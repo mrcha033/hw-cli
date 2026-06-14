@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import math
 import re
 import shutil
 import zipfile
@@ -55,12 +56,12 @@ class HardwareService:
 
     def update_requirements(self, project: str, requirements_text: str) -> dict[str, Any]:
         """Deterministically lower common natural-language requirements into the typed spec."""
-        spec = self.read_spec(project)
         system_path = self.workspace.require_project(project) / "spec" / "system.yaml"
         firmware_path = self.workspace.require_project(project) / "spec" / "firmware.yaml"
         manufacturing_path = self.workspace.require_project(project) / "spec" / "manufacturing.yaml"
+        req_path = self.workspace.require_project(project) / "spec" / "requirements.yaml"
         system_file = read_yaml(system_path); firmware_file = read_yaml(firmware_path); manufacturing_file = read_yaml(manufacturing_path)
-        changed = []
+        changed: list[str] = []
         patterns = [
             (r"(\d+)\s*(?:채널|channel)", lambda value: (system_file["actuation"].__setitem__("motor_channels", int(value)), "actuation.motor_channels")),
             (r"(?:각\s*채널\s*)?(?:피크\s*)?(\d+(?:\.\d+)?)\s*A", lambda value: (system_file["actuation"].__setitem__("motor_channel_peak_current_a", float(value)), "actuation.motor_channel_peak_current_a")),
@@ -72,29 +73,51 @@ class HardwareService:
             match = re.search(pattern, requirements_text, flags=re.IGNORECASE)
             if match:
                 _, path = setter(match.group(1)); changed.append(path)
-        lowered = requirements_text.lower()
-        if "zephyr" in lowered:
+        lowered_text = requirements_text.lower()
+        if "zephyr" in lowered_text:
             firmware_file["firmware"]["framework"] = "zephyr"; changed.append("firmware.framework")
         features = {"imu": "imu", "emergency stop": "e_stop", "e-stop": "e_stop", "비상 정지": "e_stop"}
         for token, key in features.items():
-            if token in lowered:
+            if token in lowered_text:
                 system_file["sensing"][key] = "required"; changed.append(f"sensing.{key}")
         write_yaml(system_path, system_file); write_yaml(firmware_path, firmware_file); write_yaml(manufacturing_path, manufacturing_file)
-        unresolved = []
+        unresolved_ambiguous = []
         if not re.search(r"(?:external|onboard|외장|온보드).*(?:driver|드라이버)", requirements_text, re.IGNORECASE):
-            unresolved.append("motor driver topology retained from documented assumption")
+            unresolved_ambiguous.append("motor driver topology retained from documented assumption")
         if not re.search(r"(?:forced|passive|팬|자연 냉각)", requirements_text, re.IGNORECASE):
-            unresolved.append("cooling condition retained from documented assumption")
-        unsupported_patterns = [
-            (r"\bIP\s*6[0-9]\b", "IP ingress protection rating (e.g. IP67) — not lowered into spec"),
-            (r"\bCAN-?FD\b", "CAN-FD bus variant — not lowered into spec"),
-            (r"\bASIL\b", "ASIL functional-safety level — not lowered into spec"),
-            (r"\b\d+(?:\.\d+)?\s*A\s+continuous\b", "continuous current rating — not lowered into spec"),
-            (r"\bJLCPCB\b", "JLCPCB assembly service — not lowered into spec"),
-            (r"\bimpedance[\s-]controlled\b", "impedance-controlled PCB stackup — not lowered into spec"),
+            unresolved_ambiguous.append("cooling condition retained from documented assumption")
+        _unsupported: list[tuple[str, str, str]] = [
+            (r"\bIP\s*6[0-9]\b", "ip_protection", "IP ingress protection rating (e.g. IP67) — not lowered into spec"),
+            (r"\bCAN-?FD\b", "bus_protocol", "CAN-FD bus variant — not lowered into spec"),
+            (r"\bASIL\b", "functional_safety", "ASIL functional-safety level — not lowered into spec"),
+            (r"\b\d+(?:\.\d+)?\s*A\s+continuous\b", "current_rating", "continuous current rating — not lowered into spec"),
+            (r"\bJLCPCB\b", "manufacturing_service", "JLCPCB assembly service — not lowered into spec"),
+            (r"\bimpedance[\s-]controlled\b", "pcb_stackup", "impedance-controlled PCB stackup — not lowered into spec"),
         ]
-        unsupported_constraints = [label for pattern, label in unsupported_patterns if re.search(pattern, requirements_text, re.IGNORECASE)]
-        return {"status": "generated", "changed_paths": sorted(set(changed)), "changed_files": [str(system_path), str(firmware_path), str(manufacturing_path)], "unresolved_requirements": unresolved, "unsupported_constraints": unsupported_constraints}
+        _reasons: dict[str, str] = {
+            "ip_protection": "IP ingress protection not modeled as a typed spec field",
+            "bus_protocol": "CAN-FD requested but firmware/electrical constraints only model classical CAN",
+            "functional_safety": "ASIL functional-safety level not modeled in typed spec",
+            "current_rating": "Continuous current not modeled separately from peak current in typed spec",
+            "manufacturing_service": "JLCPCB assembly service selection not modeled in typed spec",
+            "pcb_stackup": "Impedance-controlled stackup not modeled in typed spec",
+        }
+        matched = [(cat, label) for pat, cat, label in _unsupported if re.search(pat, requirements_text, re.IGNORECASE)]
+        unsupported_constraints = [label for _, label in matched]
+        req_file = read_yaml(req_path)
+        if "requirements" not in req_file:
+            req_file["requirements"] = {"raw_inputs": [], "lowered": [], "unresolved": []}
+        existing_inputs = req_file["requirements"].get("raw_inputs", [])
+        input_id = f"req_input_{len(existing_inputs) + 1:04d}"
+        req_file["requirements"]["raw_inputs"] = [*existing_inputs, {"id": input_id, "text": requirements_text, "created_by": "user"}]
+        req_file["requirements"]["lowered"] = [{"id": f"req_{i:04d}", "source": sp, "spec_path": sp, "status": "lowered"} for i, sp in enumerate(sorted(set(changed)), start=1)]
+        req_file["requirements"]["unresolved"] = [
+            {"id": f"req_unresolved_{i:04d}", "source": label, "category": cat, "status": "unresolved", "release_blocking": True, "reason": _reasons[cat]}
+            for i, (cat, label) in enumerate(matched, start=1)
+        ]
+        write_yaml(req_path, req_file)
+        status = "generated_with_unresolved_constraints" if unsupported_constraints else "generated"
+        return {"status": status, "changed_paths": sorted(set(changed)), "changed_files": [str(system_path), str(firmware_path), str(manufacturing_path), str(req_path)], "unresolved_requirements": unresolved_ambiguous, "unsupported_constraints": unsupported_constraints}
 
     def validate_spec(self, project: str) -> dict[str, Any]:
         path = self.workspace.require_project(project)
@@ -173,6 +196,7 @@ class HardwareService:
             self.validator.validate_spec(spec),
             self.validator.check_electrical_semantics(spec),
             self.validator.check_mechanical(spec),
+            self.validator.check_requirements_lowering(spec),
         ]
         pinmap_path = path / "firmware" / "generated" / "pinmap.json"
         pinmap = json.loads(pinmap_path.read_text(encoding="utf-8")) if pinmap_path.exists() else []
@@ -181,7 +205,7 @@ class HardwareService:
         else:
             reports.append(GateReport("firmware_pinmap", Status.FAIL, [Failure(FailureCategory.FIRMWARE_ERROR, "missing_pinmap", "Generate firmware before checking the pinmap")]))
         graph_path = path / "electronics" / "generated" / "electrical_graph.json"
-        graph = json.loads(graph_path.read_text(encoding="utf-8")) if graph_path.exists() else {"components": []}
+        graph = json.loads(graph_path.read_text(encoding="utf-8")) if graph_path.exists() else {"components": [], "nets": []}
         if graph_path.exists():
             if graph.get("component_resolution_report"):
                 reports.append(self._report_from_dict(graph["component_resolution_report"]))
@@ -320,21 +344,43 @@ class HardwareService:
 
     def generate_repair_plan(self, project: str, check_result: dict[str, Any] | None = None) -> dict[str, Any]:
         check_result = check_result or self.run_all_checks(project)
+        spec = self.read_spec(project)
         actions: list[dict[str, Any]] = []
         requires_user_decision = False
-        mapping = {
+        _text_advice = {
             "current_budget_exceeded": "Add power-domain concurrency limits or increase an explicitly approved battery/current-path rating.",
             "tool_unavailable": "Run the deterministic toolchain in the pinned Docker image or install the missing backend.",
             "missing_mpn": "Resolve an approved MPN and substitute before release.",
             "insufficient_clearance": "Increase enclosure dimensions or reduce the constrained envelope.",
             "pin_conflict": "Reassign the conflicting MCU peripheral pin in the firmware/electrical source.",
+            "unlowered_requirement": "Waive or lower this requirement into a typed spec field before release.",
         }
+        per_channel = spec.get("actuation", {}).get("motor_channel_peak_current_a", 0.0)
+        battery_peak = spec.get("system", {}).get("supply", {}).get("battery", {}).get("pack_current_peak_a", 0.0)
+        enclosure = list(spec.get("mechanical", {}).get("enclosure_internal_mm", []))
         for report in check_result["reports"]:
             for failure in report["failures"]:
-                action = mapping.get(failure["code"], f"Resolve {failure['code']}: {failure['message']}")
-                requires = failure.get("requires_user_decision", False) or failure["code"] in {"current_budget_exceeded", "unsafe_assumption"}
+                code = failure["code"]
+                details = failure.get("details", {})
+                action = _text_advice.get(code, f"Resolve {code}: {failure['message']}")
+                requires = failure.get("requires_user_decision", False) or code in {"current_budget_exceeded", "unsafe_assumption", "unlowered_requirement"}
                 requires_user_decision |= requires
-                actions.append({"gate": report["gate"], "failure_code": failure["code"], "action": action, "requires_user_decision": requires})
+                patches: list[dict[str, Any]] = []
+                if code == "current_budget_exceeded" and per_channel > 0 and battery_peak > 0:
+                    safe_channels = math.floor(battery_peak / per_channel)
+                    patches.append({"section": "system", "spec_path": "actuation.max_simultaneous_peak_channels", "value": safe_channels, "requires_approval": True})
+                elif code == "insufficient_clearance":
+                    axis = details.get("axis")
+                    minimum = details.get("minimum_mm")
+                    _axis_idx = {"width": 0, "height": 1, "depth": 2}
+                    idx = _axis_idx.get(axis) if axis else None
+                    if idx is not None and minimum is not None and enclosure:
+                        new_enclosure = list(enclosure)
+                        new_enclosure[idx] = math.ceil(minimum)
+                        patches.append({"section": "mechanical", "spec_path": "mechanical.enclosure_internal_mm", "value": new_enclosure, "requires_approval": False})
+                elif code == "unlowered_requirement":
+                    patches.append({"section": "requirements", "spec_path": f"requirements.unresolved.{details.get('requirement_id', 'unknown')}.status", "value": "waived", "requires_approval": True})
+                actions.append({"gate": report["gate"], "failure_code": code, "action": action, "patches": patches, "requires_user_decision": requires})
         return {"status": "generated", "project": project, "requires_user_decision": requires_user_decision, "actions": actions}
 
     def resolve_assumption(self, project: str, name: str, resolution: Any, approved: bool) -> dict[str, Any]:
@@ -391,13 +437,25 @@ class HardwareService:
         self._append_failures(project, iteration_id, checks)
         return result
 
-    def apply_repair_plan(self, project: str, check_result: dict[str, Any] | None = None) -> dict[str, Any]:
+    def apply_repair_plan(self, project: str, check_result: dict[str, Any] | None = None, approved: bool = False) -> dict[str, Any]:
         checks = check_result or self.run_all_checks(project, include_external=False)
-        codes = {failure["code"] for report in checks["reports"] for failure in report["failures"]}
-        proposals = []
-        if "current_budget_exceeded" in codes:
-            proposals.append({"path": "actuation.max_simultaneous_peak_channels", "reason": "Current budget requires an explicitly approved architecture or operating-limit decision", "requires_user_approval": True})
-        return {"status": "blocked" if proposals else "generated", "changes": [], "proposals": proposals}
+        plan = self.generate_repair_plan(project, checks)
+        applied: list[dict[str, Any]] = []
+        proposals: list[dict[str, Any]] = []
+        for action in plan["actions"]:
+            for patch in action.get("patches", []):
+                if patch.get("requires_approval") and not approved:
+                    proposals.append({"failure_code": action["failure_code"], "patch": patch, "reason": action["action"]})
+                else:
+                    self._apply_spec_patch(project, patch)
+                    applied.append(patch)
+        if applied:
+            self._append_decision_record(project, proposals, applied)
+            iteration_id = self.workspace.snapshot(project, {"goal": "auto-repair", "patches_applied": len(applied)})
+            return {"status": "applied", "applied": applied, "proposals": proposals, "iteration_id": iteration_id}
+        if proposals:
+            return {"status": "blocked", "applied": [], "proposals": proposals, "requires_user_decision": True}
+        return {"status": "no_repairs_available", "applied": [], "proposals": []}
 
     def design_until_release(self, project: str, max_iterations: int = 8, include_external: bool = False) -> dict[str, Any]:
         iterations = []
@@ -415,10 +473,55 @@ class HardwareService:
                 if bundle.get("status") == "released":
                     return {"status": "released", "iterations": iterations, "release": bundle}
                 return {"status": "blocked", "iterations": iterations, "release_gate": gate}
-            applied = self.apply_repair_plan(project, self.run_all_checks(project, include_external=False))
-            if applied["status"] != "pass":
-                return {"status": "blocked", "iterations": iterations, "repair": applied, "release_gate": result["release_gate"]}
+            repair = self.apply_repair_plan(project, self.run_all_checks(project, include_external=False))
+            if repair.get("applied"):
+                continue
+            if repair.get("requires_user_decision"):
+                return {"status": "blocked", "iterations": iterations, "repair": repair, "release_gate": result["release_gate"]}
+            return {"status": "fail", "iterations": iterations, "repair": repair, "release_gate": result["release_gate"]}
         return {"status": "fail", "code": "max_iterations_exceeded", "iterations": iterations}
+
+    def _apply_spec_patch(self, project: str, patch: dict[str, Any]) -> None:
+        section = patch["section"]
+        spec_path = patch["spec_path"]
+        value = patch["value"]
+        file_path = self.workspace.require_project(project) / "spec" / f"{section}.yaml"
+        data = read_yaml(file_path)
+        parts = spec_path.split(".")
+        node: Any = data
+        for part in parts[:-1]:
+            if isinstance(node, list):
+                # List traversal: find item by id field
+                node = next((item for item in node if isinstance(item, dict) and item.get("id") == part), None)
+                if node is None:
+                    return
+            else:
+                node = node[part]
+        if isinstance(node, list):
+            target_id = parts[-1]
+            for item in node:
+                if isinstance(item, dict) and item.get("id") == target_id:
+                    item["status"] = value
+                    break
+        else:
+            node[parts[-1]] = value
+        write_yaml(file_path, data)
+
+    def _append_decision_record(self, project: str, proposals: list[dict[str, Any]], applied: list[dict[str, Any]]) -> None:
+        path = self.workspace.require_project(project) / "history" / "decisions.md"
+        timestamp = datetime.now(UTC).isoformat()
+        lines = [f"\n## Auto-repair {timestamp}\n"]
+        if applied:
+            lines.append("### Applied patches\n")
+            for patch in applied:
+                lines.append(f"- `{patch['spec_path']}` → `{patch['value']}`")
+        if proposals:
+            lines.append("\n### Pending proposals (require user decision)\n")
+            for p in proposals:
+                lines.append(f"- [{p['failure_code']}] {p['reason']}")
+        lines.append("")
+        existing = path.read_text(encoding="utf-8")
+        path.write_text(existing + "\n".join(lines), encoding="utf-8")
 
     def _write_candidate_bundle(self, project: str, iteration_id: str, generated: dict[str, Any], checks: dict[str, Any]) -> dict[str, Any]:
         path = self.workspace.require_project(project)

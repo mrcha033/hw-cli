@@ -12,7 +12,7 @@ from .io import read_yaml, write_json, write_yaml
 
 
 PROJECT_NAME = re.compile(r"^[a-z][a-z0-9_]{1,63}$")
-SPEC_FILES = ("system", "electrical", "mechanical", "firmware", "manufacturing", "safety", "test_plan")
+SPEC_FILES = ("system", "electrical", "mechanical", "firmware", "manufacturing", "safety", "test_plan", "requirements")
 
 
 class Workspace:
@@ -47,6 +47,7 @@ class Workspace:
             if section == "system":
                 value.update({key: spec[key] for key in ("compute", "actuation", "sensing", "assumptions", "electronics")})
             write_yaml(path / "spec" / f"{section}.yaml", value)
+        write_yaml(path / "spec" / "requirements.yaml", {"requirements": {"raw_inputs": [], "lowered": [], "unresolved": []}})
         write_json(path / "history" / "failure_log.jsonl", [])
         (path / "history" / "decisions.md").write_text("# Engineering Decisions\n\n", encoding="utf-8")
         return {"project_path": str(path), "status": "created", "template": template}

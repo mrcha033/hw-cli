@@ -78,7 +78,7 @@ class Validator:
             axes = ("width", "height", "depth")
             for axis, actual, minimum in zip(axes, enclosure, required, strict=True):
                 if actual < minimum:
-                    failures.append(_failure(FailureCategory.MECHANICAL_ERROR, "insufficient_clearance", f"Enclosure {axis} {actual} mm is below required {minimum} mm", "mechanical.enclosure_internal_mm"))
+                    failures.append(_failure(FailureCategory.MECHANICAL_ERROR, "insufficient_clearance", f"Enclosure {axis} {actual} mm is below required {minimum} mm", "mechanical.enclosure_internal_mm", axis=axis, actual_mm=actual, minimum_mm=minimum))
         wall = mechanical.get("wall_thickness_mm")
         minimum_wall = spec.get("manufacturing", {}).get("mechanical", {}).get("min_wall_thickness_mm")
         if wall is not None and minimum_wall is not None and wall < minimum_wall:
@@ -174,6 +174,21 @@ class Validator:
             if net.startswith(required_prefixes) and net not in firmware_nets and not net.endswith(("CURRENT", "ENC")) and net not in {"CANH", "CANL", "ESTOP_GATE"}:
                 failures.append(_failure(FailureCategory.FIRMWARE_ERROR, "missing_firmware_assignment", f"Electrical signal lacks firmware assignment: {net}", "electronics.nets"))
         return self._report("hw_sw_parity", failures)
+
+    def check_requirements_lowering(self, spec: dict[str, Any]) -> GateReport:
+        failures: list[Failure] = []
+        for item in spec.get("requirements", {}).get("unresolved", []):
+            if item.get("release_blocking", True) and item.get("status") != "waived":
+                failures.append(_failure(
+                    FailureCategory.SPEC_ERROR,
+                    "unlowered_requirement",
+                    f"Requirement was not lowered into formal spec: {item.get('source')}",
+                    "requirements.unresolved",
+                    requirement_id=item.get("id"),
+                    requirement_category=item.get("category"),
+                    reason=item.get("reason"),
+                ))
+        return self._report("requirements_lowering", failures)
 
     @staticmethod
     def release_gate(reports: list[GateReport], assumptions: dict[str, Any], required_artifacts: list[Path]) -> GateReport:

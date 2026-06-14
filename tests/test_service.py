@@ -92,3 +92,36 @@ def test_natural_language_requirements_update_structured_spec(service, project):
     assert spec["system"]["supply"]["battery"]["pack_voltage_nominal"] == 24.0
     assert spec["manufacturing"]["pcb"]["layers"] == 6
     assert spec["firmware"]["framework"] == "zephyr"
+    assert spec.get("requirements", {}).get("unresolved", []) == []
+
+
+def test_unsupported_constraints_persist_to_spec_and_block_validation(service, project):
+    """update_requirements with high-risk constraints that cannot be lowered must:
+    - return status='generated_with_unresolved_constraints'
+    - persist constraints to spec so validate_spec fails with unlowered_constraint_in_spec
+    - thereby block the release pipeline without requiring agent to inspect the return value."""
+    result = service.update_requirements(
+        project,
+        "16 channel 24V battery, IP67, CAN-FD, ASIL-B, 8A continuous, JLCPCB assembly, impedance-controlled"
+    )
+    assert result["status"] == "generated_with_unresolved_constraints"
+    assert result["unsupported_constraints"]
+    spec = service.read_spec(project)
+    assert spec.get("requirements", {}).get("unresolved"), "Constraints must be persisted to spec/requirements.yaml"
+    checks = service.run_all_checks(project, include_external=False)
+    assert checks["status"] != "pass"
+    codes = {f["code"] for report in checks["reports"] for f in report["failures"]}
+    assert "unlowered_requirement" in codes
+
+
+def test_unsupported_constraints_cleared_on_clean_requirements_update(service, project):
+    """A subsequent update_requirements call with no unsupported constraints must clear the
+    unlowered_constraints field from spec so validate_spec no longer fails on it."""
+    service.update_requirements(project, "IP67 impedance-controlled")
+    assert service.read_spec(project).get("requirements", {}).get("unresolved")
+    service.update_requirements(project, "16 channel 24V battery, Zephyr")
+    spec = service.read_spec(project)
+    assert spec.get("requirements", {}).get("unresolved", []) == []
+    checks = service.run_all_checks(project, include_external=False)
+    codes = {f["code"] for report in checks["reports"] for f in report["failures"]}
+    assert "unlowered_requirement" not in codes
