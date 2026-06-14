@@ -111,10 +111,11 @@ class Validator:
             ref = component.get("ref", "unknown")
             if component.get("lifecycle") != "active":
                 failures.append(_failure(FailureCategory.BOM_ERROR, "lifecycle_risk", f"{ref} is not marked active", "electronics.components"))
-            if not component.get("manufacturer") or not component.get("supplier_sku"):
+            sourcing = component.get("sourcing") or {}
+            if not component.get("manufacturer") or not sourcing.get("supplier_skus"):
                 failures.append(_failure(FailureCategory.BOM_ERROR, "missing_sourcing_metadata", f"{ref} lacks manufacturer or supplier SKU", "electronics.components"))
-            if not component.get("substitute_mpn"):
-                failures.append(_failure(FailureCategory.BOM_ERROR, "missing_substitute", f"{ref} has no approved substitute MPN", "electronics.components"))
+            if sourcing.get("status") not in {"resolved", "waived"}:
+                failures.append(_failure(FailureCategory.BOM_ERROR, "sourcing_unresolved", f"{ref} sourcing is not resolved or waived", "electronics.components"))
             if not component.get("pins"):
                 failures.append(_failure(FailureCategory.BOM_ERROR, "missing_pin_mapping", f"{ref} has no symbol-to-footprint pin mapping", "electronics.components"))
         return self._report("sourcing", failures)

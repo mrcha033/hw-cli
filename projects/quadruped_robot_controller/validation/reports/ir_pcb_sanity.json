@@ -7,7 +7,7 @@
     "name": "reference-ir-drc"
   },
   "failures": [],
-  "gate": "drc",
+  "gate": "ir_pcb_sanity",
   "metrics": {
     "footprints": 42,
     "layers": 4,

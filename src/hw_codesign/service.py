@@ -156,7 +156,7 @@ class HardwareService:
         spec = self.read_spec(project)
         backend = spec.get("electronics", {}).get("backend", "reference")
         reports_dir = path / "validation" / "reports"
-        stale_tscircuit = ("tscircuit_compile.json", "tscircuit_netlist_extract.json", "tscircuit_graph_parity.json")
+        stale_tscircuit = ("tscircuit_compile.json", "tscircuit_netlist_extract.json", "tscircuit_graph_parity.json", "tscircuit_footprint_parity.json", "tscircuit_layout_completeness.json")
         stale_reference = ("compiled_electronics_backend.json",)
         for name in stale_tscircuit if backend != "tscircuit" else stale_reference:
             (reports_dir / name).unlink(missing_ok=True)
@@ -293,6 +293,12 @@ class HardwareService:
         backend = spec.get("electronics", {}).get("backend", "reference")
         if backend != "tscircuit":
             reports = [*reports, GateReport("backend_release_policy", Status.BLOCKED, [Failure(FailureCategory.RELEASE_ERROR, "compiled_electronics_backend_required", f"Backend {backend} is not release eligible")])]
+        else:
+            # Require PCB-level tscircuit gates in addition to netlist gates
+            required_tsc_gates = {"tscircuit_compile", "tscircuit_graph_parity", "tscircuit_footprint_parity", "tscircuit_layout_completeness"}
+            present_gates = {r.gate for r in reports}
+            for gate_name in sorted(required_tsc_gates - present_gates):
+                reports = [*reports, GateReport(gate_name, Status.BLOCKED, [Failure(FailureCategory.RELEASE_ERROR, "gate_not_run", f"Required gate was not executed: {gate_name}")])]
         reports = [*reports, self._artifact_integrity_report(release)]
         report = self.validator.release_gate(reports, spec.get("assumptions", {}), required)
         persist_report(path, report)
@@ -332,8 +338,8 @@ class HardwareService:
         write_yaml(path, system_file)
         return {"status": "pass", "assumption": name, "resolution": resolution}
 
-    def export_release_bundle(self, project: str) -> dict[str, Any]:
-        gate = self.check_release_gate(project, include_external=True)
+    def export_release_bundle(self, project: str, gate_result: dict[str, Any] | None = None) -> dict[str, Any]:
+        gate = gate_result or self.check_release_gate(project, include_external=True)
         if gate["status"] != "pass":
             return {"status": "blocked", "release_gate": gate, "message": "Release bundle cannot be exported until all required gates pass"}
         path = self.workspace.require_project(project)
@@ -389,10 +395,12 @@ class HardwareService:
                 prepared = self.prepare_release(project, checks, require_native=include_external)
                 if prepared.get("status") != "released":
                     return {"status": "blocked", "iterations": iterations, "release": prepared}
-                bundle = self.export_release_bundle(project)
+                frozen_reports = [self._report_from_dict(item) for item in checks["reports"]]
+                gate = self.check_release_gate(project, reports=frozen_reports, include_external=False)
+                bundle = self.export_release_bundle(project, gate_result=gate)
                 if bundle.get("status") == "released":
                     return {"status": "released", "iterations": iterations, "release": bundle}
-                return {"status": "blocked", "iterations": iterations, "release_gate": self.check_release_gate(project)}
+                return {"status": "blocked", "iterations": iterations, "release_gate": gate}
             applied = self.apply_repair_plan(project, self.run_all_checks(project, include_external=False))
             if applied["status"] != "pass":
                 return {"status": "blocked", "iterations": iterations, "repair": applied, "release_gate": result["release_gate"]}

@@ -5,7 +5,7 @@
     "name": "reference-ir-erc"
   },
   "failures": [],
-  "gate": "erc",
+  "gate": "ir_erc",
   "metrics": {
     "components": 42,
     "nets": 60

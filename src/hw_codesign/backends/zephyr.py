@@ -19,7 +19,7 @@ class ZephyrBackend:
             modules = [zephyr_base / "modules" / "hal" / name for name in ("stm32", "cmsis_6")]
             if all(item.is_dir() for item in modules):
                 arguments = [
-                    "-S", str(app), "-B", str(build), "-G", "Ninja", "-DBOARD=nucleo_h743zi",
+                    "-S", str(app), "-B", str(build), "-G", "Ninja", f"-DBOARD={board}",
                     f"-DZEPHYR_MODULES={';'.join(str(item) for item in modules)}",
                     f"-DZEPHYR_CMSIS_6_MODULE_DIR={modules[1]}",
                     f"-DZEPHYR_CMSIS_6_CMAKE_DIR={zephyr_base / 'modules' / 'cmsis_6'}",

@@ -151,7 +151,7 @@ def internal_erc(graph: dict[str, Any]) -> GateReport:
     for net in graph["nets"]:
         if len(net.get("connected_pins", [])) < 2:
             failures.append(Failure(FailureCategory.EDA_ERROR, "single_pin_net", f"{net['name']} has fewer than two endpoints"))
-    return GateReport("erc", Status.FAIL if failures else Status.PASS, failures, metrics={"components": len(graph["components"]), "nets": len(graph["nets"])}, backend={"name": "reference-ir-erc", "deterministic": True})
+    return GateReport("ir_erc", Status.FAIL if failures else Status.PASS, failures, metrics={"components": len(graph["components"]), "nets": len(graph["nets"])}, backend={"name": "reference-ir-erc", "deterministic": True})
 
 
 def internal_drc(project: Path, spec: dict[str, Any], graph: dict[str, Any]) -> GateReport:
@@ -176,7 +176,7 @@ def internal_drc(project: Path, spec: dict[str, Any], graph: dict[str, Any]) -> 
     routing_complete = routing.get("status") == "pass" and routing.get("signal_routing") == "complete"
     if not routing_complete and segment_count < len(routable_nets):
         failures.append(Failure(FailureCategory.EDA_ERROR, "routing_incomplete", "PCB signal routing is deferred or incomplete", details={"nets": len(routable_nets), "segments": segment_count, "routing_status": routing.get("status")}))
-    return GateReport("drc", Status.FAIL if failures else Status.PASS, failures, metrics={"footprints": len(graph["components"]), "pads": expected_pads, "segments": segment_count, "layers": spec["manufacturing"]["pcb"]["layers"]}, artifacts=[str(pcb)], backend={"name": "reference-ir-drc", "deterministic": True})
+    return GateReport("ir_pcb_sanity", Status.FAIL if failures else Status.PASS, failures, metrics={"footprints": len(graph["components"]), "pads": expected_pads, "segments": segment_count, "layers": spec["manufacturing"]["pcb"]["layers"]}, artifacts=[str(pcb)], backend={"name": "reference-ir-drc", "deterministic": True})
 
 
 def export_fabrication(project: Path, spec: dict[str, Any], graph: dict[str, Any], release: Path) -> list[str]:
