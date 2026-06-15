@@ -12,6 +12,7 @@ if [[ ! -x /Applications/KiCad/KiCad.app/Contents/MacOS/kicad-cli ]]; then
   brew install --cask kicad
 fi
 command -v arm-none-eabi-gcc >/dev/null || brew install arm-none-eabi-gcc
+command -v ato >/dev/null || brew install atopile
 command -v curl >/dev/null || { echo "curl is required" >&2; exit 1; }
 command -v node >/dev/null || brew install node@22
 command -v npm >/dev/null || { echo "npm is required" >&2; exit 1; }

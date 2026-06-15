@@ -52,15 +52,24 @@ def test_missing_kicad_tool_blocks_every_contract_gate(service, project, monkeyp
     assert all(report.failures[0].code == "tool_unavailable" for report in reports)
 
 
-def test_atopile_is_not_emitted_as_fake_compiler_source(service, project):
+def test_atopile_emits_real_ato_source_and_compile_gate_runs(service, project):
     _set_backend(service, project, "atopile")
     service.generate_electronics_only(project)
     source = service.workspace.require_project(project) / "electronics" / "source" / "atopile"
-    assert not list(source.glob("*.ato"))
-    assert (source / "design.ato.intent.md").is_file()
+    # Real .ato source is generated (not a placeholder comment file)
+    ato_files = list(source.glob("*.ato"))
+    assert ato_files, "atopile adapter must generate .ato source"
+    assert (source / "ato.yaml").is_file(), "atopile adapter must generate ato.yaml project file"
+    ato_content = (source / "design.ato").read_text(encoding="utf-8")
+    assert "module" in ato_content, ".ato file must contain a module declaration"
     checks = service.run_all_checks(project, include_external=False)
     reports = {item["gate"]: item for item in checks["reports"]}
-    assert all(reports[f"atopile_{stage}"]["status"] == "blocked" for stage in CONTRACT_STAGES)
+    # compile gate is now active (pass or blocked if tool missing)
+    compile_status = reports["atopile_compile"]["status"]
+    assert compile_status in ("pass", "blocked"), f"compile gate should be pass or blocked, got {compile_status}"
+    # post-compile gates remain blocked (parity extraction not implemented)
+    for stage in ("netlist_extract", "graph_parity", "footprint_parity", "layout_completeness", "manufacturing_export"):
+        assert reports[f"atopile_{stage}"]["status"] == "blocked"
 
 
 def test_non_release_backend_cannot_prepare_release(service, project):

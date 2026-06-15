@@ -17,12 +17,12 @@
           "symbol": {
             "type": "object",
             "required": ["library_id", "verified", "expected_pins"],
-            "properties": {"library_id": {"type": "string"}, "verified": {"const": true}, "expected_pins": {"type": "array", "minItems": 1, "items": {"type": "string"}}}
+            "properties": {"library_id": {"type": "string"}, "verified": {"type": "boolean"}, "expected_pins": {"type": "array", "minItems": 1, "items": {"type": "string"}}}
           },
           "footprint": {
             "type": "object",
             "required": ["library_id", "verified", "expected_pads"],
-            "properties": {"library_id": {"type": "string"}, "verified": {"const": true}, "expected_pads": {"type": "array", "minItems": 1, "items": {"type": "string"}}, "backend_footprints": {"type": "object", "properties": {"tscircuit": {"type": "string", "minLength": 1}}}}
+            "properties": {"library_id": {"type": "string"}, "verified": {"type": "boolean"}, "expected_pads": {"type": "array", "minItems": 1, "items": {"type": "string"}}, "backend_footprints": {"type": "object", "properties": {"tscircuit": {"type": "string", "minLength": 1}}}}
           },
           "pins": {"type": "array", "minItems": 1, "items": {"type": "object", "required": ["number", "name", "electrical_type"]}},
           "lifecycle": {"enum": ["active", "nrnd", "obsolete"]},

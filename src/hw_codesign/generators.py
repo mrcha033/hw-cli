@@ -28,17 +28,28 @@ def generate_electronics(project: Path, spec: dict[str, Any], parts_root: Path, 
         (project / "electronics" / "generated" / "tscircuit_netlist.json").unlink(missing_ok=True)
     channels = int(spec["actuation"]["motor_channels"])
     header = "---\nartifact_type: design_intent\ncompiled: false\nrelease_eligible: false\nsource_of_truth: false\nbackend: reference\n---\n\n"
-    board = header + f'''# Generated high-level hardware intent. Edit spec, then regenerate.
-module RobotController:
-  mcu = new {spec["compute"]["mcu"]["family"]}
-  power_input = new ProtectedPowerInput
-  imu = new IMU
-  motor_channels = new MotorChannel[{channels}]
-  emergency_stop = new FailSafeEmergencyStop
-'''
-    power = header + "# VBAT protection and rail intent\nVBAT -> fuse_or_efuse -> reverse_polarity -> tvs -> controller power\nVBAT -> buck_5v -> regulator_3v3\n"
-    motors = header + f"# Repeated channel intent\nchannels = {channels}\npeak_current_per_channel_a = {spec['actuation']['motor_channel_peak_current_a']}\n"
-    files = {"board.intent.md": board, "power_tree.intent.md": power, "motor_channels.intent.md": motors, "sensor_bus.intent.md": header + "# IMU and external sensor buses\n", "connectors.intent.md": header + "# Exposed power, motor, CAN, USB-C and debug connectors\n"}
+    mcu_family = spec["compute"]["mcu"]["family"]
+    target_use = spec.get("project", {}).get("target_use", "embedded_system")
+    board_module_lines = [
+        "# Generated high-level hardware intent. Edit spec, then regenerate.",
+        f"module {mcu_family}Board:",
+        f"  mcu = new {mcu_family}",
+        "  power_input = new ProtectedPowerInput",
+    ]
+    if spec.get("sensing", {}).get("imu") == "required":
+        board_module_lines.append("  imu = new IMU")
+    if channels > 0:
+        board_module_lines.append(f"  motor_channels = new MotorChannel[{channels}]")
+    if spec.get("safety", {}).get("emergency_stop", {}).get("required"):
+        board_module_lines.append("  emergency_stop = new FailSafeEmergencyStop")
+    board = header + "\n".join(board_module_lines) + "\n"
+    supply_type = spec.get("system", {}).get("supply", {}).get("battery", {}).get("type", "battery")
+    if supply_type == "usb_pd":
+        power = header + "# USB-C power input and rail intent\nUSB5V -> fuse_or_efuse -> tvs -> regulator_3v3\n"
+    else:
+        power = header + "# VBAT protection and rail intent\nVBAT -> fuse_or_efuse -> reverse_polarity -> tvs -> controller power\nVBAT -> buck_5v -> regulator_3v3\n"
+    motors = header + f"# Channel intent\nchannels = {channels}\npeak_current_per_channel_a = {spec['actuation']['motor_channel_peak_current_a']}\n"
+    files = {"board.intent.md": board, "power_tree.intent.md": power, "motor_channels.intent.md": motors, "sensor_bus.intent.md": header + "# IMU and external sensor buses\n", "connectors.intent.md": header + "# Exposed power and debug connectors\n"}
     for name, content in files.items():
         atomic_write_text(intent / name, content)
     graph = build_graph(spec)

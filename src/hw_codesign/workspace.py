@@ -13,6 +13,7 @@ from .io import read_yaml, write_json, write_yaml
 
 PROJECT_NAME = re.compile(r"^[a-z][a-z0-9_]{1,63}$")
 SPEC_FILES = ("system", "electrical", "mechanical", "firmware", "manufacturing", "safety", "sourcing", "test_plan", "requirements")
+SUPPORTED_TEMPLATES = frozenset({"robotics_controller_full", "sensor_data_logger"})
 
 
 class Workspace:
@@ -35,9 +36,9 @@ class Workspace:
         path = self.project_path(name)
         if path.exists():
             raise FileExistsError(f"Project already exists: {name}")
-        if template != "robotics_controller_full":
-            raise ValueError(f"Unknown template: {template}")
-        template_path = files("hw_codesign.templates").joinpath("robotics_controller_full.yaml")
+        if template not in SUPPORTED_TEMPLATES:
+            raise ValueError(f"Unknown template: {template!r}. Supported: {sorted(SUPPORTED_TEMPLATES)}")
+        template_path = files("hw_codesign.templates").joinpath(f"{template}.yaml")
         spec = read_yaml(Path(str(template_path)))
         spec["project"]["name"] = name
         self._create_tree(path)

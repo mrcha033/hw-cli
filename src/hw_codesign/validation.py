@@ -74,7 +74,10 @@ class Validator:
                 available_peak_a=battery_peak,
             ))
         protections = set(safety.get("required_protections", []))
-        for protection in ("reverse_polarity", "fuse_or_efuse", "tvs", "watchdog", "motor_enable_gate"):
+        required = ["reverse_polarity", "fuse_or_efuse", "tvs", "watchdog"]
+        if channels > 0:
+            required.append("motor_enable_gate")
+        for protection in required:
             if protection not in protections:
                 failures.append(_failure(FailureCategory.ELECTRICAL_SEMANTIC_ERROR, "missing_protection", f"Required protection is missing: {protection}", "safety.required_protections"))
         estop = safety.get("emergency_stop", {})
