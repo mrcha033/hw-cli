@@ -142,6 +142,50 @@ def test_generated_graph_contains_supplier_and_datasheet_provenance(service, pro
     assert all(component["datasheet_evidence"] for component in graph["components"])
 
 
+def test_stale_observed_at_blocks_availability(tmp_path):
+    template_spec = _template_spec()
+    parts_root = _parts_copy(tmp_path)
+    graph = build_graph(template_spec)
+    records = _available_records(parts_root, "digikey")
+    # One record has a fresh timestamp (within 90 days of today).
+    # One record has a timestamp well outside the 90-day window.
+    records[0]["observed_at"] = "2020-01-01T00:00:00Z"  # definitely stale
+    (parts_root / "suppliers" / "digikey.yaml").write_text(
+        yaml.safe_dump({"provider": "digikey", "records": records}, sort_keys=False), encoding="utf-8"
+    )
+    spec = copy.deepcopy(template_spec)
+    spec["sourcing"] = {"provider": "digikey"}
+    resolver = ComponentResolver(parts_root)
+    resolver.resolve(spec, "robotics_controller", graph["components"])
+    report = resolver.supplier_availability_report
+    assert report.status.value == "blocked"
+    stale = [f for f in report.failures if f.code == "supplier_evidence_stale"]
+    assert stale
+    assert stale[0].details["observed_at"] == "2020-01-01T00:00:00Z"
+    assert stale[0].details["max_age_days"] == 90
+
+
+def test_fresh_observed_at_does_not_trigger_staleness(tmp_path):
+    from datetime import UTC, datetime, timedelta
+    template_spec = _template_spec()
+    parts_root = _parts_copy(tmp_path)
+    graph = build_graph(template_spec)
+    records = _available_records(parts_root, "digikey")
+    fresh_ts = (datetime.now(UTC) - timedelta(days=1)).strftime("%Y-%m-%dT%H:%M:%SZ")
+    for record in records:
+        record["observed_at"] = fresh_ts
+    (parts_root / "suppliers" / "digikey.yaml").write_text(
+        yaml.safe_dump({"provider": "digikey", "records": records}, sort_keys=False), encoding="utf-8"
+    )
+    spec = copy.deepcopy(template_spec)
+    spec["sourcing"] = {"provider": "digikey"}
+    resolver = ComponentResolver(parts_root)
+    resolver.resolve(spec, "robotics_controller", graph["components"])
+    report = resolver.supplier_availability_report
+    assert report.status.value == "pass"
+    assert not any(f.code == "supplier_evidence_stale" for f in report.failures)
+
+
 def test_supplier_provider_is_persistent_project_state(service, project):
     service.update_spec(project, "sourcing", {"provider": "digikey"})
     assert service.read_spec(project)["sourcing"] == {"provider": "digikey"}

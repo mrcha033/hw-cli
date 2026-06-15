@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import asdict
+from datetime import UTC, datetime, timedelta
 from hashlib import sha256
 import json
 from pathlib import Path
@@ -11,6 +12,9 @@ from jsonschema import Draft202012Validator
 
 from .models import Failure, FailureCategory, GateReport, ResolvedComponent, Status
 from .supplier_adapters import supplier_adapter
+
+# Supplier availability snapshots older than this are treated as missing evidence.
+SUPPLIER_EVIDENCE_MAX_AGE_DAYS = 90
 
 
 ROLE_BY_CATEGORY = {
@@ -172,6 +176,9 @@ class ComponentResolver:
             elif offer.get("availability") != "available" or not offer.get("sku") or not offer.get("observed_at"):
                 availability_blocked = True
                 availability_failures.append(Failure(FailureCategory.BOM_ERROR, "supplier_availability_unknown", f"Current availability is not evidenced for {item.ref} at {provider}", path=item.ref))
+            elif _evidence_is_stale(offer["observed_at"]):
+                availability_blocked = True
+                availability_failures.append(Failure(FailureCategory.BOM_ERROR, "supplier_evidence_stale", f"{item.ref} availability evidence at {provider} is older than {SUPPLIER_EVIDENCE_MAX_AGE_DAYS} days", path=item.ref, details={"observed_at": offer["observed_at"], "max_age_days": SUPPLIER_EVIDENCE_MAX_AGE_DAYS}))
             evidence = item.data.get("datasheet_evidence", [])
             if not evidence:
                 evidence_failed = True
@@ -189,3 +196,12 @@ class ComponentResolver:
     @staticmethod
     def serialize(items: list[ResolvedComponent]) -> list[dict[str, Any]]:
         return [asdict(item) for item in items]
+
+
+def _evidence_is_stale(observed_at: str) -> bool:
+    """Return True if the observation timestamp is older than SUPPLIER_EVIDENCE_MAX_AGE_DAYS."""
+    try:
+        ts = datetime.fromisoformat(observed_at.replace("Z", "+00:00"))
+        return datetime.now(UTC) - ts > timedelta(days=SUPPLIER_EVIDENCE_MAX_AGE_DAYS)
+    except (ValueError, AttributeError):
+        return True
