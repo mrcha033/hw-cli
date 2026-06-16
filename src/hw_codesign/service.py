@@ -285,6 +285,13 @@ class HardwareService:
         reports.extend([internal_erc(graph), internal_drc(path, spec, graph), build_firmware_reference(path)])
         if graph.get("components"):
             reports.append(check_placement(propose_placement(spec, graph), graph))
+        if graph.get("components") and graph_path.exists():
+            try:
+                ref_fab_out = path / "exports" / "candidates" / "reference-fabrication"
+                ref_fab_artifacts = export_fabrication(path, spec, graph, ref_fab_out)
+                reports.append(GateReport("reference_fabrication", Status.PASS, [], metrics={"artifact_count": len(ref_fab_artifacts), "candidate_only": True}, artifacts=ref_fab_artifacts, backend={"name": "reference-fabrication", "release_eligible": False, "candidate_only": True}))
+            except Exception as exc:
+                reports.append(GateReport("reference_fabrication", Status.FAIL, [Failure(FailureCategory.EDA_ERROR, "reference_fabrication_error", str(exc))], backend={"name": "reference-fabrication", "release_eligible": False}))
         if backend == "reference":
             reports.append(GateReport("compiled_electronics_backend", Status.BLOCKED, [Failure(FailureCategory.EDA_ERROR, "reference_backend_candidate_only", "Reference electronics backend produces candidate artifacts only")], backend={"name": "reference", "release_eligible": False}))
         elif backend == "atopile":
@@ -396,6 +403,18 @@ class HardwareService:
 
     @staticmethod
     def _release_bringup_guide(profile: dict[str, Any]) -> str:
+        if profile["board_name"] == "ble_sensor_node":
+            return (
+                "# Bring-up Guide\n\n"
+                "1. Inspect assembly and verify no shorts with battery and USB disconnected.\n"
+                "2. Connect USB-C — verify VBAT rises to 3.7–4.2 V on BT1 pad, CHG_STAT toggles low.\n"
+                "3. Verify V3V3 rail (U4 LDO output) is stable at 3.3 V with USB connected.\n"
+                "4. Flash the Zephyr image over SWD with nRF Command Line Tools.\n"
+                "5. Verify BLE advertisement packet visible via a BLE scanner app.\n"
+                "6. Verify I2C bus: SHT31 identity register (0x08) and BQ27441 device type (0x0421).\n"
+                "7. Verify fuel gauge state-of-charge readout matches actual LiPo charge level.\n"
+                "8. Increase advertising interval and sensor rate only under thermal monitoring.\n"
+            )
         if profile["board_name"] == "sensor_data_logger":
             return (
                 "# Bring-up Guide\n\n"
@@ -418,6 +437,13 @@ class HardwareService:
 
     @staticmethod
     def _release_known_risks(profile: dict[str, Any]) -> str:
+        if profile["board_name"] == "ble_sensor_node":
+            return (
+                "# Known Risks\n\n"
+                "- BLE RF performance, antenna keepout effectiveness, and coexistence with nearby 2.4 GHz sources require anechoic-chamber qualification.\n"
+                "- LiPo cell abuse tolerance (overcharge, over-discharge, thermal runaway) requires cell-level testing separate from BQ24079 protection characterisation.\n"
+                "- EMI/EMC, I2C bus integrity, and ESD robustness on exposed USB-C connector require physical qualification.\n"
+            )
         if profile["board_name"] == "sensor_data_logger":
             return (
                 "# Known Risks\n\n"
@@ -432,6 +458,14 @@ class HardwareService:
 
     @staticmethod
     def _release_bringup_pdf_lines(profile: dict[str, Any]) -> list[str]:
+        if profile["board_name"] == "ble_sensor_node":
+            return [
+                "Connect USB-C and verify VBAT charging.",
+                "Verify V3V3 LDO output stable at 3.3 V.",
+                "Flash via SWD with nRF Command Line Tools.",
+                "Verify BLE advertising packet visible.",
+                "Verify I2C: SHT31 and BQ27441 identity.",
+            ]
         if profile["board_name"] == "sensor_data_logger":
             return [
                 "Current-limit initial USB-C power-up.",

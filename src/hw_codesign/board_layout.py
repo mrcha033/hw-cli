@@ -80,7 +80,38 @@ def placement_sources(graph: dict[str, Any]) -> dict[str, str]:
     }
 
 
+_BLE_SENSOR_NODE_ANCHORS: dict[str, tuple[float, float]] = {
+    "J1":  (12.0, 4.0),   # USB-C, front edge
+    "U2":  (25.0, 8.0),   # BQ24079 charger, near USB
+    "BT1": (42.0, 4.0),   # JST LiPo connector, front edge
+    "LD1": (22.0, 18.0),  # AP2112K LDO, between charger and MCU
+    "U3":  (38.0, 20.0),  # BQ27441 fuel gauge, near battery rail
+    "U1":  (25.0, 28.0),  # nRF52840 MCU, centre
+    "U5":  (10.0, 24.0),  # SHT31 env sensor, away from RF area
+    "J2":  (43.0, 30.0),  # SWD debug header, rear edge
+    "D1":  (12.0, 12.0),  # USB ESD TVS, near J1
+    "R1":  (12.0, 18.0),  # I2C SCL pullup
+    "R2":  (16.0, 18.0),  # I2C SDA pullup
+    "R3":  (38.0, 12.0),  # LED resistor
+    "R4":  (32.0, 8.0),   # Charge set resistor
+    "C1":  (28.0, 18.0),  # 100nF decoupling
+    "C2":  (32.0, 18.0),  # 100nF decoupling
+    "C3":  (20.0, 12.0),  # 10uF VBAT cap
+    "C4":  (35.0, 27.0),  # 10uF V3V3 cap
+}
+
+
+def _ble_sensor_node_seed_table() -> dict[str, tuple[tuple[float, float], str]]:
+    return {
+        ref: (xy, "ble_sensor_node_anchor")
+        for ref, xy in _BLE_SENSOR_NODE_ANCHORS.items()
+    }
+
+
 def _seed_table_for_graph(graph: dict[str, Any]) -> dict[str, tuple[tuple[float, float], str]]:
-    if graph.get("design_basis", {}).get("architecture") == "esp32s3_usb_i2c_sensor_data_logger":
+    architecture = graph.get("design_basis", {}).get("architecture")
+    if architecture == "nrf52840_ble_sensor":
+        return _ble_sensor_node_seed_table()
+    if architecture == "esp32s3_usb_i2c_sensor_data_logger":
         return _sensor_data_logger_seed_table()
     return _seed_table()

@@ -13,7 +13,7 @@ from .io import read_yaml, write_json, write_yaml
 
 PROJECT_NAME = re.compile(r"^[a-z][a-z0-9_]{1,63}$")
 SPEC_FILES = ("system", "electrical", "mechanical", "firmware", "manufacturing", "safety", "sourcing", "test_plan", "requirements")
-SUPPORTED_TEMPLATES = frozenset({"robotics_controller_full", "sensor_data_logger"})
+SUPPORTED_TEMPLATES = frozenset({"robotics_controller_full", "sensor_data_logger", "ble_sensor_node"})
 
 
 class Workspace:

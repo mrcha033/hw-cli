@@ -1,0 +1,17 @@
+name: ble_sensor_node
+critical_roles: [power_input, tvs, charger, regulator_3v3, mcu, env_sensor, fuel_gauge]
+roles:
+  power_input: {component_id: usb4105_gf_a, resolution: curated}
+  tvs: {component_id: usblc6_2sc6, resolution: curated}
+  charger: {component_id: bq24079rgtt, resolution: curated}
+  battery: {component_id: jst_ph_2pin, resolution: curated}
+  fuel_gauge: {component_id: bq27441drzr_g1a, resolution: curated}
+  regulator_3v3: {component_id: ap2112k_33trg1, resolution: curated}
+  mcu: {component_id: nrf52840_qiaa, resolution: curated}
+  env_sensor: {component_id: sht31_dis_b, resolution: curated}
+  debug: {component_id: samtec_ftsh_105, resolution: curated}
+  resistor_4k7: {component_id: rc0603_4k7, resolution: curated}
+  led_resistor: {component_id: rc0603_1k, resolution: curated}
+  charge_set: {component_id: rc0603_10k, resolution: curated}
+  capacitor_100n: {component_id: grm188_100n, resolution: curated}
+  capacitor_10u_50v: {component_id: grm32_10u_50v, resolution: curated}

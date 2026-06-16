@@ -93,6 +93,8 @@ def _electronics_intent_files(spec: dict[str, Any], header: str) -> dict[str, st
         files["power_tree.intent.md"] = header + "# VBAT protection and rail intent\nVBAT -> fuse_or_efuse -> reverse_polarity -> tvs -> controller power\nVBAT -> buck_5v -> regulator_3v3\n"
     if channels > 0:
         files["motor_channels.intent.md"] = header + f"# Channel intent\nchannels = {channels}\npeak_current_per_channel_a = {spec['actuation']['motor_channel_peak_current_a']}\n"
+    elif role_set == "ble_sensor_node":
+        files["ble_node.intent.md"] = header + "# BLE sensor node intent\nble_peripheral = required\ni2c_env_sensor = required\nfuel_gauge = required\nbattery_charger = required\n"
     elif role_set == "sensor_data_logger":
         files["data_logger.intent.md"] = header + "# Sensor data logger intent\nusb_console = required\ni2c_imu = required\nlocal_storage = not_modelled\n"
     return files
@@ -156,7 +158,23 @@ def _pin_assignments(channels: int) -> list[dict[str, Any]]:
 
 
 def firmware_profile(spec: dict[str, Any], graph: dict[str, Any]) -> dict[str, Any]:
-    if graph.get("design_basis", {}).get("architecture") == "esp32s3_usb_i2c_sensor_data_logger":
+    architecture = graph.get("design_basis", {}).get("architecture")
+    if architecture == "nrf52840_ble_sensor":
+        return {
+            "project": "ble_sensor_node",
+            "reference_project": "ble_sensor_node_bsp",
+            "board_name": "ble_sensor_node",
+            "board_arch": "arm",
+            "dts_include": "#include <nordic/nrf52840.dtsi>",
+            "model": "HW Co-design nRF52840 BLE Sensor Node",
+            "compatible": "hw,ble-sensor-node",
+            "defconfig": "CONFIG_SOC_NRF52840=y\nCONFIG_BOARD_BLE_SENSOR_NODE=y\n",
+            "kconfig_board": 'config BOARD_BLE_SENSOR_NODE\n  bool "nRF52840 BLE Sensor Node"\n',
+            "kconfig_default": 'if BOARD_BLE_SENSOR_NODE\nconfig BOARD\n  default "ble_sensor_node"\nendif\n',
+            "prj_conf": "CONFIG_GPIO=y\nCONFIG_I2C=y\nCONFIG_BT=y\nCONFIG_BT_PERIPHERAL=y\nCONFIG_SENSOR=y\n",
+            "tests": {"test_i2c_sensors.c": "/* Bring-up test stub: verify SHT31 identity and fuel gauge I2C. */\n", "test_ble_adv.c": "/* Bring-up test stub: verify BLE advertising packet tx. */\n"},
+        }
+    if architecture == "esp32s3_usb_i2c_sensor_data_logger":
         return {
             "project": "sensor_data_logger",
             "reference_project": "sensor_data_logger_bsp",

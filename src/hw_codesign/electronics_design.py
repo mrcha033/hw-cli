@@ -161,6 +161,137 @@ def build_sensor_data_logger_graph(spec: dict[str, Any]) -> dict[str, Any]:
     }
 
 
+def build_ble_sensor_node_graph(spec: dict[str, Any]) -> dict[str, Any]:
+    # Sequential pin numbers for schematic (Connector_Generic size = len(pins)).
+    # mcu_pin field records the physical package pin / GPIO name used in DTS.
+    mcu_pins = [
+        pin(1,  "VDD",         "V3V3",     "power_in"),
+        pin(2,  "VSS",         "GND",      "ground"),
+        pin(3,  "VDDPA",       "V3V3",     "power_in"),
+        pin(4,  "VDDMAIN",     "V3V3",     "power_in"),
+        {**pin(5,  "P0.02",   "I2C_SCL",  "open_drain"),  "mcu_pin": "P0.02"},
+        {**pin(6,  "P0.03",   "I2C_SDA",  "open_drain"),  "mcu_pin": "P0.03"},
+        {**pin(7,  "P0.04",   "CHG_STAT", "input"),       "mcu_pin": "P0.04"},
+        {**pin(8,  "P0.05",   "TEMP_INT", "input"),       "mcu_pin": "P0.05"},
+        {**pin(9,  "P0.06",   "FUEL_ALRT","input"),       "mcu_pin": "P0.06"},
+        {**pin(10, "P0.08",   "LED_BLE",  "output"),      "mcu_pin": "P0.08"},
+        {**pin(11, "NRESET",  "NRST",     "bidirectional"),"mcu_pin": "NRESET"},
+        {**pin(12, "P0.28",   "UART_TX",  "output"),      "mcu_pin": "P0.28"},
+        {**pin(13, "P0.29",   "UART_RX",  "input"),       "mcu_pin": "P0.29"},
+        {**pin(14, "SWDCLK",  "SWDCLK",   "input"),       "mcu_pin": "SWDCLK"},
+        {**pin(15, "SWDIO",   "SWDIO",    "bidirectional"),"mcu_pin": "SWDIO"},
+        {**pin(16, "SWO",     "SWO",      "output"),      "mcu_pin": "SWO"},
+        {**pin(17, "USB_DM",  "USB_DM",   "bidirectional"),"mcu_pin": "D-"},
+        {**pin(18, "USB_DP",  "USB_DP",   "bidirectional"),"mcu_pin": "D+"},
+    ]
+    components = [
+        component("J1", "power_input", "USB-C CHARGE", "USB4105-GF-A", "USB_C_16Pin", [
+            pin(1, "VBUS", "USB_VBUS", "power_in"),
+            pin(2, "GND", "GND", "ground"),
+            pin(3, "D+", "USB_DP_RAW", "bidirectional"),
+            pin(4, "D-", "USB_DM_RAW", "bidirectional"),
+        ], manufacturer="GCT"),
+        component("U2", "charger", "LiPo Charger", "BQ24079RGTT", "SOT-23-8", [
+            pin(1, "IN", "USB_VBUS", "power_in"),
+            pin(2, "VSS", "GND", "ground"),
+            pin(3, "EN1", "V3V3", "input"),
+            pin(4, "EN2", "GND", "input"),
+            pin(5, "OUT", "VBAT", "power_out"),
+            pin(6, "STAT", "CHG_STAT", "output"),
+            pin(7, "TE", "V3V3", "input"),
+            pin(8, "ISET", "CHG_ISET", "passive"),
+        ], manufacturer="Texas Instruments"),
+        component("BT1", "battery", "LiPo 400mAh", "S2B-PH-K-S", "JST_PH_S2B", [
+            pin(1, "VBAT", "VBAT", "power_in"),
+            pin(2, "GND", "GND", "ground"),
+        ], manufacturer="JST"),
+        component("U3", "fuel_gauge", "Fuel Gauge", "BQ27441DRZR-G1A", "VSON-9", [
+            pin(1, "SDA", "I2C_SDA", "open_drain"),
+            pin(2, "SCL", "I2C_SCL", "open_drain"),
+            pin(3, "GPO", "FUEL_ALRT", "output"),
+            pin(4, "VSS", "GND", "ground"),
+            pin(5, "SRN", "VBAT", "passive"),
+            pin(6, "SRP", "VBAT", "passive"),
+            pin(7, "BAT", "VBAT", "power_in"),
+            pin(8, "VCC", "V3V3", "power_in"),
+            pin(9, "REGIN", "VBAT", "passive"),
+        ], manufacturer="Texas Instruments"),
+        component("LD1", "regulator", "3V3 LDO", "AP2112K-3.3TRG1", "SOT-23-5", [
+            pin(1, "EN", "V3V3", "input"),
+            pin(2, "GND", "GND", "ground"),
+            pin(3, "VIN", "VBAT", "power_in"),
+            pin(4, "NC", "GND", "ground"),
+            pin(5, "VOUT", "V3V3", "power_out"),
+        ], manufacturer="Diodes Incorporated"),
+        component("U1", "mcu", "nRF52840", "nRF52840-QIAA", "Nordic_nRF52840:nRF52840-QIAA", mcu_pins, manufacturer="Nordic Semiconductor"),
+        component("U5", "env_sensor", "Temp/Humidity", "SHT31-DIS-B2.5KS", "DFN-8", [
+            pin(1, "SDA", "I2C_SDA", "open_drain"),
+            pin(2, "ADDR", "GND", "input"),
+            pin(3, "ALERT", "TEMP_INT", "output"),
+            pin(4, "SCL", "I2C_SCL", "open_drain"),
+            pin(5, "VDD", "V3V3", "power_in"),
+            pin(6, "nRESET", "V3V3", "input"),
+            pin(7, "R", "GND", "passive"),
+            pin(8, "VSS", "GND", "ground"),
+        ], manufacturer="Sensirion"),
+        component("J2", "debug", "SWD DEBUG", "Samtec-FTSH-105-01-L-DV-K", "Cortex_Debug_10Pin", [
+            pin(1, "VREF", "V3V3", "power_out"),
+            pin(2, "SWDIO", "SWDIO", "bidirectional"),
+            pin(3, "GND", "GND", "ground"),
+            pin(4, "SWDCLK", "SWDCLK", "input"),
+            pin(5, "NRST", "NRST", "bidirectional"),
+            pin(6, "SWO", "SWO", "output"),
+            pin(7, "TX", "UART_TX", "output"),
+            pin(8, "RX", "UART_RX", "input"),
+        ], manufacturer="Samtec"),
+        component("R1", "pullup", "4K7", "RC0603FR-074K7L", "R0603", [pin(1, "VCC", "V3V3", "passive"), pin(2, "SCL", "I2C_SCL", "passive")], manufacturer="Yageo"),
+        component("R2", "pullup", "4K7", "RC0603FR-074K7L", "R0603", [pin(1, "VCC", "V3V3", "passive"), pin(2, "SDA", "I2C_SDA", "passive")], manufacturer="Yageo"),
+        component("R3", "led_resistor", "1K", "RC0603FR-071KL", "R0603", [pin(1, "A", "V3V3", "passive"), pin(2, "K", "LED_BLE", "passive")], manufacturer="Yageo"),
+        component("R4", "charge_set", "10K", "RC0603FR-0710KL", "R0603", [pin(1, "A", "CHG_ISET", "passive"), pin(2, "GND", "GND", "passive")], manufacturer="Yageo"),
+        component("C1", "decoupling", "100nF", "GRM188R71C104KA01D", "C0603", [pin(1, "VCC", "V3V3", "passive"), pin(2, "GND", "GND", "ground")], manufacturer="Murata"),
+        component("C2", "decoupling", "100nF", "GRM188R71C104KA01D", "C0603", [pin(1, "VCC", "V3V3", "passive"), pin(2, "GND", "GND", "ground")], manufacturer="Murata"),
+        component("C3", "bulk_cap", "10uF", "GRM188R60J106ME47D", "C0603", [pin(1, "VCC", "VBAT", "passive"), pin(2, "GND", "GND", "ground")], manufacturer="Murata"),
+        component("C4", "bulk_cap", "10uF", "GRM188R60J106ME47D", "C0603", [pin(1, "VCC", "V3V3", "passive"), pin(2, "GND", "GND", "ground")], manufacturer="Murata"),
+        component("D1", "tvs", "USB ESD", "USBLC6-2SC6", "SOT23-6", [
+            pin(1, "DP_IN", "USB_DP_RAW", "bidirectional"),
+            pin(2, "DP_OUT", "USB_DP", "bidirectional"),
+            pin(3, "DM_IN", "USB_DM_RAW", "bidirectional"),
+            pin(4, "DM_OUT", "USB_DM", "bidirectional"),
+            pin(5, "GND", "GND", "ground"),
+        ], manufacturer="STMicroelectronics"),
+    ]
+    net_classes = {
+        "GND": "ground", "USB_VBUS": "power", "VBAT": "power", "V3V3": "power",
+        "USB_DP": "usb", "USB_DM": "usb", "USB_DP_RAW": "usb", "USB_DM_RAW": "usb",
+        "I2C_SCL": "i2c", "I2C_SDA": "i2c",
+    }
+    endpoints: dict[str, list[str]] = defaultdict(list)
+    for item in components:
+        for item_pin in item["pins"]:
+            endpoints[item_pin["net"]].append(f"{item['ref']}.{item_pin['number']}")
+    nets = [
+        {
+            "name": name,
+            "signal_class": net_classes.get(name, "signal"),
+            "voltage_domain": _domain(name),
+            "connected_pins": sorted(pins),
+            "required_track_width_mm": 0.5 if net_classes.get(name) == "power" else 0.15,
+        }
+        for name, pins in sorted(endpoints.items())
+    ]
+    return {
+        "components": components,
+        "nets": nets,
+        "design_basis": {
+            "architecture": "nrf52840_ble_sensor",
+            "lipo_powered": True,
+            "usb_charging": True,
+            "integral_pcb_antenna_required": True,
+            "board_carries_motor_power": False,
+        },
+    }
+
+
 def _domain(name: str) -> str | None:
     if name == "GND": return "GND"
     if name.startswith("VBAT") or name == "VSYS": return "VBAT"

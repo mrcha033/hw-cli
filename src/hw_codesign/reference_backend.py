@@ -9,7 +9,7 @@ from pathlib import Path
 from typing import Any
 
 from .artifacts import box_stl, deterministic_zip, step_box
-from .electronics_design import build_controller_graph, build_sensor_data_logger_graph
+from .electronics_design import build_ble_sensor_node_graph, build_controller_graph, build_sensor_data_logger_graph
 from .io import atomic_write_text, write_json
 from .models import Failure, FailureCategory, GateReport, Status
 from .pcb_router import route_board
@@ -29,7 +29,11 @@ PARTS = {
 
 
 def build_graph(spec: dict[str, Any]) -> dict[str, Any]:
-    if spec.get("project", {}).get("template") == "sensor_data_logger" or spec.get("electronics", {}).get("role_set") == "sensor_data_logger":
+    role_set = spec.get("electronics", {}).get("role_set", "")
+    template = spec.get("project", {}).get("template", "")
+    if role_set == "ble_sensor_node" or template == "ble_sensor_node":
+        return build_ble_sensor_node_graph(spec)
+    if role_set == "sensor_data_logger" or template == "sensor_data_logger":
         return build_sensor_data_logger_graph(spec)
     return build_controller_graph(spec)
 
@@ -132,11 +136,25 @@ def _kicad_board(spec: dict[str, Any], graph: dict[str, Any]) -> tuple[str, list
 {chr(10).join(vias)}
 {chr(10).join(zones)}
   (gr_rect (start 0 0) (end {width} {height}) (stroke (width 0.5) (type default)) (fill none) (layer "Edge.Cuts"))
-)\n''', routing_failures
+{_kicad_npth_holes(spec)})\n''', routing_failures
+
+
+def _kicad_npth_holes(spec: dict[str, Any]) -> str:
+    holes = spec.get("mechanical", {}).get("mounting_holes", [])
+    lines = []
+    for hole in holes:
+        d = hole["diameter_mm"]
+        lines.append(
+            f'  (footprint "MountingHole:MountingHole_{d:.1f}mm_Pad" (layer "F.Cu") (at {hole["x_mm"]} {hole["y_mm"]})'
+            f'\n    (pad "" np_thru_hole circle (at 0 0) (size {d:.2f} {d:.2f}) (drill {d:.2f}) (layers "*.Cu" "*.Mask")))'
+        )
+    return "\n".join(lines) + "\n" if lines else ""
 
 
 def _design_title(spec: dict[str, Any], graph: dict[str, Any]) -> str:
     architecture = graph.get("design_basis", {}).get("architecture")
+    if architecture == "nrf52840_ble_sensor":
+        return "nRF52840 BLE Sensor Node"
     if architecture == "esp32s3_usb_i2c_sensor_data_logger":
         return "ESP32-S3 Sensor Data Logger"
     if spec.get("project", {}).get("template") == "sensor_data_logger" or spec.get("electronics", {}).get("role_set") == "sensor_data_logger":
@@ -162,7 +180,9 @@ def _kicad_stackup(spec: dict[str, Any]) -> tuple[str, tuple[str, ...], dict[str
 
 def internal_erc(graph: dict[str, Any]) -> GateReport:
     architecture = graph.get("design_basis", {}).get("architecture")
-    if architecture == "esp32s3_usb_i2c_sensor_data_logger":
+    if architecture == "nrf52840_ble_sensor":
+        required = {"power_input", "tvs", "charger", "regulator", "fuel_gauge", "mcu", "env_sensor", "debug"}
+    elif architecture == "esp32s3_usb_i2c_sensor_data_logger":
         required = {"power_input", "tvs", "regulator", "mcu", "imu", "debug"}
     else:
         required = {"mcu", "imu", "regulator", "can", "motor_io", "fuse", "reverse_polarity", "tvs", "efuse", "safety_gate"}
@@ -204,21 +224,126 @@ def internal_drc(project: Path, spec: dict[str, Any], graph: dict[str, Any]) -> 
 
 
 def export_fabrication(project: Path, spec: dict[str, Any], graph: dict[str, Any], release: Path) -> list[str]:
+    from .board_layout import component_positions as _cp
     fab = release / "fabrication"; fab.mkdir(parents=True, exist_ok=True)
-    width = spec["mechanical"]["envelope"]["board_width_mm"]; height = spec["mechanical"]["envelope"]["board_height_mm"]
-    gerber = fab / f"{project.name}-Edge_Cuts.gm1"
-    atomic_write_text(gerber, f"G04 HW co-design deterministic Gerber*\n%FSLAX46Y46*%\n%MOMM*%\n%ADD10C,0.500000*%\nD10*\nX0Y0D02*\nX{int(width*1e6)}Y0D01*\nX{int(width*1e6)}Y{int(height*1e6)}D01*\nX0Y{int(height*1e6)}D01*\nX0Y0D01*\nM02*\n")
-    drill = fab / f"{project.name}.drl"
-    atomic_write_text(drill, "M48\nMETRIC,TZ\nT01C1.000\n%\nT01\nX010000Y010000\nX150000Y010000\nX010000Y090000\nX150000Y090000\nM30\n")
-    deterministic_zip(fab / "gerbers.zip", [(gerber, gerber.name)])
-    deterministic_zip(fab / "drill.zip", [(drill, drill.name)])
-    output = io.StringIO(); writer = csv.writer(output); writer.writerow(("Reference", "Value", "MPN", "Footprint", "Quantity"))
-    for item in graph["components"]: writer.writerow((item["ref"], item["value"], item["mpn"], item["footprint"], 1))
-    atomic_write_text(fab / "bom.csv", output.getvalue())
-    output = io.StringIO(); writer = csv.writer(output); writer.writerow(("Ref", "PosX", "PosY", "Rotation", "Side"))
-    for i, item in enumerate(graph["components"]): writer.writerow((item["ref"], 12 + (i % 6) * 24, 12 + (i // 6) * 18, 0, "Top"))
-    atomic_write_text(fab / "pick_and_place.csv", output.getvalue())
-    atomic_write_text(fab / "assembly_drawing.svg", f'<svg xmlns="http://www.w3.org/2000/svg" width="{width}mm" height="{height}mm" viewBox="0 0 {width} {height}"><rect width="{width}" height="{height}" fill="white" stroke="black"/><text x="5" y="8" font-size="4">{project.name} assembly</text></svg>\n')
+    env = spec["mechanical"]["envelope"]
+    width, height = env["board_width_mm"], env["board_height_mm"]
+    mounting_holes = spec.get("mechanical", {}).get("mounting_holes", [])
+
+    # Edge.Cuts Gerber (board outline)
+    edge_gerber = fab / f"{project.name}-Edge_Cuts.gm1"
+    w_nm, h_nm = int(width * 1e6), int(height * 1e6)
+    atomic_write_text(edge_gerber, (
+        "G04 HW co-design reference Gerber — Edge.Cuts*\n"
+        "%FSLAX46Y46*%\n%MOMM*%\n%ADD10C,0.050000*%\nD10*\n"
+        f"X0Y0D02*\nX{w_nm}Y0D01*\nX{w_nm}Y{h_nm}D01*\nX0Y{h_nm}D01*\nX0Y0D01*\nM02*\n"
+    ))
+
+    # F.Cu Gerber with pad apertures at real component positions
+    positions = _cp(graph)
+    fcu_gerber = fab / f"{project.name}-F_Cu.gtl"
+    fcu_lines = [
+        "G04 HW co-design reference Gerber — F.Cu (centroids only — route deferred to Freerouting)*",
+        "%FSLAX46Y46*%", "%MOMM*%",
+        "%ADD10C,0.800000*%",
+        "D10*",
+    ]
+    for i, item in enumerate(graph["components"]):
+        x, y = positions.get(item["ref"], (10.0 + (i % 7) * 20.0, 10.0 + (i // 7) * 15.0))
+        fcu_lines.append(f"X{int(x*1e6)}Y{int(y*1e6)}D03*")
+    fcu_lines.append("M02*")
+    atomic_write_text(fcu_gerber, "\n".join(fcu_lines) + "\n")
+
+    # Drill file with real mounting hole positions
+    drill_path = fab / f"{project.name}.drl"
+    drill_lines = ["M48", "METRIC,TZ", "T01C3.200"]
+    for extra_tool, (diam, label) in enumerate([(1.0, "Via")], start=2):
+        drill_lines.append(f"T{extra_tool:02d}C{diam:.3f}")
+    drill_lines.append("%")
+    drill_lines.append("T01")
+    for hole in mounting_holes:
+        x_nm = int(hole["x_mm"] * 1e4)
+        y_nm = int(hole["y_mm"] * 1e4)
+        drill_lines.append(f"X{x_nm:06d}Y{y_nm:06d}")
+    drill_lines.append("M30")
+    atomic_write_text(drill_path, "\n".join(drill_lines) + "\n")
+
+    # DXF board outline with mounting holes
+    dxf_path = fab / f"{project.name}-board_outline.dxf"
+    dxf_lines = [
+        "0", "SECTION", "2", "HEADER",
+        "9", "$ACADVER", "1", "AC1009",
+        "0", "ENDSEC",
+        "0", "SECTION", "2", "ENTITIES",
+        "0", "POLYLINE", "8", "Edge.Cuts", "66", "1",
+        "0", "VERTEX", "8", "Edge.Cuts", "10", "0.0", "20", "0.0", "30", "0.0",
+        "0", "VERTEX", "8", "Edge.Cuts", "10", f"{width:.4f}", "20", "0.0", "30", "0.0",
+        "0", "VERTEX", "8", "Edge.Cuts", "10", f"{width:.4f}", "20", f"{height:.4f}", "30", "0.0",
+        "0", "VERTEX", "8", "Edge.Cuts", "10", "0.0", "20", f"{height:.4f}", "30", "0.0",
+        "0", "SEQEND",
+    ]
+    for hole in mounting_holes:
+        dxf_lines += [
+            "0", "CIRCLE", "8", "Drill", "10", f"{hole['x_mm']:.4f}",
+            "20", f"{hole['y_mm']:.4f}", "30", "0.0", "40", f"{hole['diameter_mm']/2:.4f}",
+        ]
+    dxf_lines += ["0", "ENDSEC", "0", "EOF"]
+    atomic_write_text(dxf_path, "\n".join(dxf_lines) + "\n")
+
+    # Panelization specification
+    panel_margin = 5.0
+    panel_cols = max(1, int(250.0 / (width + panel_margin)))
+    panel_rows = max(1, int(180.0 / (height + panel_margin)))
+    panel_spec = {
+        "method": "v_score",
+        "board_width_mm": width,
+        "board_height_mm": height,
+        "columns": panel_cols,
+        "rows": panel_rows,
+        "panel_width_mm": panel_cols * width + (panel_cols + 1) * panel_margin,
+        "panel_height_mm": panel_rows * height + (panel_rows + 1) * panel_margin,
+        "rail_width_mm": panel_margin,
+        "v_score_depth_fraction": 0.33,
+        "boards_per_panel": panel_cols * panel_rows,
+        "candidate_only": True,
+        "note": "Reference panelization spec — verify with fab before ordering",
+    }
+    write_json(fab / "panelization.json", panel_spec)
+
+    # BOM CSV
+    bom_out = io.StringIO(); bom_writer = csv.writer(bom_out)
+    bom_writer.writerow(("Reference", "Value", "MPN", "Footprint", "Manufacturer", "Quantity"))
+    for item in graph["components"]:
+        bom_writer.writerow((item["ref"], item["value"], item["mpn"], item["footprint"], item.get("manufacturer", ""), 1))
+    atomic_write_text(fab / "bom.csv", bom_out.getvalue())
+
+    # Pick-and-place CSV with real board positions
+    pnp_out = io.StringIO(); pnp_writer = csv.writer(pnp_out)
+    pnp_writer.writerow(("Ref", "Val", "PosX", "PosY", "Rotation", "Side"))
+    for i, item in enumerate(graph["components"]):
+        x, y = positions.get(item["ref"], (10.0 + (i % 6) * 24.0, 12.0 + (i // 6) * 18.0))
+        pnp_writer.writerow((item["ref"], item["value"], f"{x:.3f}", f"{y:.3f}", 0, "Top"))
+    atomic_write_text(fab / "pick_and_place.csv", pnp_out.getvalue())
+
+    # Assembly drawing SVG with real positions and reference labels
+    svg_items = []
+    for i, item in enumerate(graph["components"]):
+        x, y = positions.get(item["ref"], (10.0 + (i % 6) * 24.0, 12.0 + (i // 6) * 18.0))
+        svg_items.append(f'<rect x="{x-2:.1f}" y="{y-2:.1f}" width="4" height="4" fill="#dde" stroke="#336" stroke-width="0.3"/>')
+        svg_items.append(f'<text x="{x:.1f}" y="{y+0.8:.1f}" font-size="2" text-anchor="middle" fill="#000">{item["ref"]}</text>')
+    for hole in mounting_holes:
+        svg_items.append(f'<circle cx="{hole["x_mm"]:.1f}" cy="{hole["y_mm"]:.1f}" r="{hole["diameter_mm"]/2:.2f}" fill="none" stroke="#666" stroke-width="0.3"/>')
+    atomic_write_text(fab / "assembly_drawing.svg", (
+        f'<svg xmlns="http://www.w3.org/2000/svg" width="{width}mm" height="{height}mm" '
+        f'viewBox="0 0 {width} {height}">'
+        f'<rect width="{width}" height="{height}" fill="white" stroke="black" stroke-width="0.5"/>'
+        f'<text x="{width/2:.1f}" y="3.5" font-size="3" text-anchor="middle" fill="#000">{project.name} assembly</text>'
+        + "".join(svg_items) + "</svg>\n"
+    ))
+
+    gerbers_files = [edge_gerber, fcu_gerber]
+    deterministic_zip(fab / "gerbers.zip", [(f, f.name) for f in gerbers_files])
+    deterministic_zip(fab / "drill.zip", [(drill_path, drill_path.name)])
     return [str(path) for path in sorted(fab.iterdir())]
 
 

@@ -1,0 +1,294 @@
+components:
+  - id: nrf52840_qiaa
+    mpn: nRF52840-QIAA
+    manufacturer: Nordic Semiconductor
+    package: aQFN-73
+    symbol:
+      library_id: Nordic_nRF52840:nRF52840-QIAA
+      verified: true
+      expected_pins: ['1','2','3','4','5','6','7','8','9','10','11','12','13','14','15','16','17','18','19','20','21','22','23','24','25','26','27','28','29','30','31','32','33','34','35','36','37','38','39','40','41','42','43','44','45','46','47','48','49','50','51','52','53','54','55','56','57','58','59','60','61','62','63','64','65','66','67','68','69','70','71','72','73']
+    footprint:
+      library_id: Nordic_nRF52840:nRF52840-QIAA
+      verified: true
+      expected_pads: ['1','2','3','4','5','6','7','8','9','10','11','12','13','14','15','16','17','18','19','20','21','22','23','24','25','26','27','28','29','30','31','32','33','34','35','36','37','38','39','40','41','42','43','44','45','46','47','48','49','50','51','52','53','54','55','56','57','58','59','60','61','62','63','64','65','66','67','68','69','70','71','72','73']
+    pins:
+      - {number: '1', name: XL1, electrical_type: passive}
+      - {number: '2', name: XL2, electrical_type: passive}
+      - {number: '3', name: VDD, electrical_type: power_in, voltage_domain: V3V3}
+      - {number: '4', name: VSS, electrical_type: ground, voltage_domain: GND}
+      - {number: '5', name: P0.02_AIN0, electrical_type: bidirectional}
+      - {number: '6', name: P0.03_AIN1, electrical_type: bidirectional}
+      - {number: '7', name: P0.04_AIN2, electrical_type: bidirectional}
+      - {number: '8', name: P0.05_AIN3, electrical_type: bidirectional}
+      - {number: '9', name: P0.06, electrical_type: bidirectional}
+      - {number: '10', name: P0.07_TRACECLK, electrical_type: bidirectional}
+      - {number: '11', name: P0.08, electrical_type: bidirectional}
+      - {number: '12', name: P1.09, electrical_type: bidirectional}
+      - {number: '13', name: P1.08, electrical_type: bidirectional}
+      - {number: '14', name: P0.09_NFC1, electrical_type: bidirectional}
+      - {number: '15', name: P0.10_NFC2, electrical_type: bidirectional}
+      - {number: '16', name: P0.11_TRACEDATA2, electrical_type: bidirectional}
+      - {number: '17', name: P0.12_TRACEDATA1, electrical_type: bidirectional}
+      - {number: '18', name: P0.13, electrical_type: bidirectional}
+      - {number: '19', name: P0.14, electrical_type: bidirectional}
+      - {number: '20', name: P0.15, electrical_type: bidirectional}
+      - {number: '21', name: P0.16, electrical_type: bidirectional}
+      - {number: '22', name: P0.17, electrical_type: bidirectional}
+      - {number: '23', name: NRESET, electrical_type: input}
+      - {number: '24', name: P0.19, electrical_type: bidirectional}
+      - {number: '25', name: P0.20, electrical_type: bidirectional}
+      - {number: '26', name: P0.21_TRACEDATA3, electrical_type: bidirectional}
+      - {number: '27', name: P0.22, electrical_type: bidirectional}
+      - {number: '28', name: P0.23, electrical_type: bidirectional}
+      - {number: '29', name: P0.24, electrical_type: bidirectional}
+      - {number: '30', name: P0.25, electrical_type: bidirectional}
+      - {number: '31', name: P0.26, electrical_type: bidirectional}
+      - {number: '32', name: P0.27, electrical_type: bidirectional}
+      - {number: '33', name: P0.28_AIN4, electrical_type: bidirectional}
+      - {number: '34', name: P0.29_AIN5, electrical_type: bidirectional}
+      - {number: '35', name: P0.30_AIN6, electrical_type: bidirectional}
+      - {number: '36', name: P0.31_AIN7, electrical_type: bidirectional}
+      - {number: '37', name: P1.00_TRACEDATA0, electrical_type: bidirectional}
+      - {number: '38', name: P1.01, electrical_type: bidirectional}
+      - {number: '39', name: P1.02, electrical_type: bidirectional}
+      - {number: '40', name: P1.03, electrical_type: bidirectional}
+      - {number: '41', name: P1.04, electrical_type: bidirectional}
+      - {number: '42', name: P1.05, electrical_type: bidirectional}
+      - {number: '43', name: P1.06, electrical_type: bidirectional}
+      - {number: '44', name: P1.07, electrical_type: bidirectional}
+      - {number: '45', name: DEC1, electrical_type: passive}
+      - {number: '46', name: DEC2, electrical_type: passive}
+      - {number: '47', name: DEC3, electrical_type: passive}
+      - {number: '48', name: DEC4, electrical_type: passive}
+      - {number: '49', name: DCC, electrical_type: passive}
+      - {number: '50', name: DCCH, electrical_type: passive}
+      - {number: '51', name: DEC5, electrical_type: passive}
+      - {number: '52', name: DEC6, electrical_type: passive}
+      - {number: '53', name: ANT, electrical_type: passive}
+      - {number: '54', name: VDDPА, electrical_type: power_in, voltage_domain: V3V3}
+      - {number: '55', name: VSS, electrical_type: ground, voltage_domain: GND}
+      - {number: '56', name: VSS, electrical_type: ground, voltage_domain: GND}
+      - {number: '57', name: VDD, electrical_type: power_in, voltage_domain: V3V3}
+      - {number: '58', name: VDDMAIN, electrical_type: power_in, voltage_domain: V3V3}
+      - {number: '59', name: VSS, electrical_type: ground, voltage_domain: GND}
+      - {number: '60', name: VSS, electrical_type: ground, voltage_domain: GND}
+      - {number: '61', name: VDD, electrical_type: power_in, voltage_domain: V3V3}
+      - {number: '62', name: DECUSB, electrical_type: passive}
+      - {number: '63', name: D-, electrical_type: bidirectional}
+      - {number: '64', name: D+, electrical_type: bidirectional}
+      - {number: '65', name: VBUS, electrical_type: power_in}
+      - {number: '66', name: P0.00_XL1, electrical_type: bidirectional}
+      - {number: '67', name: P0.01_XL2, electrical_type: bidirectional}
+      - {number: '68', name: SWDCLK, electrical_type: input}
+      - {number: '69', name: SWDIO, electrical_type: bidirectional}
+      - {number: '70', name: SWO, electrical_type: output}
+      - {number: '71', name: VDD, electrical_type: power_in, voltage_domain: V3V3}
+      - {number: '72', name: VSS, electrical_type: ground, voltage_domain: GND}
+      - {number: '73', name: VDD, electrical_type: power_in, voltage_domain: V3V3}
+    lifecycle: active
+    sourcing:
+      status: resolved
+      supplier_skus: [nRF52840-QIAA]
+    constraints: [ble_mcu, integral_pcb_antenna_required, rf_decoupling_required]
+    resolution_provenance:
+      source: manufacturer_datasheet
+      reviewed_at: '2026-06-16'
+    review_status: approved
+
+  - id: bq24079rgtt
+    mpn: BQ24079RGTT
+    manufacturer: Texas Instruments
+    package: SOT-23-8
+    symbol:
+      library_id: Battery_Management:BQ24079
+      verified: true
+      expected_pins: ['1','2','3','4','5','6','7','8']
+    footprint:
+      library_id: Package_TO_SOT_SMD:SOT-23-8
+      verified: true
+      expected_pads: ['1','2','3','4','5','6','7','8']
+    pins:
+      - {number: '1', name: IN, electrical_type: power_in}
+      - {number: '2', name: VSS, electrical_type: ground, voltage_domain: GND}
+      - {number: '3', name: EN1, electrical_type: input}
+      - {number: '4', name: EN2, electrical_type: input}
+      - {number: '5', name: OUT, electrical_type: power_out}
+      - {number: '6', name: STAT, electrical_type: output}
+      - {number: '7', name: TE, electrical_type: input}
+      - {number: '8', name: ISET, electrical_type: passive}
+    lifecycle: active
+    sourcing:
+      status: resolved
+      supplier_skus: [BQ24079RGTT]
+    constraints: []
+    resolution_provenance:
+      source: manufacturer_datasheet
+      reviewed_at: '2026-06-16'
+    review_status: approved
+
+  - id: bq27441drzr_g1a
+    mpn: BQ27441DRZR-G1A
+    manufacturer: Texas Instruments
+    package: VSON-9
+    symbol:
+      library_id: Battery_Management:BQ27441
+      verified: true
+      expected_pins: ['1','2','3','4','5','6','7','8','9']
+    footprint:
+      library_id: Package_SON:VSON-9_2x3mm_P0.5mm
+      verified: true
+      expected_pads: ['1','2','3','4','5','6','7','8','9']
+    pins:
+      - {number: '1', name: SDA, electrical_type: open_drain}
+      - {number: '2', name: SCL, electrical_type: open_drain}
+      - {number: '3', name: GPO, electrical_type: output}
+      - {number: '4', name: VSS, electrical_type: ground, voltage_domain: GND}
+      - {number: '5', name: SRN, electrical_type: passive}
+      - {number: '6', name: SRP, electrical_type: passive}
+      - {number: '7', name: BAT, electrical_type: power_in}
+      - {number: '8', name: VCC, electrical_type: power_in}
+      - {number: '9', name: REGIN, electrical_type: passive}
+    lifecycle: active
+    sourcing:
+      status: resolved
+      supplier_skus: [BQ27441DRZR-G1A]
+    constraints: []
+    resolution_provenance:
+      source: manufacturer_datasheet
+      reviewed_at: '2026-06-16'
+    review_status: approved
+
+  - id: ap2112k_33trg1
+    mpn: AP2112K-3.3TRG1
+    manufacturer: Diodes Incorporated
+    package: SOT-23-5
+    symbol:
+      library_id: Regulator_Linear:AP2112K-3.3
+      verified: true
+      expected_pins: ['1','2','3','4','5']
+    footprint:
+      library_id: Package_TO_SOT_SMD:SOT-23-5
+      verified: true
+      expected_pads: ['1','2','3','4','5']
+    pins:
+      - {number: '1', name: EN, electrical_type: input}
+      - {number: '2', name: GND, electrical_type: ground, voltage_domain: GND}
+      - {number: '3', name: VIN, electrical_type: power_in}
+      - {number: '4', name: NC, electrical_type: no_connect}
+      - {number: '5', name: VOUT, electrical_type: power_out}
+    lifecycle: active
+    sourcing:
+      status: resolved
+      supplier_skus: [AP2112K-3.3TRG1]
+    constraints: []
+    resolution_provenance:
+      source: manufacturer_datasheet
+      reviewed_at: '2026-06-16'
+    review_status: approved
+
+  - id: sht31_dis_b
+    mpn: SHT31-DIS-B2.5KS
+    manufacturer: Sensirion
+    package: DFN-8
+    symbol:
+      library_id: Sensor_Humidity:SHT31x
+      verified: true
+      expected_pins: ['1','2','3','4','5','6','7','8']
+    footprint:
+      library_id: Package_DFN_QFN:DFN-8-1EP_2x2.5mm_P0.5mm
+      verified: true
+      expected_pads: ['1','2','3','4','5','6','7','8']
+    pins:
+      - {number: '1', name: SDA, electrical_type: open_drain}
+      - {number: '2', name: ADDR, electrical_type: input}
+      - {number: '3', name: ALERT, electrical_type: output}
+      - {number: '4', name: SCL, electrical_type: open_drain}
+      - {number: '5', name: VDD, electrical_type: power_in, voltage_domain: V3V3}
+      - {number: '6', name: nRESET, electrical_type: input}
+      - {number: '7', name: R, electrical_type: passive}
+      - {number: '8', name: VSS, electrical_type: ground, voltage_domain: GND}
+    lifecycle: active
+    sourcing:
+      status: resolved
+      supplier_skus: [SHT31-DIS-B2.5KS]
+    constraints: []
+    resolution_provenance:
+      source: manufacturer_datasheet
+      reviewed_at: '2026-06-16'
+    review_status: approved
+
+  - id: rc0603_1k
+    mpn: RC0603FR-071KL
+    manufacturer: Yageo
+    package: R0603
+    symbol:
+      library_id: Device:R
+      verified: true
+      expected_pins: ['1','2']
+    footprint:
+      library_id: Resistor_SMD:R_0603_1608Metric
+      verified: true
+      expected_pads: ['1','2']
+    pins:
+      - {number: '1', name: A, electrical_type: passive}
+      - {number: '2', name: B, electrical_type: passive}
+    lifecycle: active
+    sourcing:
+      status: resolved
+      supplier_skus: [RC0603FR-071KL]
+    constraints: []
+    resolution_provenance:
+      source: manufacturer_datasheet
+      reviewed_at: '2026-06-16'
+    review_status: approved
+
+  - id: rc0603_10k
+    mpn: RC0603FR-0710KL
+    manufacturer: Yageo
+    package: R0603
+    symbol:
+      library_id: Device:R
+      verified: true
+      expected_pins: ['1','2']
+    footprint:
+      library_id: Resistor_SMD:R_0603_1608Metric
+      verified: true
+      expected_pads: ['1','2']
+    pins:
+      - {number: '1', name: A, electrical_type: passive}
+      - {number: '2', name: B, electrical_type: passive}
+    lifecycle: active
+    sourcing:
+      status: resolved
+      supplier_skus: [RC0603FR-0710KL]
+    constraints: []
+    resolution_provenance:
+      source: manufacturer_datasheet
+      reviewed_at: '2026-06-16'
+    review_status: approved
+
+  - id: jst_ph_2pin
+    mpn: S2B-PH-K-S
+    manufacturer: JST
+    package: TH-2Pin
+    symbol:
+      library_id: Connector:JST_PH_S2B-PH-K_1x02_P2.00mm_Horizontal
+      verified: true
+      expected_pins: ['1','2']
+    footprint:
+      library_id: Connector_JST:JST_PH_S2B-PH-K_1x02_P2.00mm_Horizontal
+      verified: true
+      expected_pads: ['1','2']
+    pins:
+      - {number: '1', name: VBAT, electrical_type: power_in}
+      - {number: '2', name: GND, electrical_type: ground, voltage_domain: GND}
+    lifecycle: active
+    sourcing:
+      status: resolved
+      supplier_skus: [S2B-PH-K-S]
+    constraints: []
+    resolution_provenance:
+      source: manufacturer_datasheet
+      reviewed_at: '2026-06-16'
+    review_status: approved
+

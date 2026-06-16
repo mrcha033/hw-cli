@@ -1,0 +1,105 @@
+project:
+  target_use: ble_environmental_sensor
+  revision: r1
+  template: ble_sensor_node
+electronics:
+  backend: tscircuit
+  role_set: ble_sensor_node
+  compiled_backend_required: true
+sourcing:
+  provider: curated
+system:
+  supply:
+    battery:
+      type: lipo_usb_charged
+      pack_voltage_nominal: 3.7
+      pack_voltage_max: 4.2
+      pack_voltage_min: 3.0
+      pack_current_peak_a: 0.3
+    rails:
+      - {name: VBAT, voltage: 3.7, current_peak_a: 0.3}
+      - {name: V3V3, voltage: 3.3, current_peak_a: 0.2}
+compute:
+  mcu:
+    family: nRF52840
+    hard_realtime_required: false
+actuation:
+  motor_channels: 0
+  motor_channel_peak_current_a: 0.0
+sensing:
+  imu: not_required
+  battery_monitor: required
+  current_monitor: not_required
+  temperature_monitor: required
+  humidity_monitor: required
+  e_stop: not_required
+mechanical:
+  enclosure: optional
+  selected_variant: desktop
+  variants:
+    - {name: desktop, lid_style: snap, ventilation: none, gasket: false}
+  mounting: desktop
+  connectors_exposed: true
+  vibration_environment: low
+  cooling: passive
+  envelope:
+    board_width_mm: 50.0
+    board_height_mm: 35.0
+    board_thickness_mm: 1.6
+    max_component_height_top_mm: 4.0
+    max_component_height_bottom_mm: 1.0
+  enclosure_internal_mm: [56.0, 41.0, 12.0]
+  wall_thickness_mm: 2.0
+  insertion_clearance_mm: 1.5
+  assembly_clearance_mm: 0.8
+  tolerance_mm: 0.2
+  max_connector_edge_distance_mm: 5.0
+  default_component_height_mm: 2.0
+  component_heights_mm: {J1: 7.0, U1: 0.9, BT1: 5.0}
+  board_origin_mm: [3.0, 3.0, 3.2]
+  mounting_holes:
+    - {x_mm: 3.5, y_mm: 3.5, diameter_mm: 3.2}
+    - {x_mm: 46.5, y_mm: 3.5, diameter_mm: 3.2}
+    - {x_mm: 3.5, y_mm: 31.5, diameter_mm: 3.2}
+    - {x_mm: 46.5, y_mm: 31.5, diameter_mm: 3.2}
+  fixtures:
+    mounting_plate: {enabled: false}
+    frame_brackets: {enabled: false}
+  connector_interfaces:
+    - {ref: J1, side: front, opening_mm: [10.0, 7.0], center_z_mm: 6.0, position_tolerance_mm: 0.5}
+firmware:
+  framework: zephyr
+  target: nrf52840dk
+  outputs: [devicetree_overlay, pinmap, driver_stubs, bringup_tests]
+manufacturing:
+  pcb:
+    profile: jlcpcb_2layer
+    layers: 2
+    min_clearance_mm: 0.15
+    min_track_width_mm: 0.15
+    controlled_impedance: not_required
+  mechanical:
+    min_wall_thickness_mm: 1.6
+  exports: [gerber, drill, bom, pick_and_place, schematic_pdf]
+safety:
+  emergency_stop:
+    required: false
+    fail_safe_hardware_path: false
+  required_protections: [reverse_polarity, fuse_or_efuse, tvs, watchdog]
+assumptions:
+  rf_antenna_clearance:
+    value: pcb_trace_antenna_with_keepout
+    confidence: high
+    reason: nRF52840-QIAA requires a 2.4 GHz trace antenna and a copper keepout zone per Nordic reference layout AN117.
+    critical: true
+    requires_user_review: true
+  lipo_protection:
+    value: charger_ic_provides_protection
+    confidence: medium
+    reason: BQ24079 provides overcharge, over-discharge, and thermal protection. Additional external protection circuit not modelled.
+    critical: false
+    requires_user_review: false
+requirements:
+  raw_inputs: []
+  active_lowered: []
+  active_unresolved: []
