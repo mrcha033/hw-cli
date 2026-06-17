@@ -234,7 +234,20 @@ passed.
 
 ## Capabilities
 
-### Electronics
+### Electronics topology authoring
+- Agents author circuit blocks via `hw_add_circuit_block`: specify a ref,
+  category, and connection map; the block is merged into the base topology, nets
+  are re-derived, and ERC runs immediately — the gate result is returned in the
+  same response
+- `hw_propose_circuit_block` searches the curated component catalog by category
+  and returns candidates with BOM-resolution status before any block is committed
+- Agent-authored blocks stored under `agent_electronics.blocks` in
+  `spec/agent_blocks.yaml`; distinct key prevents collision with `system.yaml`
+  during spec merge
+- ERC tolerates single-pin nets when every endpoint belongs to an agent block
+  (incremental authoring support)
+
+### Electronics backends
 - Deterministic typed electrical graph with role-set resolver and curated
   component database; every resolved component has immutable provenance
 - Shared source-generation step plus six-gate backend contract (compile →
@@ -254,6 +267,10 @@ passed.
   when the tool is absent — they do not silently skip
 
 ### Placement
+- Agent-authored placement constraints via `hw_set_placement_constraint`:
+  express relationships (`adjacent_to`, `near_connector`) rather than absolute
+  XY coordinates; the placer derives positions and the `placement_constraints`
+  gate validates compliance immediately on write
 - Constraint-driven placement proposal: structured, provenance-tagged placements
   with keepout, mounting-hole, connector-edge, decoupling-proximity, and
   thermal-spacing constraints
@@ -267,6 +284,10 @@ passed.
   the release-blocking arbiters
 
 ### Mechanical
+- Parametric 3D part design via `hw_design_part`: five part types
+  (`pcb_mount_bracket`, `standoff_tower`, `cable_clip`, `din_rail_adapter`,
+  `custom_enclosure_variant`), each with typed intent fields; parts are exported
+  as STEP + STL with an FDM printability report (overhang, min wall, min hole)
 - Spec-parameterized OpenCASCADE enclosure variants, mounting plates, frame
   brackets, connector cutouts, and board STEP assembly import/export
 - Gates: valid solid, manifold STL, tolerance-aware board/component clearance,
@@ -274,6 +295,17 @@ passed.
   volume — nonzero interference returns `fail`
 - Mechanical release requires the board STEP exported by the electronics backend;
   missing evidence returns `blocked`, not a fabricated pass
+
+### Firmware module authoring
+- Agents author firmware behavior modules via `hw_design_firmware_module`:
+  four parametric behaviors (`timeout_shutdown`, `periodic_transmit`,
+  `state_machine`, `sensor_poll`); each emits a `.c` file under
+  `firmware/modules/` with matching Zephyr config entries
+- `firmware_module_check` gate validates that every referenced signal exists in
+  the pinmap; unknown signals return `fail` with specific signal names
+- Signal-level cross-domain consistency checked by
+  `hw_check_cross_domain_consistency`: placement constraint refs verified against
+  BOM, firmware module signals verified against pinmap
 
 ### Suppliers and BOM
 - Normalized curated, LCSC/JLCPCB, Digi-Key, Mouser, and Octopart-style
@@ -346,6 +378,17 @@ review bundles, and release artifacts are created beneath it.
 hw_get_capabilities          ← which backends and external tools are installed
 hw_create_project / hw_open_project
 hw_update_requirements       ← lowers natural-language requirements; returns release_blocking_failures
+
+# Author topology, parts, placement, and firmware (new in Phases A–D)
+hw_get_part_types            ← available parametric part types and their intent schemas
+hw_design_part               ← design a 3D-printable part; returns STEP/STL + printability report
+hw_propose_circuit_block     ← find catalog candidates for a given category before committing
+hw_add_circuit_block         ← author a circuit block into the topology; ERC runs immediately
+hw_set_placement_constraint  ← express adjacent_to / near_connector relationships; gate runs on write
+hw_design_firmware_module    ← author a firmware behavior (timeout_shutdown, periodic_transmit, …)
+hw_record_design_decision    ← log a decision + rationale to history/decisions.jsonl
+hw_check_cross_domain_consistency ← validate placement refs against BOM, firmware signals against pinmap
+
 hw_generate_all              ← always candidate_only=true, release_eligible=false
 hw_run_all_checks            ← include_external=true for full gate matrix
 hw_review_release_readiness  ← non-authoritative summary: blocking gates, requirements, assumptions
@@ -392,12 +435,34 @@ Every tool response carries a consistent envelope that enforces the core invaria
 - `hw_list_assumptions` — list all declared design assumptions and their resolution state
 - `hw_resolve_assumption` — resolve a named assumption; requires `approved=true`
 
+**Mechanical part design**
+- `hw_get_part_types` — available parametric part types with their intent schemas
+- `hw_design_part` — design a 3D-printable part from typed intent; returns STEP/STL + FDM printability report
+- `hw_list_parts` — list all agent-designed parts for a project
+
+**Electronics topology authoring**
+- `hw_propose_circuit_block` — search component catalog by category; returns candidates before any commit
+- `hw_add_circuit_block` — add or replace a circuit block in the topology; ERC gate result returned inline
+- `hw_list_circuit_blocks` — list all agent-authored circuit blocks for a project
+
+**Placement constraint authoring**
+- `hw_set_placement_constraint` — author a placement relationship (`adjacent_to`, `near_connector`); placement gate runs on write
+- `hw_list_placement_constraints` — list all placement constraints for a project
+
+**Firmware module authoring**
+- `hw_design_firmware_module` — author a firmware behavior module (`timeout_shutdown`, `periodic_transmit`, `state_machine`, `sensor_poll`); emits `.c` + config; signal refs checked against pinmap
+- `hw_list_firmware_modules` — list all agent-designed firmware modules for a project
+
+**Design traceability (Phase E)**
+- `hw_record_design_decision` — log a decision + rationale to `history/decisions.jsonl`
+- `hw_check_cross_domain_consistency` — validate placement constraint refs against BOM and firmware signal refs against pinmap; returns a GateReport
+
 **Generation** (all emit `release_eligible: false`, `candidate_only: true`)
 - `hw_generate_all` — generate electronics, mechanical, and firmware sources in one step
 - `hw_generate_reference_intent` — generate reference-backend intent artifacts only
 - `hw_generate_electronics_source` — generate electronics source for the configured backend
 - `hw_generate_mechanical` — generate mechanical source (enclosure, mounting, fixtures)
-- `hw_generate_firmware` — generate Zephyr firmware source (pinmap, devicetree, app scaffold)
+- `hw_generate_firmware` — generate Zephyr firmware source (pinmap, devicetree, app scaffold) including any authored modules
 - `hw_generate_bringup_tests` — generate bring-up test scripts from the firmware source
 
 **Validation**
@@ -414,7 +479,7 @@ Every tool response carries a consistent envelope that enforces the core invaria
 
 **Iteration / repair**
 - `hw_run_design_iteration` — single supervised generate→check→repair cycle
-- `hw_generate_repair_plan` — propose spec patches for current gate failures
+- `hw_generate_repair_plan` — propose spec patches for current gate failures; includes `agent_actions` list of specific tool calls to address each failure code
 - `hw_apply_repair_plan` — apply safe patches automatically; proposals requiring approval are returned, not applied
 - `hw_design_until_release` — autonomous generate→check→repair loop; requires `user_approved_autonomous_iteration=true` or returns `blocked`
 
@@ -490,10 +555,24 @@ The complete release, adapter, hash, and physical-evidence rules are defined in
 ```
 src/hw_codesign/          # core platform and service layer
   backends/               # per-backend adapters (tscircuit, kicad, ...)
+    firmware_modules/     # parametric firmware behavior renderers (Phase D)
+    parts/                # parametric 3D part designers (Phase A)
 schemas/                  # JSON Schema for spec validation
 parts/                    # curated component database and supplier snapshots
 projects/<name>/          # generated project workspaces
-  {spec,electronics,mechanical,firmware,validation,exports,history}/
+  spec/
+    system.yaml           # board topology, backend, supply rails
+    agent_blocks.yaml     # agent-authored circuit blocks + placement constraints
+  electronics/
+  mechanical/
+    parts/<part_name>/    # designed 3D parts: intent.json, .step, .stl
+  firmware/
+    modules/              # agent-authored firmware module .c files
+  history/
+    decisions.jsonl       # structured design decision log (Phase E)
+    iterations/
+  validation/reports/
+  exports/
 ```
 
 Digital release evidence cannot certify load thermals, EMI/EMC, abuse safety,

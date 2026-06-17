@@ -37,6 +37,33 @@ Do not treat a schema-valid edit as an engineering approval. Semantic, sourcing,
 layout, mechanical, firmware, and release gates still decide whether the change
 is acceptable.
 
+## Extending topology without a new template
+
+For incremental additions that fit within the existing base topology — extra
+peripherals, custom sensor interfaces, protocol transceivers — use the agent
+authoring tools rather than modifying Python generators:
+
+```bash
+# Find catalog candidates for a CAN transceiver
+hw propose-circuit-block --category can_transceiver
+
+# Add it to the topology; ERC runs and the result is returned immediately
+hw add-circuit-block quadruped_robot_controller \
+  '{"ref": "U7", "category": "can_transceiver", "connections": {"SPI_CS": "CAN2_CS", "CAN_TX": "CAN2_TX"}}'
+
+# Express a placement relationship
+hw set-placement-constraint quadruped_robot_controller \
+  '{"ref": "U7", "relationship": "adjacent_to", "target": "U1", "max_distance_mm": 5}'
+
+# Author a firmware watchdog module
+hw design-firmware-module quadruped_robot_controller \
+  '{"id": "can_watchdog", "behavior": "timeout_shutdown", "trigger": {"signal": "ESTOP_IN", "timeout_ms": 100}}'
+```
+
+Agent-authored content is written to `spec/agent_blocks.yaml` under the keys
+`agent_electronics.blocks` and `placement.constraints`. These are merged with
+`system.yaml` at spec-read time without overwriting base definitions.
+
 ## Adding a new board family
 
 A board with materially different topology is extension work. At minimum:
