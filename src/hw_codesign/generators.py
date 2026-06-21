@@ -58,7 +58,164 @@ def generate_electronics(project: Path, spec: dict[str, Any], parts_root: Path, 
     graph["provenance"] = artifact_provenance(spec, parts_root, backend, release_eligible=False)
     graph_path = project / "electronics" / "generated" / "electrical_graph.json"
     write_json(graph_path, graph)
-    return [str(intent / name) for name in files] + [str(graph_path), *generate_kicad(project, spec, graph)], [item for item in graph["component_resolution"]], resolution_report.to_dict()
+    semantic_files = _write_semantic_schematic(project, spec, graph)
+    return [str(intent / name) for name in files] + [str(graph_path), *semantic_files, *generate_kicad(project, spec, graph)], [item for item in graph["component_resolution"]], resolution_report.to_dict()
+
+
+def _write_semantic_schematic(project: Path, spec: dict[str, Any], graph: dict[str, Any]) -> list[str]:
+    target = project / "electronics" / "generated" / "semantic"
+    target.mkdir(parents=True, exist_ok=True)
+    json_path = target / "semantic_schematic.json"
+    code_path = target / "semantic_schematic.py"
+    placements = graph.get("placement", {}).get("placements", {})
+    constraints = graph.get("placement", {}).get("constraints", [])
+
+    component_by_ref = {item["ref"]: item for item in graph.get("components", [])}
+
+    def endpoint(pin_ref: str) -> dict[str, Any]:
+        ref, _, pin_number = pin_ref.partition(".")
+        component = component_by_ref.get(ref, {})
+        pin_data = next((pin for pin in component.get("pins", []) if str(pin.get("number")) == pin_number), {})
+        return {
+            "component_ref": ref,
+            "component_role": component.get("category"),
+            "pin_number": pin_number,
+            "pin_name": pin_data.get("name"),
+            "pin_role": pin_data.get("role"),
+            "mcu_pin": pin_data.get("mcu_pin"),
+        }
+
+    semantic = {
+        "artifact_type": "semantic_schematic",
+        "authoring_model": "semantic-first-pin-name-wiring",
+        "project": project.name,
+        "revision": spec.get("project", {}).get("revision"),
+        "purpose": "LLM-suited schematic representation derived from typed graph; native EDA files are generated outputs.",
+        "components": [
+            {
+                "ref": item.get("ref"),
+                "role": item.get("category"),
+                "value": item.get("value"),
+                "component_id": item.get("component_id"),
+                "mpn": item.get("mpn"),
+                "manufacturer": item.get("manufacturer"),
+                "package": item.get("package"),
+                "footprint": item.get("footprint"),
+                "pins": [
+                    {
+                        "number": pin.get("number"),
+                        "name": pin.get("name"),
+                        "net": pin.get("net"),
+                        "role": pin.get("role"),
+                        "voltage_domain": pin.get("voltage_domain"),
+                        "mcu_pin": pin.get("mcu_pin"),
+                    }
+                    for pin in item.get("pins", [])
+                ],
+            }
+            for item in sorted(graph.get("components", []), key=lambda item: item.get("ref", ""))
+        ],
+        "nets": [
+            {
+                "name": net.get("name"),
+                "signal_class": net.get("signal_class"),
+                "voltage_domain": net.get("voltage_domain"),
+                "required_track_width_mm": net.get("required_track_width_mm"),
+                "pin_name_connections": [endpoint(pin_ref) for pin_ref in sorted(net.get("connected_pins", []))],
+            }
+            for net in sorted(graph.get("nets", []), key=lambda item: item.get("name", ""))
+        ],
+        "relative_placement": {
+            "board_width_mm": graph.get("placement", {}).get("board_width_mm"),
+            "board_height_mm": graph.get("placement", {}).get("board_height_mm"),
+            "placements": placements,
+            "constraints": constraints,
+        },
+        "source_graph": str(project / "electronics" / "generated" / "electrical_graph.json"),
+    }
+    write_json(json_path, semantic)
+    atomic_write_text(code_path, _semantic_schematic_code(semantic))
+    return [str(json_path), str(code_path)]
+
+
+def _semantic_schematic_code(semantic: dict[str, Any]) -> str:
+    lines = [
+        '"""Generated executable semantic schematic for agent review.',
+        "",
+        "This file is intentionally compact and pin-name based. It can be executed",
+        "to reconstruct the normalized semantic_schematic model. Native EDA/CAD",
+        "artifacts are generated from typed artifacts; edit the spec or graph-producing",
+        "blocks when changing a generated design.",
+        '"""',
+        "",
+        "from hw_codesign.semantic_schematic import SemanticBoard, pin",
+        "",
+        "board = SemanticBoard(",
+        f"    project={semantic['project']!r},",
+        f"    revision={semantic.get('revision')!r},",
+        f"    purpose={semantic.get('purpose')!r},",
+        f"    source_graph={semantic.get('source_graph')!r},",
+        f"    board_width_mm={semantic.get('relative_placement', {}).get('board_width_mm')!r},",
+        f"    board_height_mm={semantic.get('relative_placement', {}).get('board_height_mm')!r},",
+        ")",
+        "component = board.component",
+        "net = board.net",
+        "connect = board.connect",
+        "place = board.place",
+        "constraint = board.constraint",
+        "",
+    ]
+    for component in semantic["components"]:
+        lines.extend([
+            "component(",
+            f"    {component['ref']!r},",
+            f"    role={component.get('role')!r},",
+            f"    value={component.get('value')!r},",
+            f"    component_id={component.get('component_id')!r},",
+            f"    mpn={component.get('mpn')!r},",
+            f"    manufacturer={component.get('manufacturer')!r},",
+            f"    package={component.get('package')!r},",
+            f"    footprint={component.get('footprint')!r},",
+            "    pins=[",
+        ])
+        for item in component.get("pins", []):
+            lines.append(
+                "        pin("
+                f"{item.get('number')!r}, {item.get('name')!r}, net={item.get('net')!r}, "
+                f"role={item.get('role')!r}, voltage_domain={item.get('voltage_domain')!r}, "
+                f"mcu_pin={item.get('mcu_pin')!r}),"
+            )
+        lines.extend(["    ],", ")", ""])
+    lines.append("")
+    for net in semantic["nets"]:
+        lines.append(
+            "net("
+            f"{net.get('name')!r}, signal_class={net.get('signal_class')!r}, "
+            f"voltage_domain={net.get('voltage_domain')!r}, "
+            f"required_track_width_mm={net.get('required_track_width_mm')!r})"
+        )
+        for endpoint in net["pin_name_connections"]:
+            lines.append(
+                "connect("
+                f"{endpoint['component_ref']!r}, pin={endpoint.get('pin_name')!r}, "
+                f"number={endpoint.get('pin_number')!r}, net={net.get('name')!r}, "
+                f"role={endpoint.get('pin_role')!r}, mcu_pin={endpoint.get('mcu_pin')!r})"
+            )
+        lines.append("")
+    lines.append("")
+    for ref, placement in sorted(semantic["relative_placement"].get("placements", {}).items()):
+        lines.append(
+            "place("
+            f"{ref!r}, data={placement!r})"
+        )
+    lines.append("")
+    for constraint in semantic["relative_placement"].get("constraints", []):
+        lines.append(
+            f"constraint(data={constraint!r})"
+        )
+    lines.append("")
+    lines.append("semantic_schematic = board.to_dict()")
+    return "\n".join(lines) + "\n"
 
 
 def _electronics_intent_files(spec: dict[str, Any], header: str) -> dict[str, str]:
@@ -171,8 +328,12 @@ def firmware_profile(spec: dict[str, Any], graph: dict[str, Any]) -> dict[str, A
             "defconfig": "CONFIG_SOC_NRF52840=y\nCONFIG_BOARD_BLE_SENSOR_NODE=y\n",
             "kconfig_board": 'config BOARD_BLE_SENSOR_NODE\n  bool "nRF52840 BLE Sensor Node"\n',
             "kconfig_default": 'if BOARD_BLE_SENSOR_NODE\nconfig BOARD\n  default "ble_sensor_node"\nendif\n',
-            "prj_conf": "CONFIG_GPIO=y\nCONFIG_I2C=y\nCONFIG_BT=y\nCONFIG_BT_PERIPHERAL=y\nCONFIG_SENSOR=y\n",
-            "tests": {"test_i2c_sensors.c": "/* Bring-up test stub: verify SHT31 identity and fuel gauge I2C. */\n", "test_ble_adv.c": "/* Bring-up test stub: verify BLE advertising packet tx. */\n"},
+            "prj_conf": "CONFIG_GPIO=y\nCONFIG_I2C=y\nCONFIG_BT=y\nCONFIG_BT_PERIPHERAL=y\nCONFIG_SENSOR=y\nCONFIG_USB_DEVICE_STACK=y\n",
+            "tests": {
+                "test_i2c_sensors.c": "/* Bring-up test stub: verify SHT31 identity and fuel gauge I2C. */\n",
+                "test_ble_adv.c": "/* Bring-up test stub: verify BLE advertising packet tx. */\n",
+                "test_usb_connection.c": "/* Bring-up test stub: verify USB data connection and charging/status path. */\n",
+            },
         }
     if architecture == "esp32s3_usb_i2c_sensor_data_logger":
         return {
@@ -186,7 +347,7 @@ def firmware_profile(spec: dict[str, Any], graph: dict[str, Any]) -> dict[str, A
             "defconfig": "CONFIG_SOC_ESP32S3=y\nCONFIG_BOARD_SENSOR_DATA_LOGGER=y\n",
             "kconfig_board": 'config BOARD_SENSOR_DATA_LOGGER\n  bool "ESP32-S3 Sensor Data Logger"\n',
             "kconfig_default": 'if BOARD_SENSOR_DATA_LOGGER\nconfig BOARD\n  default "sensor_data_logger"\nendif\n',
-            "prj_conf": "CONFIG_GPIO=y\nCONFIG_I2C=y\nCONFIG_UART_CONSOLE=y\n",
+            "prj_conf": "CONFIG_GPIO=y\nCONFIG_I2C=y\nCONFIG_UART_CONSOLE=y\nCONFIG_USB_DEVICE_STACK=y\n",
             "tests": {"test_i2c_imu.c": "/* Bring-up test stub: verify IMU identity and samples. */\n", "test_usb_console.c": "/* Bring-up test stub: verify USB console enumeration. */\n"},
         }
     return {
@@ -200,8 +361,14 @@ def firmware_profile(spec: dict[str, Any], graph: dict[str, Any]) -> dict[str, A
         "defconfig": "CONFIG_SOC_STM32H743XX=y\nCONFIG_BOARD_ROBOT_CONTROLLER=y\n",
         "kconfig_board": 'config BOARD_ROBOT_CONTROLLER\n  bool "Robot Controller"\n',
         "kconfig_default": 'if BOARD_ROBOT_CONTROLLER\nconfig BOARD\n  default "robot_controller"\nendif\n',
-        "prj_conf": "CONFIG_GPIO=y\nCONFIG_I2C=y\nCONFIG_CAN=y\nCONFIG_PWM=y\n",
-        "tests": {"test_i2c_imu.c": "/* Bring-up test stub: verify IMU identity and samples. */\n", "test_motor_pwm.c": "/* Bring-up test stub: scope PWM with motor power disabled. */\n"},
+        "prj_conf": "CONFIG_GPIO=y\nCONFIG_I2C=y\nCONFIG_CAN=y\nCONFIG_PWM=y\nCONFIG_USB_DEVICE_STACK=y\n",
+        "tests": {
+            "test_i2c_imu.c": "/* Bring-up test stub: verify IMU identity and samples. */\n",
+            "test_motor_pwm.c": "/* Bring-up test stub: scope PWM with motor power disabled. */\n",
+            "test_can_loopback.c": "/* Bring-up test stub: verify CAN loopback before external bus connection. */\n",
+            "test_estop_fail_safe.c": "/* Bring-up test stub: verify ESTOP fail-safe path disables motor outputs. */\n",
+            "test_usb_connection.c": "/* Bring-up test stub: verify USB connection before console or bootloader use. */\n",
+        },
     }
 
 
