@@ -176,9 +176,254 @@ class Validator:
         return report
 
     def check_graph_pin_resolution(self, graph: dict[str, Any]) -> GateReport:
-        known = {f"{component['ref']}.{pin['number']}" for component in graph.get("components", []) for pin in component.get("pins", [])}
-        failures = [_failure(FailureCategory.ELECTRICAL_SEMANTIC_ERROR, "graph_pin_unresolved", f"Net {net.get('name')} references unknown pin {endpoint}") for net in graph.get("nets", []) for endpoint in net.get("connected_pins", []) if endpoint not in known]
+        pin_nets = {
+            f"{component['ref']}.{pin['number']}": pin.get("net")
+            for component in graph.get("components", [])
+            for pin in component.get("pins", [])
+        }
+        failures = []
+        for net in graph.get("nets", []):
+            net_name = net.get("name")
+            for endpoint in net.get("connected_pins", []):
+                if endpoint not in pin_nets:
+                    failures.append(_failure(
+                        FailureCategory.ELECTRICAL_SEMANTIC_ERROR,
+                        "graph_pin_unresolved",
+                        f"Net {net_name} references unknown pin {endpoint}",
+                    ))
+                elif pin_nets[endpoint] != net_name:
+                    failures.append(_failure(
+                        FailureCategory.ELECTRICAL_SEMANTIC_ERROR,
+                        "graph_pin_net_mismatch",
+                        f"Net {net_name} references {endpoint}, but the component pin is assigned to {pin_nets[endpoint]}",
+                        "electronics.nets",
+                        endpoint=endpoint,
+                        net_name=net_name,
+                        pin_net=pin_nets[endpoint],
+                    ))
         return self._report("pin_symbol_footprint", failures)
+
+    def check_power_tree(self, graph: dict[str, Any], spec: dict[str, Any] | None = None) -> GateReport:
+        failures: list[Failure] = []
+        spec = spec or {}
+        net_domains = {item.get("name"): item.get("voltage_domain") for item in graph.get("nets", [])}
+        rail_nominal = _rail_nominal_voltages(spec)
+        source_categories = {"power_input", "battery", "usb"}
+        transfer_categories = {"fuse", "reverse_polarity", "efuse", "regulator", "charger"}
+        reachable: set[str] = set()
+        transfers: list[tuple[dict[str, Any], set[str], set[str]]] = []
+
+        for component in graph.get("components", []):
+            category = component.get("category")
+            power_inputs = {
+                pin.get("net")
+                for pin in component.get("pins", [])
+                if pin.get("role") == "power_in" and pin.get("net")
+            }
+            power_outputs = {
+                pin.get("net")
+                for pin in component.get("pins", [])
+                if pin.get("role") == "power_out" and pin.get("net")
+            }
+            if category == "fuse":
+                power_inputs |= {pin.get("net") for pin in component.get("pins", []) if str(pin.get("name", "")).upper() == "IN" and pin.get("net")}
+                power_outputs |= {pin.get("net") for pin in component.get("pins", []) if str(pin.get("name", "")).upper() == "OUT" and pin.get("net")}
+            if category in source_categories:
+                reachable |= power_inputs
+            if category in transfer_categories:
+                transfers.append((component, power_inputs, power_outputs))
+                if not power_inputs or not power_outputs:
+                    failures.append(_failure(
+                        FailureCategory.ELECTRICAL_SEMANTIC_ERROR,
+                        "power_transfer_pin_missing",
+                        f"{component.get('ref', '?')} lacks a modelled power input or output pin",
+                        "electronics.components",
+                        ref=component.get("ref"),
+                        component_category=category,
+                        power_inputs=sorted(power_inputs),
+                        power_outputs=sorted(power_outputs),
+                    ))
+            for pin in component.get("pins", []):
+                role = pin.get("role")
+                if role not in {"power_in", "power_out", "ground"}:
+                    continue
+                net_name = pin.get("net")
+                expected_domain = net_domains.get(net_name) or _infer_power_domain(net_name)
+                if expected_domain and pin.get("voltage_domain") != expected_domain:
+                    failures.append(_failure(
+                        FailureCategory.ELECTRICAL_SEMANTIC_ERROR,
+                        "power_pin_voltage_domain_mismatch",
+                        f"{component.get('ref', '?')}.{pin.get('number')} voltage domain {pin.get('voltage_domain')} does not match net {net_name} domain {expected_domain}",
+                        "electronics.components",
+                        ref=component.get("ref"),
+                        pin_number=pin.get("number"),
+                        net_name=net_name,
+                        pin_voltage_domain=pin.get("voltage_domain"),
+                        net_voltage_domain=expected_domain,
+                    ))
+
+        changed = True
+        while changed:
+            changed = False
+            for _, inputs, outputs in transfers:
+                if inputs & reachable:
+                    before = len(reachable)
+                    reachable |= outputs
+                    changed = changed or len(reachable) != before
+
+        for component in graph.get("components", []):
+            category = component.get("category")
+            for pin in component.get("pins", []):
+                if pin.get("role") != "power_in" or not pin.get("net") or category in source_categories:
+                    continue
+                if pin["net"] not in reachable:
+                    failures.append(_failure(
+                        FailureCategory.ELECTRICAL_SEMANTIC_ERROR,
+                        "power_net_unreachable",
+                        f"{component.get('ref', '?')}.{pin.get('number')} requires unreachable power net {pin['net']}",
+                        "electronics.components",
+                        ref=component.get("ref"),
+                        pin_number=pin.get("number"),
+                        net_name=pin["net"],
+                    ))
+
+        for component, inputs, outputs in transfers:
+            known_inputs = [value for net in inputs if (value := _net_nominal_voltage(net, rail_nominal)) is not None]
+            known_outputs = [value for net in outputs if (value := _net_nominal_voltage(net, rail_nominal)) is not None]
+            input_domains = {_infer_power_domain(net) for net in inputs}
+            output_domains = {_infer_power_domain(net) for net in outputs}
+            if input_domains == output_domains:
+                continue
+            if known_inputs and known_outputs and max(known_outputs) > max(known_inputs) + 0.05:
+                failures.append(_failure(
+                    FailureCategory.ELECTRICAL_SEMANTIC_ERROR,
+                    "power_output_exceeds_input_voltage",
+                    f"{component.get('ref', '?')} output rail exceeds its known input rail voltage",
+                    "electronics.components",
+                    ref=component.get("ref"),
+                    component_category=component.get("category"),
+                    input_nets=sorted(inputs),
+                    output_nets=sorted(outputs),
+                    max_input_v=max(known_inputs),
+                    max_output_v=max(known_outputs),
+                ))
+
+        report = self._report("power_tree_integrity", failures)
+        report.metrics = {
+            **report.metrics,
+            "source_nets": sorted(reachable),
+            "transfer_components": len(transfers),
+            "power_loads_checked": sum(
+                1
+                for component in graph.get("components", [])
+                if component.get("category") not in source_categories
+                for pin in component.get("pins", [])
+                if pin.get("role") == "power_in"
+            ),
+        }
+        return report
+
+    def check_interface_integrity(self, graph: dict[str, Any]) -> GateReport:
+        failures: list[Failure] = []
+        nets_by_name = {net.get("name"): net for net in graph.get("nets", []) if net.get("name")}
+        net_names = set(nets_by_name)
+        components = graph.get("components", [])
+
+        i2c_nets = sorted(
+            name
+            for name, net in nets_by_name.items()
+            if net.get("signal_class") == "i2c" or str(name).upper().startswith("I2C")
+        )
+        for net_name in i2c_nets:
+            pullup_refs = sorted(
+                str(component.get("ref"))
+                for component in components
+                if _component_category_matches(component, {"pullup"})
+                and net_name in _component_nets(component)
+                and any(_is_positive_supply_net(pin.get("net"), nets_by_name) for pin in component.get("pins", []))
+            )
+            if not pullup_refs:
+                failures.append(_failure(
+                    FailureCategory.ELECTRICAL_SEMANTIC_ERROR,
+                    "i2c_pullup_missing",
+                    f"I2C net {net_name} has no pull-up to a positive logic rail",
+                    "electronics.components",
+                    net_name=net_name,
+                ))
+
+        can_high = "CANH" in net_names
+        can_low = "CANL" in net_names
+        if can_high != can_low:
+            failures.append(_failure(
+                FailureCategory.ELECTRICAL_SEMANTIC_ERROR,
+                "can_pair_incomplete",
+                "CAN interface exposes only one side of the differential pair",
+                "electronics.nets",
+                canh_present=can_high,
+                canl_present=can_low,
+            ))
+        if can_high and can_low:
+            if not any(_component_category_matches(component, {"termination"}) and _component_has_nets(component, {"CANH", "CANL"}) for component in components):
+                failures.append(_failure(
+                    FailureCategory.ELECTRICAL_SEMANTIC_ERROR,
+                    "can_termination_missing",
+                    "CANH/CANL are present without a termination component across the pair",
+                    "electronics.components",
+                    required_nets=["CANH", "CANL"],
+                ))
+            if not any(_component_category_matches(component, {"can"}) and _component_has_nets(component, {"CANH", "CANL"}) for component in components):
+                failures.append(_failure(
+                    FailureCategory.ELECTRICAL_SEMANTIC_ERROR,
+                    "can_transceiver_missing",
+                    "CANH/CANL are present without a CAN transceiver connected to both nets",
+                    "electronics.components",
+                    required_nets=["CANH", "CANL"],
+                ))
+            if not any(_component_category_matches(component, {"can_connector"}) and _component_has_nets(component, {"CANH", "CANL"}) for component in components):
+                failures.append(_failure(
+                    FailureCategory.ELECTRICAL_SEMANTIC_ERROR,
+                    "can_connector_missing",
+                    "CANH/CANL are present without a connector connected to both nets",
+                    "electronics.components",
+                    required_nets=["CANH", "CANL"],
+                ))
+
+        usb_nets = {"USB_DP_RAW", "USB_DM_RAW", "USB_DP", "USB_DM"}
+        present_usb_nets = usb_nets & net_names
+        usb_bridge_present = False
+        if present_usb_nets:
+            if present_usb_nets != usb_nets:
+                failures.append(_failure(
+                    FailureCategory.ELECTRICAL_SEMANTIC_ERROR,
+                    "usb_differential_pair_incomplete",
+                    "USB interface is missing raw or protected D+/D- nets",
+                    "electronics.nets",
+                    missing_nets=sorted(usb_nets - present_usb_nets),
+                    present_nets=sorted(present_usb_nets),
+                ))
+            usb_bridge_present = any(
+                _component_category_matches(component, {"usb_esd", "tvs"})
+                and _component_has_nets(component, usb_nets | {"GND"})
+                for component in components
+            )
+            if present_usb_nets == usb_nets and not usb_bridge_present:
+                failures.append(_failure(
+                    FailureCategory.ELECTRICAL_SEMANTIC_ERROR,
+                    "usb_esd_bridge_missing",
+                    "USB raw connector nets are not bridged to protected USB nets through an ESD/protection component",
+                    "electronics.components",
+                    required_nets=sorted(usb_nets | {"GND"}),
+                ))
+
+        report = self._report("interface_integrity", failures)
+        report.metrics = {
+            **report.metrics,
+            "i2c_nets_checked": len(i2c_nets),
+            "can_pair_present": can_high and can_low,
+            "usb_nets_checked": len(present_usb_nets),
+            "usb_bridge_present": usb_bridge_present,
+        }
+        return report
 
     def check_hw_sw_parity(self, graph: dict[str, Any], assignments: Iterable[dict[str, Any]]) -> GateReport:
         hardware_nets = {item["name"] for item in graph.get("nets", [])}
@@ -205,6 +450,8 @@ class Validator:
         self,
         modules: list[dict[str, Any]],
         pinmap: list[dict[str, Any]],
+        spec: dict[str, Any] | None = None,
+        graph: dict[str, Any] | None = None,
     ) -> GateReport:
         from .backends.firmware_modules import _RENDERERS, BEHAVIOR_SCHEMAS
         failures: list[Failure] = []
@@ -214,6 +461,8 @@ class Validator:
         total_stack = 0
         _ISR_BUDGET = 8
         _STACK_BUDGET_BYTES = 65536
+        required_behaviors: list[str] = []
+        graph = graph or {}
 
         for mod in modules:
             mid = mod.get("id", "<unnamed>")
@@ -269,6 +518,55 @@ class Validator:
                     f"firmware.modules.{mid}",
                 ))
 
+        if spec:
+            try:
+                motor_channels = int(spec.get("actuation", {}).get("motor_channels", 0) or 0)
+            except (TypeError, ValueError):
+                motor_channels = 0
+            estop_required = (
+                bool(spec.get("safety", {}).get("emergency_stop", {}).get("required"))
+                or spec.get("sensing", {}).get("e_stop") == "required"
+                or any(component.get("category") == "estop" for component in graph.get("components", []))
+            )
+            if motor_channels > 0 and estop_required:
+                required_behaviors.append("estop_motor_shutdown")
+                candidates = [
+                    module for module in modules
+                    if module.get("behavior") == "timeout_shutdown"
+                    and module.get("trigger", {}).get("signal") == "ESTOP_IN"
+                ]
+                if not candidates:
+                    failures.append(_failure(
+                        FailureCategory.FIRMWARE_ERROR,
+                        "missing_estop_shutdown_behavior",
+                        "Motor e-stop requirements need a timeout_shutdown firmware module triggered by ESTOP_IN",
+                        "firmware.modules",
+                        required_behavior="estop_motor_shutdown",
+                        required_trigger="ESTOP_IN",
+                        suggested_module={
+                            "id": "motor_estop_watchdog",
+                            "behavior": "timeout_shutdown",
+                            "trigger": {"signal": "ESTOP_IN", "timeout_ms": 100},
+                            "action": {"disable_all": "motor_enables", "assert": "FAULT_LED"},
+                        },
+                    ))
+                else:
+                    safe_groups = {"motor_enables", "motor_outputs", "motor_power", "motor_channels"}
+                    if not any(module.get("action", {}).get("disable_all") in safe_groups for module in candidates):
+                        failures.append(_failure(
+                            FailureCategory.FIRMWARE_ERROR,
+                            "unsafe_estop_shutdown_action",
+                            "ESTOP_IN timeout_shutdown module does not disable a recognized motor output group",
+                            "firmware.modules",
+                            required_behavior="estop_motor_shutdown",
+                            accepted_disable_groups=sorted(safe_groups),
+                            observed_disable_groups=sorted({
+                                str(module.get("action", {}).get("disable_all"))
+                                for module in candidates
+                                if module.get("action", {}).get("disable_all") is not None
+                            }),
+                        ))
+
         if isr_count > _ISR_BUDGET:
             failures.append(_failure(
                 FailureCategory.FIRMWARE_ERROR, "isr_budget_exceeded",
@@ -289,6 +587,7 @@ class Validator:
             "module_count": len(modules),
             "isr_count": isr_count,
             "total_stack_bytes": total_stack,
+            "required_behaviors": required_behaviors,
         }
         return report
 
@@ -331,6 +630,71 @@ class Validator:
     @staticmethod
     def _report(gate: str, failures: list[Failure]) -> GateReport:
         return GateReport(gate=gate, status=Status.FAIL if failures else Status.PASS, failures=failures, metrics={"errors": sum(item.severity == "error" for item in failures), "warnings": sum(item.severity == "warning" for item in failures)})
+
+
+def _infer_power_domain(net_name: str | None) -> str | None:
+    if not net_name:
+        return None
+    if net_name == "GND":
+        return "GND"
+    if net_name in {"VBAT", "VBAT_RAW", "VBAT_FUSED", "VSYS"} or net_name.startswith("VBAT"):
+        return "VBAT"
+    if net_name == "V5":
+        return "V5"
+    if net_name == "USB_VBUS":
+        return "USB_5V"
+    if net_name == "V3V3":
+        return "V3V3"
+    return None
+
+
+def _rail_nominal_voltages(spec: dict[str, Any]) -> dict[str, float]:
+    values: dict[str, float] = {"GND": 0.0, "USB_VBUS": 5.0, "V5": 5.0, "V3V3": 3.3}
+    battery = spec.get("system", {}).get("supply", {}).get("battery", {})
+    if isinstance(battery.get("pack_voltage_nominal"), (int, float)):
+        for name in ("VBAT", "VBAT_RAW", "VBAT_FUSED", "VSYS"):
+            values[name] = float(battery["pack_voltage_nominal"])
+    for rail in spec.get("system", {}).get("supply", {}).get("rails", []):
+        name = rail.get("name")
+        if not name:
+            continue
+        if isinstance(rail.get("voltage"), (int, float)):
+            values[name] = float(rail["voltage"])
+        elif isinstance(rail.get("voltage_min"), (int, float)) and isinstance(rail.get("voltage_max"), (int, float)):
+            values[name] = (float(rail["voltage_min"]) + float(rail["voltage_max"])) / 2.0
+    return values
+
+
+def _net_nominal_voltage(net_name: str, values: dict[str, float]) -> float | None:
+    if net_name in values:
+        return values[net_name]
+    domain = _infer_power_domain(net_name)
+    if domain in values:
+        return values[domain]
+    return None
+
+
+def _component_nets(component: dict[str, Any]) -> set[str]:
+    return {pin.get("net") for pin in component.get("pins", []) if pin.get("net")}
+
+
+def _component_category_matches(component: dict[str, Any], categories: set[str]) -> bool:
+    if component.get("category") in categories:
+        return True
+    return bool(set(component.get("constraints", [])) & categories)
+
+
+def _component_has_nets(component: dict[str, Any], required_nets: set[str]) -> bool:
+    return required_nets <= _component_nets(component)
+
+
+def _is_positive_supply_net(net_name: str | None, nets_by_name: dict[str, dict[str, Any]]) -> bool:
+    if not net_name or net_name == "GND":
+        return False
+    net = nets_by_name.get(net_name, {})
+    if net.get("signal_class") == "power":
+        return True
+    return (_infer_power_domain(net_name) or "") not in {"", "GND"}
 
 
 def persist_report(project_path: Path, report: GateReport) -> str:
