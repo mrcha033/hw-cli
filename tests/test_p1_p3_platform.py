@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import runpy
 from pathlib import Path
 
 import yaml
@@ -49,6 +50,140 @@ def test_iteration_writes_candidate_only_bundle(service, project):
     assert candidate.is_dir()
     assert json.loads((candidate / "candidate.json").read_text())["candidate_only"] is True
     assert not (service.workspace.require_project(project) / "exports" / "releases").exists()
+
+
+def test_design_candidate_is_cross_domain_primary_workflow(service, project):
+    result = service.design_candidate(
+        project,
+        include_external=False,
+        with_review_bundle=False,
+        requirements_text="16 channel 24V battery, peak 6A, STM32H7, IMU, emergency stop, Zephyr, 6-layer",
+    )
+    candidate = Path(result["candidate"]["path"])
+    assert result["status"] == "candidate"
+    assert result["design_goal"] == "cross-domain hardware candidate for evidence-backed promotion"
+    assert result["release_eligible"] is False
+    assert result["candidate_only"] is True
+    assert result["requirements_update"]["status"] == "generated"
+    assert "actuation.motor_channels" in result["requirements_update"]["changed_paths"]
+    assert candidate.is_dir()
+    assert result["design_domains"]["electronics"]
+    assert result["design_domains"]["mechanical"]
+    assert result["design_domains"]["firmware"]
+    assert result["design_domains"]["sourcing"] == ["component_resolution", "component_provenance", "sourcing_resilience"]
+    assert result["design_domains"]["manufacturing"]
+    semantic = result["semantic_representation"]
+    assert semantic["authoring_model"] == "semantic-first"
+    assert semantic["layers"]["electronics_graph"].endswith("/electronics/generated/electrical_graph.json")
+    assert semantic["layers"]["semantic_schematic"].endswith("/electronics/generated/semantic/semantic_schematic.json")
+    assert semantic["layers"]["semantic_schematic_code"].endswith("/electronics/generated/semantic/semantic_schematic.py")
+    assert Path(semantic["layers"]["semantic_schematic"]).is_file()
+    assert Path(semantic["layers"]["semantic_schematic_code"]).is_file()
+    semantic_data = json.loads(Path(semantic["layers"]["semantic_schematic"]).read_text(encoding="utf-8"))
+    semantic_code_data = runpy.run_path(semantic["layers"]["semantic_schematic_code"])["semantic_schematic"]
+    assert semantic_data["authoring_model"] == "semantic-first-pin-name-wiring"
+    assert semantic_code_data == semantic_data
+    assert semantic_data["nets"]
+    first_connection = semantic_data["nets"][0]["pin_name_connections"][0]
+    assert {"component_ref", "pin_name", "pin_number"} <= set(first_connection)
+    assert semantic["layers"]["relative_placement"]["source"] == semantic["layers"]["semantic_schematic"]
+    assert semantic["layers"]["mechanical_contract"].endswith("/mechanical/source/mechanical_contract.json")
+    assert semantic["layers"]["firmware_pinmap"].endswith("/firmware/generated/pinmap.json")
+    assert "pin_wiring" in semantic["representation_contract"]
+    assert result["sourcing_choices"]
+    assert {"ref", "component_id", "mpn", "supplier", "datasheet_evidence_ids"} <= set(result["sourcing_choices"][0])
+    assert result["reviewable_artifacts"]["candidate_bundle"] == result["candidate"]["bundle"]
+    assert result["reviewable_artifacts"]["candidate_manifest"].endswith("/manifest.json")
+    assert result["reviewable_artifacts"]["manufacturing"]
+    assert result["reviewable_artifacts"]["physical_qualification_plan"].endswith("/validation/physical/qualification_plan.json")
+    assert Path(result["reviewable_artifacts"]["physical_qualification_plan"]).is_file()
+    assert result["dependency_graph"]["gate"] == "design_dependency_graph"
+    assert "declared_edges" in result["dependency_graph"]["metrics"]
+    project_path = service.workspace.require_project(project)
+    roundtrip_report = json.loads((project_path / "validation" / "reports" / "semantic_schematic_roundtrip.json").read_text(encoding="utf-8"))
+    assert roundtrip_report["status"] == "pass"
+    assert roundtrip_report["metrics"]["code_roundtrip_exact"] is True
+    areas = {item["area"]: item["status"] for item in result["grounding_summary"]["risk_areas"]}
+    assert areas["pinout_package_footprint"] == "pass"
+    assert areas["semantic_representation_integrity"] == "pass"
+    assert areas["support_circuit_and_power_assumptions"] in {"pass", "fail", "blocked"}
+    assert "long_horizon_dependency_integrity" in areas
+    assert "layout_routing_manufacturability" in areas
+    assert areas["physical_qualification_evidence"] == "blocked"
+    assert result["grounding_summary"]["component_grounding"]["total"] == len(result["sourcing_choices"])
+    assert result["grounding_summary"]["physical_oracle_gaps"]
+    assert result["promotion"]["next_gate"] == "hw_check_release_gate"
+    assert json.loads((candidate / "candidate.json").read_text())["iteration_id"] == result["iteration_id"]
+    plan = service.generate_physical_qualification_plan(project)
+    assert plan["status"] == "generated"
+    assert {"thermal_load_profile", "emi_emc_prescan", "firmware_interface_bringup"} <= set(plan["required_tests"])
+    evidence = service.record_physical_evidence(
+        project,
+        {"test_id": "thermal_load_profile", "status": "pass", "summary": "Instrumented thermal run placeholder for ledger wiring"},
+        approved=True,
+    )
+    assert evidence["status"] == "generated"
+    assert Path(evidence["record"]).is_file()
+    assert evidence["gate"]["status"] == "blocked"
+    benchmark = service.run_grounding_benchmark(project)
+    assert benchmark["status"] == "pass"
+    assert benchmark["summary"]["total_cases"] >= 8
+    assert benchmark["summary"]["missed_cases"] == 0
+    case_ids = {item["id"] for item in benchmark["cases"]}
+    assert {
+        "wrong_pinout_contract",
+        "wrong_footprint_contract",
+        "missing_support_circuit",
+        "miswired_support_circuit",
+        "bad_power_assumption",
+        "unreachable_power_rail",
+        "regulator_voltage_order_violation",
+        "missing_i2c_pullup",
+        "missing_can_termination",
+        "missing_usb_esd_bridge",
+        "usb_esd_far_from_connector",
+        "hot_block_near_sensitive_logic",
+        "connector_current_rating_violation",
+        "missing_sourcing_resilience_strategy",
+        "unavailable_or_obsolete_part",
+        "schematic_unknown_pin_endpoint",
+        "component_pin_net_mismatch",
+        "firmware_pinmap_mismatch",
+        "missing_firmware_estop_shutdown_behavior",
+        "missing_firmware_can_bringup",
+        "dependency_graph_prerequisite_violation",
+    } <= case_ids
+    assert Path(benchmark["artifact"]).is_file()
+
+
+def test_design_space_exploration_ranks_variants_and_sourcing(service, project):
+    from hw_codesign.contracts import SHARED_SCHEMAS, TOOL_REGISTRY
+
+    result = service.explore_design_space(project, max_candidates=20)
+    artifact = Path(result["artifact"])
+    candidates = result["candidates"]
+    axes = {item["axis"] for item in candidates}
+    scores = [item["score"] for item in candidates]
+
+    assert result["status"] == "generated"
+    assert result["candidate_only"] is True
+    assert result["release_eligible"] is False
+    assert result["exploration_model"] == "deterministic_multi_axis_tradeoff_v1"
+    assert {"baseline_gate_state", "electronics_backend", "component_alternative", "mechanical_enclosure_variant", "supplier_provider"} <= set(result["axes"])
+    assert artifact.is_file()
+    assert json.loads(artifact.read_text(encoding="utf-8"))["selected_candidate"]["id"] == result["selected_candidate"]["id"]
+    assert scores == sorted(scores, reverse=True)
+    assert {"electronics_backend", "component_alternative", "mechanical_enclosure_variant", "supplier_provider"} <= axes
+    assert any(item["patch"] and item["patch"]["spec_path"] == "electronics.backend" for item in candidates)
+    component_candidates = [item for item in candidates if item["axis"] == "component_alternative"]
+    assert component_candidates
+    assert any(item["patch"] and item["patch"]["section"] == "system" and item["patch"]["spec_path"].startswith("electronics.role_overrides.") for item in component_candidates)
+    assert any(item["blockers"] for item in component_candidates)
+    assert any(item["patch"] and item["patch"]["spec_path"] == "mechanical.selected_variant" for item in candidates)
+    assert any(item["patch"] and item["patch"]["spec_path"] == "sourcing.provider" for item in candidates)
+    assert all({"id", "rank", "score", "tradeoffs", "blockers", "evidence"} <= set(item) for item in candidates)
+    assert "design_space_exploration_result" in SHARED_SCHEMAS
+    assert TOOL_REGISTRY["hw_explore_design_space"].output_schema["$ref"].endswith("design_space_exploration_result")
 
 
 def test_tscircuit_real_compile_and_graph_parity(tmp_path):
@@ -275,3 +410,18 @@ def test_missing_tscircuit_netlist_extract_injected_as_gate_not_run(service, pro
     # The injected gate report surfaces through the release_gate failure roll-up
     codes = {f["code"] for f in gate["failures"]}
     assert "gate_not_run" in codes or "failed_gate" in codes
+
+
+def test_release_gate_requires_semantic_schematic_roundtrip_report(service, project):
+    service.generate_all(project)
+    checks = service.run_all_checks(project, include_external=False)
+    stripped = [service._report_from_dict(r) for r in checks["reports"] if r["gate"] != "semantic_schematic_roundtrip"]
+
+    gate = service.check_release_gate(project, stripped)
+    semantic_failure = next(
+        failure for failure in gate["failures"]
+        if failure["message"].endswith("semantic_schematic_roundtrip")
+    )
+
+    assert gate["status"] == "blocked"
+    assert semantic_failure["details"]["details"]["failure_codes"] == ["gate_not_run"]

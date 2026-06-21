@@ -95,7 +95,12 @@ def test_ble_sensor_node_checks_pass_without_robotics_blocks(service, monkeypatc
 
     assert reports_by_gate["ir_erc"]["status"] == "pass"
     assert reports_by_gate["ir_pcb_sanity"]["status"] == "pass"
+    assert reports_by_gate["sourcing_resilience"]["status"] == "pass"
+    assert reports_by_gate["firmware_modules"]["status"] == "pass"
+    assert reports_by_gate["firmware_interface_contract"]["status"] == "pass"
     assert reports_by_gate["placement_constraints"]["status"] == "pass"
+    assert reports_by_gate["layout_thermal_integrity"]["status"] == "pass"
+    assert reports_by_gate["layout_signal_integrity"]["status"] == "pass"
     assert reports_by_gate.get("reference_fabrication", {}).get("status") == "pass"
 
 
@@ -134,6 +139,7 @@ def test_ble_sensor_node_firmware_artifacts_are_ble_specific(service):
 
     prj = (project_path / "firmware" / "zephyr" / "app" / "prj.conf").read_text(encoding="utf-8")
     assert "CONFIG_BT=y" in prj
+    assert "CONFIG_USB_DEVICE_STACK=y" in prj
 
     pinmap = json.loads((gen / "pinmap.json").read_text(encoding="utf-8"))
     pin_signals = {p["signal"] for p in pinmap}
@@ -145,6 +151,7 @@ def test_ble_sensor_node_firmware_artifacts_are_ble_specific(service):
     test_names = {f.name for f in tests_dir.iterdir() if f.is_file()} if tests_dir.is_dir() else set()
     assert "test_i2c_sensors.c" in test_names
     assert "test_ble_adv.c" in test_names
+    assert "test_usb_connection.c" in test_names
     assert "test_motor_pwm.c" not in test_names, "robot motor test should not appear for BLE node"
     assert "test_i2c_imu.c" not in test_names, "sensor_data_logger IMU test should not appear for BLE node"
 
@@ -205,6 +212,19 @@ def test_ble_sensor_node_reference_fabrication_uses_real_positions(service):
     assert any("F_Cu" in n for n in names)
 
 
+def test_ble_sensor_node_grounding_benchmark_catches_rf_placement(service):
+    project = "ble_sensor_board"
+    service.create_project(project, template="ble_sensor_node")
+    service.generate_all(project)
+
+    benchmark = service.run_grounding_benchmark(project)
+
+    case_ids = {item["id"] for item in benchmark["cases"]}
+    assert "rf_antenna_not_edge_aligned" in case_ids
+    rf_case = next(item for item in benchmark["cases"] if item["id"] == "rf_antenna_not_edge_aligned")
+    assert rf_case["detected"] is True
+
+
 def test_ble_sensor_node_release_docs_are_ble_specific(service, monkeypatch):
     project = "ble_sensor_board"
     service.create_project(project, template="ble_sensor_node")
@@ -218,9 +238,9 @@ def test_ble_sensor_node_release_docs_are_ble_specific(service, monkeypatch):
     all_reports = []
     for gate in [
         "spec_validation", "requirements_lowering", "electrical_semantics", "mechanical_check",
-        "firmware_pinmap", "component_resolution", "supplier_availability", "datasheet_evidence",
-        "bom", "sourcing", "component_metadata", "graph_pin_resolution", "hw_sw_parity",
-        "ir_erc", "ir_pcb_sanity", "reference_firmware_build", "placement_constraints",
+        "firmware_pinmap", "component_resolution", "supplier_availability", "datasheet_evidence", "sourcing_resilience",
+        "bom", "sourcing", "component_metadata", "graph_pin_resolution", "hw_sw_parity", "firmware_interface_contract",
+        "ir_erc", "ir_pcb_sanity", "reference_firmware_build", "placement_constraints", "layout_thermal_integrity", "layout_signal_integrity",
         "reference_fabrication", "compiled_electronics_backend",
         "autoroute", "native_erc", "native_drc", "kicad_library_crosscheck",
         "native_mechanical_validation", "native_zephyr_build",

@@ -115,7 +115,7 @@ def test_unsupported_constraints_persist_to_spec_and_block_validation(service, p
     """update_requirements with high-risk constraints that cannot be lowered must:
     - return status='generated' with has_unresolved_constraints=true
     - persist constraints to spec so validate_spec fails with unlowered_constraint_in_spec
-    - thereby block the release pipeline without requiring agent to inspect the return value."""
+    - thereby block release promotion without requiring agent to inspect the return value."""
     result = service.update_requirements(
         project,
         "16 channel 24V battery, IP67, CAN-FD, ASIL-B, 8A continuous, JLCPCB assembly, impedance-controlled"

@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import runpy
 from pathlib import Path
 
 from hw_codesign.io import read_yaml, write_yaml
@@ -41,6 +42,20 @@ def test_sensor_data_logger_template_generates_esp32_graph(service):
     assert "safety_gate" not in categories
     assert "USB_DP" in {net["name"] for net in graph["nets"]}
     assert "I2C_IMU_SCL" in {net["name"] for net in graph["nets"]}
+
+    semantic_path = service.workspace.require_project(project) / "electronics" / "generated" / "semantic" / "semantic_schematic.json"
+    semantic_code_path = semantic_path.with_suffix(".py")
+    generated_files = {Path(path).name for path in result["files"]}
+    semantic = json.loads(semantic_path.read_text(encoding="utf-8"))
+    semantic_from_code = runpy.run_path(str(semantic_code_path))["semantic_schematic"]
+    usb_dp = next(net for net in semantic["nets"] if net["name"] == "USB_DP")
+
+    assert "semantic_schematic.json" in generated_files
+    assert "semantic_schematic.py" in generated_files
+    assert semantic_code_path.is_file()
+    assert semantic["authoring_model"] == "semantic-first-pin-name-wiring"
+    assert semantic_from_code == semantic
+    assert any(connection["pin_name"] == "USB_D+" for connection in usb_dp["pin_name_connections"])
 
 
 def test_sensor_data_logger_intent_files_are_sensor_specific(service):
@@ -96,9 +111,16 @@ def test_sensor_data_logger_checks_do_not_require_robotics_blocks(service):
 
     assert reports["component_resolution"]["status"] == "pass"
     assert reports["datasheet_evidence"]["status"] == "pass"
+    assert reports["sourcing_resilience"]["status"] == "pass"
+    assert reports["semantic_schematic_roundtrip"]["status"] == "pass"
+    assert reports["semantic_schematic_roundtrip"]["metrics"]["code_roundtrip_exact"] is True
     assert reports["firmware_pinmap"]["status"] == "pass"
+    assert reports["firmware_modules"]["status"] == "pass"
+    assert reports["firmware_interface_contract"]["status"] == "pass"
     assert reports["ir_erc"]["status"] == "pass"
     assert reports["placement_constraints"]["status"] == "pass"
+    assert reports["layout_thermal_integrity"]["status"] == "pass"
+    assert reports["layout_signal_integrity"]["status"] == "pass"
     assert reports["reference_firmware_build"]["status"] == "pass"
     assert "missing_required_block" not in {
         failure["code"]
@@ -108,6 +130,22 @@ def test_sensor_data_logger_checks_do_not_require_robotics_blocks(service):
         failure["code"]
         for failure in reports["placement_constraints"]["failures"]
     }
+
+
+def test_semantic_schematic_roundtrip_gate_fails_on_code_drift(service):
+    project = "sensor_data_logger_board"
+    service.create_project(project, template="sensor_data_logger")
+    service.generate_all(project)
+    project_path = service.workspace.require_project(project)
+    code_path = project_path / "electronics" / "generated" / "semantic" / "semantic_schematic.py"
+    code_path.write_text(code_path.read_text(encoding="utf-8") + "\nsemantic_schematic['nets'][0]['name'] = 'DRIFTED_NET'\n", encoding="utf-8")
+
+    checks = service.run_all_checks(project, include_external=False)
+    report = next(item for item in checks["reports"] if item["gate"] == "semantic_schematic_roundtrip")
+    failure_codes = {failure["code"] for failure in report["failures"]}
+
+    assert report["status"] == "fail"
+    assert "semantic_schematic_roundtrip_mismatch" in failure_codes
 
 
 def test_sensor_data_logger_mechanical_contract_uses_sensor_placement(service):
@@ -142,6 +180,7 @@ def test_sensor_data_logger_firmware_artifacts_are_sensor_specific(service):
 
     assert "project(sensor_data_logger)" in app_cmake
     assert "CONFIG_I2C=y" in prj_conf
+    assert "CONFIG_USB_DEVICE_STACK=y" in prj_conf
     assert "CONFIG_CAN" not in prj_conf
     assert "CONFIG_PWM" not in prj_conf
     assert (board_dir / "sensor_data_logger.dts").is_file()

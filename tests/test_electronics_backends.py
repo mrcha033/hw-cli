@@ -140,6 +140,10 @@ def test_atopile_backend_is_release_eligible(service, project):
     assert "atopile_compile" in blocking
     assert "atopile_netlist_extract" in blocking
     assert "atopile_graph_parity" in blocking
+    checks = service.run_all_checks(project, include_external=False)
+    gate = service.check_release_gate(project, [service._report_from_dict(item) for item in checks["reports"]])
+    codes = {failure["code"] for failure in gate["failures"]}
+    assert "compiled_electronics_backend_required" not in codes
 
 
 def test_python_netlist_backend_is_release_eligible(service, project):

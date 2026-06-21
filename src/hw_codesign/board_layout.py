@@ -3,15 +3,13 @@ from __future__ import annotations
 from typing import Any
 
 # Hand-tuned anchor coordinates for the robotics-controller reference design.
-# These are the authoritative placement seed: they are tuned so the reference
-# board routes and clears the enclosure. The structured placement-proposal layer
-# in ``placement.py`` builds provenance, constraints, and checks on top of them
-# but never moves them. Keeping the coordinates here unchanged guarantees the
-# tuned routing and mechanical gates keep producing identical output.
+# These are the authoritative placement seed. Changes should be driven by
+# explicit placement or physical-correctness gates so downstream routing and
+# mechanical checks keep a traceable reason for coordinate movement.
 _ANCHORS: dict[str, tuple[float, float]] = {
     "J1": (20.0, 5.0), "F1": (38.0, 5.0), "Q1": (56.0, 5.0), "D1": (74.0, 5.0),
     "U3": (92.0, 5.0), "U4": (112.0, 18.0), "U5": (132.0, 18.0),
-    "J5": (120.0, 95.0), "D2": (42.0, 27.0), "R4": (60.0, 27.0), "U6": (90.0, 27.0),
+    "J5": (120.0, 95.0), "D2": (120.0, 86.0), "R4": (60.0, 27.0), "U6": (90.0, 27.0),
     "J3": (80.0, 5.0), "R1": (136.0, 27.0), "U2": (22.0, 48.0), "R2": (42.0, 48.0),
     "R3": (58.0, 48.0), "J2": (140.0, 95.0), "Q2": (124.0, 48.0), "J4": (104.0, 69.0),
     "U1": (70.0, 37.0),
@@ -21,7 +19,7 @@ _SENSOR_DATA_LOGGER_ANCHORS: dict[str, tuple[float, float]] = {
     "J1": (18.0, 4.0),
     "D1": (30.0, 10.0),
     "U3": (44.0, 12.0),
-    "U1": (38.0, 28.0),
+    "U1": (44.0, 44.0),
     "U2": (18.0, 28.0),
     "J2": (58.0, 44.0),
     "R1": (18.0, 38.0),

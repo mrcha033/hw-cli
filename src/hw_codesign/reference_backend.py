@@ -46,7 +46,17 @@ def generate_kicad(project: Path, spec: dict[str, Any], graph: dict[str, Any]) -
     write_json(target / f"{name}.kicad_pro", pro)
     schematic = _legacy_schematic(spec, graph)
     atomic_write_text(target / f"{name}.sch", schematic)
-    generate_kicad_schematic(name, graph, target / f"{name}.kicad_sch")
+    schematic_path = target / f"{name}.kicad_sch"
+    try:
+        generate_kicad_schematic(name, graph, schematic_path)
+    except Exception as exc:
+        atomic_write_text(schematic_path, _kicad_schematic_stub(name, graph))
+        write_json(target / "schematic_generation.json", {
+            "status": "blocked",
+            "code": "kicad_symbol_instantiation_failed",
+            "message": str(exc),
+            "fallback": schematic_path.name,
+        })
     board_text, routing_failures = _kicad_board(spec, graph)
     atomic_write_text(target / f"{name}.kicad_pcb", board_text)
     write_json(target / "routing.json", {

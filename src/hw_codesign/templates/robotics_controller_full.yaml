@@ -92,6 +92,11 @@ firmware:
   framework: zephyr
   target: stm32h7
   outputs: [devicetree_overlay, pinmap, board_definition, driver_stubs, bringup_tests]
+  modules:
+    - id: motor_estop_watchdog
+      behavior: timeout_shutdown
+      trigger: {signal: ESTOP_IN, timeout_ms: 100}
+      action: {disable_all: motor_enables, assert: FAULT_LED}
 manufacturing:
   pcb:
     profile: jlcpcb_4layer
