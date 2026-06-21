@@ -35,12 +35,32 @@ from .models import Failure, FailureCategory, GateReport, Status
 
 # Categories whose components dissipate meaningful power and benefit from spacing.
 POWER_CATEGORIES = {"regulator", "efuse", "reverse_polarity", "safety_gate", "motor_io"}
+# Categories that can create enough heat or current concentration to corrupt a
+# superficially valid placement if they are too close to logic/sensor devices.
+THERMAL_RISK_CATEGORIES = {"regulator", "efuse", "reverse_polarity", "safety_gate", "charger"}
+SENSITIVE_CATEGORIES = {"mcu", "imu", "env_sensor", "fuel_gauge"}
+HIGH_CURRENT_PATH_CATEGORIES = ["power_input", "fuse", "reverse_polarity", "tvs", "efuse"]
 # Gross-overlap floor: centers closer than this are unambiguously broken,
 # independent of any courtyard-size estimate.
 MIN_CENTER_DISTANCE_MM = 1.5
 # Advisory power-component spacing. No datasheet-backed number is available, so
 # this constraint is emitted as advisory only (never blocking).
 ADVISORY_THERMAL_SPACING_MM = 8.0
+MIN_THERMAL_TO_SENSITIVE_MM = 8.0
+HIGH_CURRENT_THRESHOLD_A = 5.0
+MIN_HIGH_CURRENT_LAYERS = 4
+MAX_HIGH_CURRENT_A_PER_MM2 = 0.01
+MAX_HIGH_CURRENT_CHAIN_STEP_MM = 35.0
+RF_EDGE_DISTANCE_MAX_MM = 8.0
+RF_NOISY_COMPONENT_KEEP_OUT_MM = 10.0
+USB_ESD_MAX_CONNECTOR_DISTANCE_MM = 15.0
+RF_NOISY_CATEGORIES = {"charger", "regulator", "efuse", "reverse_polarity", "safety_gate", "motor_io"}
+RF_CONSTRAINT_MARKERS = {
+    "ble_mcu",
+    "wifi_bt_mcu",
+    "integral_pcb_antenna_required",
+    "integral_antenna_keepout_required",
+}
 
 
 @dataclass(frozen=True)
@@ -517,3 +537,277 @@ def check_placement(proposal: PlacementProposal, graph: dict[str, Any]) -> GateR
         metrics=metrics,
         backend={"name": "placement-proposal", "deterministic": True, "release_authoritative": False},
     )
+
+
+def check_layout_thermal_integrity(
+    proposal: PlacementProposal,
+    graph: dict[str, Any],
+    spec: dict[str, Any],
+) -> GateReport:
+    """Catch coarse layout/current contradictions before physical qualification.
+
+    This is not a thermal or SI/PI oracle. It blocks high-confidence digital
+    contradictions: high-current designs on an inadequate board stackup/area,
+    under-rated motor connectors, hot blocks placed next to sensitive devices,
+    and a spread-out high-current ingress chain.
+    """
+
+    failures: list[Failure] = []
+    components = {component.get("ref"): component for component in graph.get("components", []) if component.get("ref")}
+    placements = proposal.placements
+    width = float(proposal.board_width_mm)
+    height = float(proposal.board_height_mm)
+    board_area = width * height
+    peak_current = _declared_peak_current_a(spec)
+    layers = int(spec.get("manufacturing", {}).get("pcb", {}).get("layers", 0) or 0)
+
+    def fail(code: str, message: str, **details: Any) -> None:
+        failures.append(Failure(FailureCategory.MECHANICAL_ERROR, code, message, path="placement", details=details))
+
+    if peak_current >= HIGH_CURRENT_THRESHOLD_A:
+        if layers < MIN_HIGH_CURRENT_LAYERS:
+            fail(
+                "high_current_layer_count_insufficient",
+                f"Declared peak current {peak_current:.1f} A requires at least {MIN_HIGH_CURRENT_LAYERS} PCB layers",
+                peak_current_a=peak_current,
+                layers=layers,
+                minimum_layers=MIN_HIGH_CURRENT_LAYERS,
+            )
+        if board_area <= 0:
+            fail("board_area_missing", "Board area is missing for high-current layout risk checking", peak_current_a=peak_current)
+        elif peak_current / board_area > MAX_HIGH_CURRENT_A_PER_MM2:
+            fail(
+                "high_current_board_area_insufficient",
+                "Declared peak current is too high for the available board area without stronger evidence",
+                peak_current_a=peak_current,
+                board_area_mm2=round(board_area, 3),
+                current_per_mm2=round(peak_current / board_area, 6),
+                limit_a_per_mm2=MAX_HIGH_CURRENT_A_PER_MM2,
+            )
+
+    motor_peak = float(spec.get("actuation", {}).get("motor_channel_peak_current_a", 0) or 0)
+    motor_channels = int(spec.get("actuation", {}).get("motor_channels", 0) or 0)
+    connector_rating = _connector_current_rating_a(spec)
+    if motor_channels > 0 and connector_rating is not None and motor_peak > connector_rating:
+        fail(
+            "connector_current_rating_below_peak",
+            f"Motor channel peak current {motor_peak:.1f} A exceeds connector rating {connector_rating:.1f} A",
+            motor_channel_peak_current_a=motor_peak,
+            connector_current_rating_a=connector_rating,
+        )
+
+    thermal_refs = [
+        ref for ref, component in components.items()
+        if component.get("category") in THERMAL_RISK_CATEGORIES and ref in placements
+    ]
+    sensitive_refs = [
+        ref for ref, component in components.items()
+        if component.get("category") in SENSITIVE_CATEGORIES and ref in placements
+    ]
+    for hot_ref in thermal_refs:
+        for sensitive_ref in sensitive_refs:
+            distance = _placement_distance_mm(placements[hot_ref], placements[sensitive_ref])
+            if distance < MIN_THERMAL_TO_SENSITIVE_MM:
+                fail(
+                    "thermal_sensitive_spacing_violation",
+                    f"{hot_ref} is {distance:.3f} mm from sensitive component {sensitive_ref}",
+                    hot_ref=hot_ref,
+                    sensitive_ref=sensitive_ref,
+                    distance_mm=round(distance, 3),
+                    minimum_spacing_mm=MIN_THERMAL_TO_SENSITIVE_MM,
+                )
+
+    if peak_current >= HIGH_CURRENT_THRESHOLD_A:
+        chain = _high_current_chain_refs(graph)
+        for left, right in zip(chain, chain[1:]):
+            if left not in placements or right not in placements:
+                continue
+            distance = _placement_distance_mm(placements[left], placements[right])
+            if distance > MAX_HIGH_CURRENT_CHAIN_STEP_MM:
+                fail(
+                    "high_current_path_spread_excessive",
+                    f"High-current path step {left}->{right} spans {distance:.3f} mm",
+                    refs=[left, right],
+                    distance_mm=round(distance, 3),
+                    max_step_mm=MAX_HIGH_CURRENT_CHAIN_STEP_MM,
+                )
+
+    return GateReport(
+        "layout_thermal_integrity",
+        Status.FAIL if failures else Status.PASS,
+        failures,
+        metrics={
+            "peak_current_a": peak_current,
+            "board_area_mm2": round(board_area, 3),
+            "layers": layers,
+            "thermal_risk_components": len(thermal_refs),
+            "sensitive_components": len(sensitive_refs),
+        },
+        backend={"name": "layout-thermal-precheck", "deterministic": True, "release_authoritative": False},
+    )
+
+
+def check_layout_signal_integrity(
+    proposal: PlacementProposal,
+    graph: dict[str, Any],
+    spec: dict[str, Any],
+) -> GateReport:
+    """Catch explicit RF layout contradictions before native/simulation evidence.
+
+    This is not an RF/SI oracle. It only enforces part-catalog constraints that
+    are already present in the generated component metadata: integral antenna
+    parts need an edge-adjacent placement and a keepout from noisy power blocks.
+    """
+
+    failures: list[Failure] = []
+    placements = proposal.placements
+    width = float(proposal.board_width_mm)
+    height = float(proposal.board_height_mm)
+    components = {component.get("ref"): component for component in graph.get("components", []) if component.get("ref")}
+    basis = graph.get("design_basis", {})
+    rf_refs = [
+        str(ref) for ref, component in components.items()
+        if ref in placements
+        and (
+            RF_CONSTRAINT_MARKERS & set(component.get("constraints", []))
+            or (component.get("category") == "mcu" and basis.get("integral_pcb_antenna_required"))
+        )
+    ]
+    noisy_refs = [
+        str(ref) for ref, component in components.items()
+        if ref in placements and component.get("category") in RF_NOISY_CATEGORIES
+    ]
+    usb_connector_refs = [
+        str(ref) for ref, component in components.items()
+        if ref in placements
+        and {"USB_DP_RAW", "USB_DM_RAW"} <= _component_nets(component)
+        and not {"USB_DP", "USB_DM"} & _component_nets(component)
+    ]
+    usb_esd_refs = [
+        str(ref) for ref, component in components.items()
+        if ref in placements
+        and component.get("category") in {"usb_esd", "tvs"}
+        and {"USB_DP_RAW", "USB_DM_RAW", "USB_DP", "USB_DM"} <= _component_nets(component)
+    ]
+    usb_device_refs = [
+        str(ref) for ref, component in components.items()
+        if ref in placements
+        and {"USB_DP", "USB_DM"} <= _component_nets(component)
+        and component.get("category") not in {"usb_esd", "tvs"}
+    ]
+
+    def fail(code: str, message: str, **details: Any) -> None:
+        failures.append(Failure(FailureCategory.EDA_ERROR, code, message, path="placement", details=details))
+
+    for rf_ref in rf_refs:
+        placement = placements[rf_ref]
+        edge_distance = min(placement.x_mm, width - placement.x_mm, placement.y_mm, height - placement.y_mm)
+        if edge_distance > RF_EDGE_DISTANCE_MAX_MM:
+            fail(
+                "rf_antenna_not_edge_aligned",
+                f"{rf_ref} has an integral antenna constraint but is {edge_distance:.3f} mm from the nearest board edge",
+                ref=rf_ref,
+                edge_distance_mm=round(edge_distance, 3),
+                maximum_edge_distance_mm=RF_EDGE_DISTANCE_MAX_MM,
+            )
+        for noisy_ref in noisy_refs:
+            if noisy_ref == rf_ref:
+                continue
+            distance = _placement_distance_mm(placement, placements[noisy_ref])
+            if distance < RF_NOISY_COMPONENT_KEEP_OUT_MM:
+                fail(
+                    "rf_noisy_component_keepout_violation",
+                    f"{noisy_ref} is {distance:.3f} mm from RF/antenna component {rf_ref}",
+                    rf_ref=rf_ref,
+                    noisy_ref=noisy_ref,
+                    distance_mm=round(distance, 3),
+                    minimum_keepout_mm=RF_NOISY_COMPONENT_KEEP_OUT_MM,
+                )
+
+    for esd_ref in usb_esd_refs:
+        esd = placements[esd_ref]
+        connector_distances = [
+            _placement_distance_mm(esd, placements[connector_ref])
+            for connector_ref in usb_connector_refs
+        ]
+        if not connector_distances:
+            continue
+        nearest_connector_distance = min(connector_distances)
+        if nearest_connector_distance > USB_ESD_MAX_CONNECTOR_DISTANCE_MM:
+            fail(
+                "usb_esd_far_from_connector",
+                f"{esd_ref} protects USB D+/D- but is {nearest_connector_distance:.3f} mm from the nearest USB connector",
+                esd_ref=esd_ref,
+                connector_distance_mm=round(nearest_connector_distance, 3),
+                maximum_connector_distance_mm=USB_ESD_MAX_CONNECTOR_DISTANCE_MM,
+            )
+        device_distances = [
+            _placement_distance_mm(esd, placements[device_ref])
+            for device_ref in usb_device_refs
+        ]
+        if device_distances and min(device_distances) < nearest_connector_distance:
+            fail(
+                "usb_esd_not_connector_side",
+                f"{esd_ref} is closer to a USB device than to the USB connector",
+                esd_ref=esd_ref,
+                connector_distance_mm=round(nearest_connector_distance, 3),
+                nearest_device_distance_mm=round(min(device_distances), 3),
+            )
+
+    return GateReport(
+        "layout_signal_integrity",
+        Status.FAIL if failures else Status.PASS,
+        failures,
+        metrics={
+            "rf_components": len(rf_refs),
+            "noisy_power_components": len(noisy_refs),
+            "usb_connectors": len(usb_connector_refs),
+            "usb_esd_components": len(usb_esd_refs),
+            "usb_devices": len(usb_device_refs),
+            "rf_edge_distance_max_mm": RF_EDGE_DISTANCE_MAX_MM,
+            "rf_noisy_keepout_mm": RF_NOISY_COMPONENT_KEEP_OUT_MM,
+            "usb_esd_max_connector_distance_mm": USB_ESD_MAX_CONNECTOR_DISTANCE_MM,
+        },
+        backend={"name": "layout-signal-precheck", "deterministic": True, "release_authoritative": False},
+    )
+
+
+def _declared_peak_current_a(spec: dict[str, Any]) -> float:
+    supply = spec.get("system", {}).get("supply", {})
+    candidates: list[float] = []
+    battery = supply.get("battery", {})
+    if isinstance(battery.get("pack_current_peak_a"), (int, float)):
+        candidates.append(float(battery["pack_current_peak_a"]))
+    for rail in supply.get("rails", []):
+        if isinstance(rail.get("current_peak_a"), (int, float)):
+            candidates.append(float(rail["current_peak_a"]))
+    actuation = spec.get("actuation", {})
+    motor_peak = float(actuation.get("motor_channel_peak_current_a", 0) or 0)
+    simultaneous = int(actuation.get("max_simultaneous_peak_channels", actuation.get("motor_channels", 0)) or 0)
+    if motor_peak and simultaneous:
+        candidates.append(motor_peak * simultaneous)
+    return max(candidates or [0.0])
+
+
+def _connector_current_rating_a(spec: dict[str, Any]) -> float | None:
+    value = spec.get("assumptions", {}).get("connector_current_rating", {}).get("value_a")
+    if isinstance(value, (int, float)):
+        return float(value)
+    return None
+
+
+def _placement_distance_mm(a: Placement, b: Placement) -> float:
+    return math.hypot(a.x_mm - b.x_mm, a.y_mm - b.y_mm)
+
+
+def _component_nets(component: dict[str, Any]) -> set[str]:
+    return {str(pin.get("net")) for pin in component.get("pins", []) if pin.get("net")}
+
+
+def _high_current_chain_refs(graph: dict[str, Any]) -> list[str]:
+    refs: list[str] = []
+    for category in HIGH_CURRENT_PATH_CATEGORIES:
+        match = next((component.get("ref") for component in graph.get("components", []) if component.get("category") == category), None)
+        if match:
+            refs.append(str(match))
+    return refs

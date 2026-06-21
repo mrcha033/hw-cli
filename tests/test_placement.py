@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 import math
+from copy import deepcopy
 from dataclasses import replace
 from pathlib import Path
 
@@ -10,7 +11,7 @@ import yaml
 
 from hw_codesign.board_layout import component_positions
 from hw_codesign.models import GateReport, Status
-from hw_codesign.placement import POWER_CATEGORIES, check_placement, propose_placement
+from hw_codesign.placement import POWER_CATEGORIES, check_layout_signal_integrity, check_layout_thermal_integrity, check_placement, propose_placement
 from hw_codesign.reference_backend import build_graph
 from hw_codesign.validation import Validator
 
@@ -24,6 +25,17 @@ def spec() -> dict:
 @pytest.fixture
 def graph(spec: dict) -> dict:
     return build_graph(spec)
+
+
+@pytest.fixture
+def ble_spec() -> dict:
+    template = Path(__file__).parents[1] / "src" / "hw_codesign" / "templates" / "ble_sensor_node.yaml"
+    return yaml.safe_load(template.read_text(encoding="utf-8"))
+
+
+@pytest.fixture
+def ble_graph(ble_spec: dict) -> dict:
+    return build_graph(ble_spec)
 
 
 def _codes(report) -> set[str]:
@@ -180,6 +192,92 @@ def test_thermal_spacing_advisory_fires(spec, graph):
     assert report.status == Status.PASS  # advisory only
 
 
+def test_layout_thermal_integrity_passes_seed(spec: dict, graph: dict):
+    report = check_layout_thermal_integrity(propose_placement(spec, graph), graph, spec)
+
+    assert report.status == Status.PASS
+    assert report.metrics["peak_current_a"] >= 80.0
+    assert report.metrics["layers"] == 4
+
+
+def test_layout_thermal_integrity_rejects_hot_block_near_logic(spec: dict, graph: dict):
+    proposal = propose_placement(spec, graph)
+    hot_ref = next(c["ref"] for c in graph["components"] if c.get("category") == "regulator")
+    mcu_ref = next(c["ref"] for c in graph["components"] if c.get("category") == "mcu")
+    mcu = proposal.placements[mcu_ref]
+    proposal.placements[hot_ref] = replace(proposal.placements[hot_ref], x_mm=mcu.x_mm + 1.0, y_mm=mcu.y_mm)
+
+    report = check_layout_thermal_integrity(proposal, graph, spec)
+
+    assert report.status == Status.FAIL
+    assert "thermal_sensitive_spacing_violation" in _codes(report)
+
+
+def test_layout_thermal_integrity_rejects_under_rated_motor_connector(spec: dict, graph: dict):
+    bad_spec = deepcopy(spec)
+    bad_spec["assumptions"]["connector_current_rating"]["value_a"] = 2.0
+
+    report = check_layout_thermal_integrity(propose_placement(bad_spec, graph), graph, bad_spec)
+
+    assert report.status == Status.FAIL
+    assert "connector_current_rating_below_peak" in _codes(report)
+
+
+def test_layout_signal_integrity_passes_ble_rf_seed(ble_spec: dict, ble_graph: dict):
+    report = check_layout_signal_integrity(propose_placement(ble_spec, ble_graph), ble_graph, ble_spec)
+
+    assert report.status == Status.PASS
+    assert report.metrics["rf_components"] == 1
+
+
+def test_layout_signal_integrity_rejects_rf_component_away_from_edge(ble_spec: dict, ble_graph: dict):
+    bad_graph = deepcopy(ble_graph)
+    rf = next(component for component in bad_graph["components"] if component["category"] == "mcu")
+    rf["pcb_position_mm"] = [
+        ble_spec["mechanical"]["envelope"]["board_width_mm"] / 2,
+        ble_spec["mechanical"]["envelope"]["board_height_mm"] / 2,
+    ]
+
+    report = check_layout_signal_integrity(propose_placement(ble_spec, bad_graph), bad_graph, ble_spec)
+
+    assert report.status == Status.FAIL
+    assert "rf_antenna_not_edge_aligned" in _codes(report)
+
+
+def test_layout_signal_integrity_rejects_noisy_power_near_rf(ble_spec: dict, ble_graph: dict):
+    bad_graph = deepcopy(ble_graph)
+    rf = next(component for component in bad_graph["components"] if component["category"] == "mcu")
+    charger = next(component for component in bad_graph["components"] if component["category"] == "charger")
+    rf_position = rf.get("pcb_position_mm", [25.0, 28.0])
+    charger["pcb_position_mm"] = [float(rf_position[0]) + 1.0, float(rf_position[1])]
+
+    report = check_layout_signal_integrity(propose_placement(ble_spec, bad_graph), bad_graph, ble_spec)
+
+    assert report.status == Status.FAIL
+    assert "rf_noisy_component_keepout_violation" in _codes(report)
+
+
+def test_layout_signal_integrity_passes_usb_esd_near_connector(spec: dict, graph: dict):
+    report = check_layout_signal_integrity(propose_placement(spec, graph), graph, spec)
+
+    assert report.status == Status.PASS
+    assert report.metrics["usb_esd_components"] == 1
+
+
+def test_layout_signal_integrity_rejects_usb_esd_far_from_connector(spec: dict, graph: dict):
+    bad_graph = deepcopy(graph)
+    esd = next(component for component in bad_graph["components"] if component["category"] == "usb_esd")
+    esd["pcb_position_mm"] = [
+        spec["mechanical"]["envelope"]["board_width_mm"] / 2,
+        spec["mechanical"]["envelope"]["board_height_mm"] / 2,
+    ]
+
+    report = check_layout_signal_integrity(propose_placement(spec, bad_graph), bad_graph, spec)
+
+    assert report.status == Status.FAIL
+    assert "usb_esd_far_from_connector" in _codes(report)
+
+
 def test_estimated_courtyard_overlap_warns(spec, graph):
     proposal = propose_placement(spec, graph)
     refs = [r for r in proposal.placements if not r.startswith("J")][:2]
@@ -318,3 +416,5 @@ def test_pipeline_emits_placement_gate_and_structured_graph(service, project):
     result = service.run_all_checks(project, include_external=False)
     gates = {report["gate"] for report in result["reports"]}
     assert "placement_constraints" in gates
+    assert "layout_thermal_integrity" in gates
+    assert "layout_signal_integrity" in gates
