@@ -15,7 +15,7 @@ def generate_kicad_schematic(name: str, graph: dict[str, Any], output: Path) -> 
     components = sorted(graph["components"], key=lambda item: _reference_key(item["ref"]))
     ordinary = [item for item in components if item["ref"] != "U1"]
     positions = {
-        item["ref"]: (35.0 + (index // 10) * 52.0, 22.0 + (index % 10) * 18.0)
+        item["ref"]: (35.0 + (index // 10) * 52.0, 22.0 + (index % 10) * 30.48)
         for index, item in enumerate(ordinary)
     }
     positions["U1"] = (282.0, 105.0)
