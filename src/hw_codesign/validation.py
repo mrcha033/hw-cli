@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import math
 from collections import Counter
 from pathlib import Path
 from typing import Any, Iterable
@@ -7,7 +8,9 @@ from typing import Any, Iterable
 from jsonschema import Draft202012Validator
 
 from .io import write_json
+from .mechanical_contract import build_mechanical_contract
 from .models import Failure, FailureCategory, GateReport, Status
+from .resolver import SUPPLIER_EVIDENCE_MAX_AGE_DAYS, _evidence_is_stale
 
 
 CONNECTOR_CATEGORIES = {"power_input", "can_connector", "usb", "estop", "motor_io"}
@@ -52,9 +55,10 @@ class Validator:
         if isinstance(nominal, (int, float)) and isinstance(maximum, (int, float)) and nominal > maximum:
             failures.append(_failure(FailureCategory.SPEC_ERROR, "contradictory_requirement", "Battery nominal voltage exceeds maximum voltage", "system.supply.battery"))
         assumptions = spec.get("assumptions", {})
-        for name, assumption in assumptions.items():
-            if assumption.get("critical") and not assumption.get("requires_user_review") and "resolved_value" not in assumption:
-                failures.append(_failure(FailureCategory.SPEC_ERROR, "unsafe_assumption", f"Critical assumption {name} is not marked for review", f"assumptions.{name}"))
+        if isinstance(assumptions, dict):
+            for name, assumption in assumptions.items():
+                if assumption.get("critical") and not assumption.get("requires_user_review") and "resolved_value" not in assumption:
+                    failures.append(_failure(FailureCategory.SPEC_ERROR, "unsafe_assumption", f"Critical assumption {name} is not marked for review", f"assumptions.{name}"))
         return self._report("spec_schema", failures)
 
     def check_electrical_semantics(self, spec: dict[str, Any]) -> GateReport:
@@ -173,6 +177,240 @@ class Validator:
         }
         return report
 
+    def check_mechanical_connector_cutouts(self, spec: dict[str, Any], graph: dict[str, Any]) -> GateReport:
+        failures: list[Failure] = []
+        mechanical = spec.get("mechanical", {})
+        interface_refs = {
+            str(item.get("ref"))
+            for item in mechanical.get("connector_interfaces", [])
+            if item.get("ref")
+        }
+        electrical_connector_refs = {
+            str(item.get("ref"))
+            for item in graph.get("components", [])
+            if item.get("ref") and item.get("category") in CONNECTOR_CATEGORIES
+        }
+        requires_cutout_contract = mechanical.get("enclosure") == "required" or bool(interface_refs)
+        if not requires_cutout_contract:
+            report = self._report("mechanical_connector_cutouts", [])
+            report.metrics = {
+                **report.metrics,
+                "required": False,
+                "connector_refs": sorted(electrical_connector_refs),
+                "interface_refs": sorted(interface_refs),
+            }
+            return report
+
+        missing_cutout_refs = sorted(electrical_connector_refs - interface_refs)
+        if missing_cutout_refs:
+            failures.append(_failure(
+                FailureCategory.MECHANICAL_ERROR,
+                "connector_cutout_missing",
+                "Electrical connectors lack mechanical connector-interface cutouts",
+                "mechanical.connector_interfaces",
+                references=missing_cutout_refs,
+            ))
+
+        try:
+            contract = build_mechanical_contract(spec, graph)
+        except Exception as exc:  # noqa: BLE001 - malformed specs should report a gate failure, not abort checks
+            failures.append(_failure(
+                FailureCategory.MECHANICAL_ERROR,
+                "mechanical_contract_unbuildable",
+                f"Mechanical connector contract could not be built: {exc}",
+                "mechanical",
+            ))
+            return self._report("mechanical_connector_cutouts", failures)
+
+        board = contract["board"]
+        enclosure = contract["enclosure"]
+        clearances = contract["clearances"]
+        board_width = float(board["width_mm"])
+        board_height = float(board["height_mm"])
+        internal = enclosure.get("internal_mm", [0.0, 0.0, 0.0])
+        max_edge_distance = float(clearances.get("max_connector_edge_distance_mm", 6.0))
+        global_tolerance = float(clearances.get("tolerance_mm", 0.0))
+        alignment_failures: list[str] = []
+        missing_component_refs: list[str] = []
+        out_of_bounds_refs: list[str] = []
+
+        for cutout in contract.get("connector_cutouts", []):
+            ref = str(cutout.get("ref"))
+            if not cutout.get("component_present"):
+                missing_component_refs.append(ref)
+                failures.append(_failure(
+                    FailureCategory.MECHANICAL_ERROR,
+                    "connector_reference_missing",
+                    f"Connector cutout references absent electrical connector {ref}",
+                    "mechanical.connector_interfaces",
+                    ref=ref,
+                ))
+                continue
+            position = cutout.get("pcb_position_mm")
+            if not isinstance(position, list) or len(position) < 2:
+                failures.append(_failure(
+                    FailureCategory.MECHANICAL_ERROR,
+                    "connector_position_missing",
+                    f"Connector {ref} has no PCB placement for cutout alignment",
+                    "electronics.components",
+                    ref=ref,
+                ))
+                continue
+            x = float(position[0])
+            y = float(position[1])
+            position_tolerance = float(cutout.get("position_tolerance_mm", 0.0))
+            tolerance = global_tolerance + position_tolerance
+            if x < -tolerance or x > board_width + tolerance or y < -tolerance or y > board_height + tolerance:
+                out_of_bounds_refs.append(ref)
+                failures.append(_failure(
+                    FailureCategory.MECHANICAL_ERROR,
+                    "connector_position_out_of_bounds",
+                    f"Connector {ref} placement is outside the PCB envelope",
+                    "electronics.components.pcb_position_mm",
+                    ref=ref,
+                    pcb_position_mm=position,
+                    board_width_mm=board_width,
+                    board_height_mm=board_height,
+                ))
+
+            side = str(cutout.get("side"))
+            edge_distances = {
+                "front": y,
+                "rear": board_height - y,
+                "left": x,
+                "right": board_width - x,
+            }
+            edge_distance = edge_distances.get(side)
+            limit = max_edge_distance + tolerance
+            if edge_distance is None:
+                failures.append(_failure(
+                    FailureCategory.MECHANICAL_ERROR,
+                    "connector_cutout_side_invalid",
+                    f"Connector {ref} declares unsupported enclosure side {side}",
+                    "mechanical.connector_interfaces.side",
+                    ref=ref,
+                    side=side,
+                ))
+            elif edge_distance > limit:
+                alignment_failures.append(ref)
+                failures.append(_failure(
+                    FailureCategory.MECHANICAL_ERROR,
+                    "connector_cutout_alignment_failed",
+                    f"Connector {ref} is {edge_distance:.1f} mm from the {side} board edge, beyond cutout tolerance",
+                    "mechanical.connector_interfaces",
+                    ref=ref,
+                    side=side,
+                    edge_distance_mm=edge_distance,
+                    limit_mm=limit,
+                ))
+
+            enclosure_position = cutout.get("enclosure_position_mm")
+            if isinstance(enclosure_position, list) and len(enclosure_position) >= 2:
+                ex = float(enclosure_position[0])
+                ey = float(enclosure_position[1])
+                if ex < -tolerance or ex > float(internal[0]) + tolerance or ey < -tolerance or ey > float(internal[1]) + tolerance:
+                    failures.append(_failure(
+                        FailureCategory.MECHANICAL_ERROR,
+                        "connector_cutout_out_of_bounds",
+                        f"Connector {ref} cutout position is outside the enclosure internal envelope",
+                        "mechanical.connector_interfaces",
+                        ref=ref,
+                        enclosure_position_mm=enclosure_position,
+                        enclosure_internal_mm=internal,
+                    ))
+
+        report = self._report("mechanical_connector_cutouts", failures)
+        report.metrics = {
+            **report.metrics,
+            "required": True,
+            "connector_refs": sorted(electrical_connector_refs),
+            "interface_refs": sorted(interface_refs),
+            "missing_cutout_refs": missing_cutout_refs,
+            "missing_component_refs": sorted(missing_component_refs),
+            "alignment_failure_refs": sorted(alignment_failures),
+            "out_of_bounds_refs": sorted(out_of_bounds_refs),
+            "max_connector_edge_distance_mm": max_edge_distance,
+        }
+        return report
+
+    def check_mechanical_mounting_integrity(self, spec: dict[str, Any], graph: dict[str, Any]) -> GateReport:
+        failures: list[Failure] = []
+        mechanical = spec.get("mechanical", {})
+        envelope = mechanical.get("envelope", {})
+        board_width = float(envelope.get("board_width_mm", 0.0) or 0.0)
+        board_height = float(envelope.get("board_height_mm", 0.0) or 0.0)
+        assembly_clearance = float(mechanical.get("assembly_clearance_mm", 0.0) or 0.0)
+        manufacturing_clearance = float(spec.get("manufacturing", {}).get("pcb", {}).get("min_clearance_mm", 0.0) or 0.0)
+        mounting_holes = mechanical.get("mounting_holes", [])
+        checked_holes = 0
+        collision_refs: list[str] = []
+        invalid_holes: list[int] = []
+
+        for index, hole in enumerate(mounting_holes):
+            checked_holes += 1
+            x = float(hole.get("x_mm", 0.0) or 0.0)
+            y = float(hole.get("y_mm", 0.0) or 0.0)
+            diameter = float(hole.get("diameter_mm", 0.0) or 0.0)
+            radius = diameter / 2.0
+            edge_margin = radius + manufacturing_clearance
+            keepout_radius = radius + assembly_clearance
+
+            if diameter <= 0:
+                invalid_holes.append(index)
+                failures.append(_failure(
+                    FailureCategory.MECHANICAL_ERROR,
+                    "mounting_hole_diameter_invalid",
+                    "Mounting-hole diameter must be positive",
+                    f"mechanical.mounting_holes[{index}].diameter_mm",
+                    diameter_mm=diameter,
+                ))
+                continue
+            if x < edge_margin or x > board_width - edge_margin or y < edge_margin or y > board_height - edge_margin:
+                invalid_holes.append(index)
+                failures.append(_failure(
+                    FailureCategory.MECHANICAL_ERROR,
+                    "mounting_hole_edge_clearance_failed",
+                    "Mounting hole drill plus manufacturing clearance extends outside the PCB envelope",
+                    f"mechanical.mounting_holes[{index}]",
+                    hole_mm=[x, y],
+                    diameter_mm=diameter,
+                    edge_margin_mm=round(edge_margin, 3),
+                    board_width_mm=board_width,
+                    board_height_mm=board_height,
+                ))
+
+            for component in graph.get("components", []):
+                ref = component.get("ref")
+                position = component.get("pcb_position_mm")
+                if not ref or not isinstance(position, list) or len(position) < 2:
+                    continue
+                distance = math.hypot(float(position[0]) - x, float(position[1]) - y)
+                if distance < keepout_radius:
+                    collision_refs.append(str(ref))
+                    failures.append(_failure(
+                        FailureCategory.MECHANICAL_ERROR,
+                        "mounting_hole_component_keepout_intrusion",
+                        f"{ref} placement intrudes into mounting-hole screw/standoff keepout",
+                        "electronics.components.pcb_position_mm",
+                        ref=ref,
+                        hole_index=index,
+                        hole_mm=[x, y],
+                        distance_mm=round(distance, 3),
+                        keepout_radius_mm=round(keepout_radius, 3),
+                    ))
+
+        report = self._report("mechanical_mounting_integrity", failures)
+        report.metrics = {
+            **report.metrics,
+            "holes_checked": checked_holes,
+            "invalid_hole_indices": sorted(set(invalid_holes)),
+            "collision_refs": sorted(set(collision_refs)),
+            "assembly_clearance_mm": assembly_clearance,
+            "manufacturing_clearance_mm": manufacturing_clearance,
+            "oracle_boundary": "center-point screw/standoff keepout precheck; native CAD and board DRC remain authoritative for courtyard and fastener geometry",
+        }
+        return report
+
     def check_pinmap(self, assignments: Iterable[dict[str, Any]]) -> GateReport:
         assignments = list(assignments)
         counts = Counter(item.get("mcu_pin") for item in assignments if item.get("mcu_pin"))
@@ -204,6 +442,37 @@ class Validator:
                 failures.append(_failure(FailureCategory.BOM_ERROR, "missing_sourcing_metadata", f"{ref} lacks manufacturer or supplier SKU", "electronics.components"))
             if sourcing.get("status") not in {"resolved", "waived"}:
                 failures.append(_failure(FailureCategory.BOM_ERROR, "sourcing_unresolved", f"{ref} sourcing is not resolved or waived", "electronics.components"))
+            offer = component.get("supplier_offer") or {}
+            if offer and sourcing.get("status") != "waived":
+                availability = offer.get("availability")
+                if availability in {"out_of_stock", "discontinued"}:
+                    failures.append(_failure(
+                        FailureCategory.BOM_ERROR,
+                        "supplier_unavailable",
+                        f"{ref} is {availability} at {offer.get('provider', 'supplier')}",
+                        "electronics.components",
+                        provider=offer.get("provider"),
+                        availability=availability,
+                    ))
+                elif availability == "available":
+                    if not offer.get("sku") or not offer.get("observed_at"):
+                        failures.append(_failure(
+                            FailureCategory.BOM_ERROR,
+                            "supplier_availability_unknown",
+                            f"{ref} lacks current supplier availability evidence",
+                            "electronics.components",
+                            provider=offer.get("provider"),
+                        ))
+                    elif _evidence_is_stale(offer["observed_at"]):
+                        failures.append(_failure(
+                            FailureCategory.BOM_ERROR,
+                            "supplier_evidence_stale",
+                            f"{ref} supplier availability evidence is older than {SUPPLIER_EVIDENCE_MAX_AGE_DAYS} days",
+                            "electronics.components",
+                            provider=offer.get("provider"),
+                            observed_at=offer.get("observed_at"),
+                            max_age_days=SUPPLIER_EVIDENCE_MAX_AGE_DAYS,
+                        ))
             if not component.get("pins"):
                 failures.append(_failure(FailureCategory.BOM_ERROR, "missing_pin_mapping", f"{ref} has no symbol-to-footprint pin mapping", "electronics.components"))
         return self._report("sourcing", failures)
@@ -392,6 +661,99 @@ class Validator:
         }
         return report
 
+    def check_power_integrity_estimate(self, graph: dict[str, Any], spec: dict[str, Any] | None = None) -> GateReport:
+        spec = spec or {}
+        failures: list[Failure] = []
+        components = graph.get("components", [])
+        rail_current = _rail_current_peaks(spec)
+        power_nets = {
+            pin.get("net")
+            for component in components
+            for pin in component.get("pins", [])
+            if pin.get("net") and _infer_power_domain(pin.get("net")) not in {None, "GND"}
+        }
+        rail_names = sorted((set(rail_current) | {str(net) for net in power_nets}) - {"GND"})
+        source_categories = {"power_input", "battery", "usb"}
+        capacitor_categories = {"decoupling", "bulk_cap"}
+        transfer_categories = {"fuse", "reverse_polarity", "efuse", "regulator", "charger", "tvs", "safety_gate"}
+        coverage: dict[str, dict[str, Any]] = {}
+
+        for rail in rail_names:
+            loads = sorted({
+                str(component.get("ref"))
+                for component in components
+                if component.get("category") not in source_categories | capacitor_categories | transfer_categories
+                and any(pin.get("role") == "power_in" and pin.get("net") == rail for pin in component.get("pins", []))
+            })
+            if not loads:
+                continue
+            decoupling_refs = sorted({
+                str(component.get("ref"))
+                for component in components
+                if component.get("category") == "decoupling"
+                and _component_has_nets(component, {rail, "GND"})
+            })
+            bulk_refs = sorted({
+                str(component.get("ref"))
+                for component in components
+                if component.get("category") == "bulk_cap"
+                and _component_has_nets(component, {rail, "GND"})
+            })
+            high_current_connector_loads = sorted({
+                str(component.get("ref"))
+                for component in components
+                if component.get("category") in {"motor_io", "can_connector", "usb"}
+                and any(pin.get("role") == "power_in" and pin.get("net") == rail for pin in component.get("pins", []))
+            })
+            current_a = float(rail_current.get(rail, 0.0) or 0.0)
+            coverage[rail] = {
+                "loads": loads,
+                "decoupling": decoupling_refs,
+                "bulk": bulk_refs,
+                "declared_peak_current_a": current_a,
+                "high_current_connector_loads": high_current_connector_loads,
+            }
+            if not decoupling_refs and not bulk_refs:
+                failures.append(_failure(
+                    FailureCategory.ELECTRICAL_SEMANTIC_ERROR,
+                    "rail_decoupling_missing",
+                    f"Rail {rail} feeds active loads without any local decoupling or bulk capacitor in the graph",
+                    "electronics.components",
+                    rail=rail,
+                    loads=loads,
+                ))
+            if current_a >= 0.5 and not bulk_refs:
+                severity = "error" if high_current_connector_loads else "warning"
+                failures.append(Failure(
+                    FailureCategory.ELECTRICAL_SEMANTIC_ERROR,
+                    "rail_bulk_cap_missing",
+                    f"Rail {rail} declares {current_a:.2f} A peak current without a bulk capacitor in the graph",
+                    severity=severity,
+                    path="electronics.components",
+                    details={
+                        "rail": rail,
+                        "declared_peak_current_a": current_a,
+                        "loads": loads,
+                        "high_current_connector_loads": high_current_connector_loads,
+                    },
+                ))
+
+        error_count = sum(1 for failure in failures if failure.severity == "error")
+        warning_count = sum(1 for failure in failures if failure.severity == "warning")
+        return GateReport(
+            "power_integrity_estimate",
+            Status.FAIL if error_count else Status.PASS,
+            failures,
+            metrics={
+                "errors": error_count,
+                "warnings": warning_count,
+                "rails_checked": len(coverage),
+                "coverage": coverage,
+                "oracle_boundary": "Heuristic decoupling and bulk-cap coverage only; transient, impedance, and stability still require simulation or bench evidence.",
+            },
+            backend={"name": "power-integrity-estimator", "authority": "heuristic"},
+        )
+
     def check_interface_integrity(self, graph: dict[str, Any]) -> GateReport:
         failures: list[Failure] = []
         nets_by_name = {net.get("name"): net for net in graph.get("nets", []) if net.get("name")}
@@ -498,9 +860,53 @@ class Validator:
         hardware_nets = {item["name"] for item in graph.get("nets", [])}
         assignments = list(assignments)
         failures: list[Failure] = []
+        mcu_refs = {component.get("ref") for component in graph.get("components", []) if component.get("category") == "mcu"}
+        mcu_pins_by_endpoint: dict[str, dict[str, Any]] = {
+            f"{component.get('ref')}.{pin.get('number')}": pin
+            for component in graph.get("components", [])
+            if component.get("ref") in mcu_refs
+            for pin in component.get("pins", [])
+        }
         for assignment in assignments:
             if assignment.get("net_name") not in hardware_nets:
                 failures.append(_failure(FailureCategory.FIRMWARE_ERROR, "missing_hardware_net", f"Firmware signal has no electrical net: {assignment.get('net_name')}", "firmware.pin_assignments"))
+            graph_pin = assignment.get("graph_pin")
+            if not graph_pin:
+                continue
+            ref, _, _number = str(graph_pin).partition(".")
+            pin = mcu_pins_by_endpoint.get(str(graph_pin))
+            if ref not in mcu_refs or pin is None:
+                failures.append(_failure(
+                    FailureCategory.FIRMWARE_ERROR,
+                    "firmware_graph_pin_unresolved",
+                    f"Firmware assignment references non-MCU or unknown graph pin: {graph_pin}",
+                    "firmware.pin_assignments",
+                    graph_pin=graph_pin,
+                ))
+                continue
+            if assignment.get("net_name") != pin.get("net"):
+                failures.append(_failure(
+                    FailureCategory.FIRMWARE_ERROR,
+                    "firmware_graph_pin_net_mismatch",
+                    f"Firmware assignment for {assignment.get('signal')} points at {graph_pin}, but that MCU pin is wired to {pin.get('net')}",
+                    "firmware.pin_assignments",
+                    signal=assignment.get("signal"),
+                    graph_pin=graph_pin,
+                    assigned_net=assignment.get("net_name"),
+                    hardware_net=pin.get("net"),
+                ))
+            expected_mcu_pin = pin.get("mcu_pin") or pin.get("name") or pin.get("number")
+            if assignment.get("mcu_pin") and assignment.get("mcu_pin") != expected_mcu_pin:
+                failures.append(_failure(
+                    FailureCategory.FIRMWARE_ERROR,
+                    "firmware_mcu_pin_mismatch",
+                    f"Firmware assignment for {assignment.get('signal')} uses MCU pin {assignment.get('mcu_pin')} but {graph_pin} is {expected_mcu_pin}",
+                    "firmware.pin_assignments",
+                    signal=assignment.get("signal"),
+                    graph_pin=graph_pin,
+                    assigned_mcu_pin=assignment.get("mcu_pin"),
+                    expected_mcu_pin=expected_mcu_pin,
+                ))
         firmware_nets = {item.get("net_name") for item in assignments}
         ignored_mcu_nets = {"V3V3", "V5", "GND", "SWDIO", "SWCLK", "NRST"}
         required_nets = {
@@ -525,6 +931,7 @@ class Validator:
         from .backends.firmware_modules import _RENDERERS
         failures: list[Failure] = []
         known_signals = {item.get("signal") for item in pinmap if item.get("signal")}
+        known_net_names = {item.get("net_name") for item in pinmap if item.get("net_name")}
         seen_ids: set[str] = set()
         isr_count = 0
         total_stack = 0
@@ -532,6 +939,43 @@ class Validator:
         _STACK_BUDGET_BYTES = 65536
         required_behaviors: list[str] = []
         graph = graph or {}
+        graph_nets = {
+            str(net.get("name"))
+            for net in graph.get("nets", [])
+            if net.get("name")
+        }
+        graph_signal_classes = {
+            str(net.get("signal_class")).lower()
+            for net in graph.get("nets", [])
+            if net.get("signal_class")
+        }
+        firmware_signal_space = {
+            str(item)
+            for item in {*known_signals, *known_net_names, *graph_nets}
+            if item
+        }
+        component_labels = {
+            str(value).lower()
+            for component in graph.get("components", [])
+            for value in (
+                component.get("category"),
+                component.get("role"),
+                component.get("value"),
+                component.get("mpn"),
+                component.get("component_id"),
+            )
+            if value
+        }
+
+        def hardware_has_bus(bus: str) -> bool:
+            bus = bus.lower()
+            if bus == "i2c":
+                return "i2c" in graph_signal_classes or any(signal.upper().startswith("I2C") for signal in firmware_signal_space)
+            if bus == "spi":
+                return "spi" in graph_signal_classes or any(signal.upper().startswith(("SPI", "QSPI")) for signal in firmware_signal_space)
+            if bus == "adc":
+                return "adc" in graph_signal_classes or any("ADC" in signal.upper() for signal in firmware_signal_space)
+            return False
 
         for mod in modules:
             mid = mod.get("id", "<unnamed>")
@@ -572,6 +1016,38 @@ class Validator:
                         f"firmware.modules.{mid}.trigger.timeout_ms",
                     ))
                 isr_count += 1  # timer ISR
+
+            if behavior == "sensor_poll":
+                bus = str(mod.get("bus", "i2c")).lower()
+                if not hardware_has_bus(bus):
+                    failures.append(_failure(
+                        FailureCategory.FIRMWARE_ERROR,
+                        "firmware_sensor_bus_missing",
+                        f"Module '{mid}' polls over {bus.upper()}, but the hardware graph exposes no matching bus",
+                        f"firmware.modules.{mid}.bus",
+                        bus=bus,
+                        known_signals=sorted(firmware_signal_space),
+                    ))
+                sensor = mod.get("sensor")
+                if sensor:
+                    sensor_text = str(sensor).lower()
+                    if not any(sensor_text in label or label in sensor_text for label in component_labels):
+                        failures.append(_failure(
+                            FailureCategory.FIRMWARE_ERROR,
+                            "firmware_sensor_target_missing",
+                            f"Module '{mid}' polls sensor '{sensor}', but no matching component is resolved in the hardware graph",
+                            f"firmware.modules.{mid}.sensor",
+                            sensor=sensor,
+                            known_components=sorted(component_labels),
+                        ))
+                poll_interval = mod.get("poll_interval_ms")
+                if poll_interval is not None and int(poll_interval) < 1:
+                    failures.append(_failure(
+                        FailureCategory.FIRMWARE_ERROR,
+                        "invalid_poll_interval",
+                        f"Module '{mid}' poll_interval_ms must be >= 1",
+                        f"firmware.modules.{mid}.poll_interval_ms",
+                    ))
 
             # Render to get stack info
             try:
@@ -731,6 +1207,19 @@ def _rail_nominal_voltages(spec: dict[str, Any]) -> dict[str, float]:
             values[name] = float(rail["voltage"])
         elif isinstance(rail.get("voltage_min"), (int, float)) and isinstance(rail.get("voltage_max"), (int, float)):
             values[name] = (float(rail["voltage_min"]) + float(rail["voltage_max"])) / 2.0
+    return values
+
+
+def _rail_current_peaks(spec: dict[str, Any]) -> dict[str, float]:
+    values: dict[str, float] = {}
+    battery = spec.get("system", {}).get("supply", {}).get("battery", {})
+    if isinstance(battery.get("pack_current_peak_a"), (int, float)):
+        for name in ("VBAT", "VBAT_RAW", "VBAT_FUSED", "VSYS", "USB_VBUS"):
+            values[name] = float(battery["pack_current_peak_a"])
+    for rail in spec.get("system", {}).get("supply", {}).get("rails", []):
+        name = rail.get("name")
+        if name and isinstance(rail.get("current_peak_a"), (int, float)):
+            values[name] = float(rail["current_peak_a"])
     return values
 
 

@@ -19,15 +19,15 @@ Design constraints (intentional, to keep the feature credible):
 * Courtyard extents are coarse estimates. Native ERC/DRC and the mechanical
   interference gate remain authoritative for manufacturability; this check is a
   proposal-level sanity layer.
-* Constraints we cannot ground in real data (decoupling cap -> IC association is
-  not present in the netlist) are represented as structured, *unenforced*
-  constraints with provenance, not faked.
+* Constraints we cannot ground in real data are represented as structured,
+  *unenforced* constraints with provenance, not faked. Decoupling proximity is
+  enforced only when the generated graph names the target IC.
 """
 
 from __future__ import annotations
 
 import math
-from dataclasses import asdict, dataclass, field
+from dataclasses import asdict, dataclass, field, replace
 from typing import Any
 
 from .board_layout import component_positions, placement_sources
@@ -54,6 +54,7 @@ MAX_HIGH_CURRENT_CHAIN_STEP_MM = 35.0
 RF_EDGE_DISTANCE_MAX_MM = 8.0
 RF_NOISY_COMPONENT_KEEP_OUT_MM = 10.0
 USB_ESD_MAX_CONNECTOR_DISTANCE_MM = 15.0
+MAX_DECOUPLING_TARGET_DISTANCE_MM = 12.0
 RF_NOISY_CATEGORIES = {"charger", "regulator", "efuse", "reverse_polarity", "safety_gate", "motor_io"}
 RF_CONSTRAINT_MARKERS = {
     "ble_mcu",
@@ -106,6 +107,9 @@ class PlacementProposal:
     board_height_mm: float
     placements: dict[str, Placement] = field(default_factory=dict)
     constraints: list[PlacementConstraint] = field(default_factory=list)
+    cost: float = 0.0
+    cost_breakdown: dict[str, float] = field(default_factory=dict)
+    solver_iterations: int = 0
 
     def to_dict(self) -> dict[str, Any]:
         return {
@@ -113,6 +117,13 @@ class PlacementProposal:
             "board_height_mm": self.board_height_mm,
             "placements": {ref: placement.to_dict() for ref, placement in self.placements.items()},
             "constraints": [constraint.to_dict() for constraint in self.constraints],
+            "cost": self.cost,
+            "cost_breakdown": self.cost_breakdown,
+            "solver": {
+                "method": "deterministic_constraint_cost_search",
+                "iterations": self.solver_iterations,
+                "authoritative": False,
+            },
         }
 
 
@@ -241,7 +252,8 @@ def propose_placement(spec: dict[str, Any], graph: dict[str, Any]) -> PlacementP
         )
 
     constraints = _derive_constraints(spec, graph) + agent_constraint_list
-    return PlacementProposal(width, height, placements, constraints)
+    placements, cost, cost_breakdown, iterations = _solve_placement_cost(placements, constraints, graph, spec, width, height)
+    return PlacementProposal(width, height, placements, constraints, cost=cost, cost_breakdown=cost_breakdown, solver_iterations=iterations)
 
 
 def _derive_constraints(spec: dict[str, Any], graph: dict[str, Any]) -> list[PlacementConstraint]:
@@ -294,20 +306,24 @@ def _derive_constraints(spec: dict[str, Any], graph: dict[str, Any]) -> list[Pla
             )
         )
 
-    # Decoupling proximity: the constraint type is real, but the netlist does not
-    # model which IC each decoupling cap serves, so enforcement is deferred rather
-    # than faked with a circular "nearest IC on the shared net" rule.
+    # Decoupling proximity is enforced only when the generated graph carries an
+    # explicit target. Generic rail caps remain visible as deferred constraints.
     for item in graph.get("components", []):
         if item.get("category") == "decoupling":
             power_nets = sorted({pin["net"] for pin in item.get("pins", []) if pin.get("net")})
+            target_ref = item.get("decoupling_target_ref")
             constraints.append(
                 PlacementConstraint(
                     kind="decoupling_proximity",
                     target_ref=item["ref"],
-                    params={"power_nets": power_nets},
-                    derived_from="graph decoupling component pins",
-                    enforced=False,
-                    rationale="Cap-to-IC association is not modelled in the netlist; proximity enforcement is deferred.",
+                    params={
+                        "power_nets": power_nets,
+                        "target_ref": target_ref,
+                        "max_distance_mm": MAX_DECOUPLING_TARGET_DISTANCE_MM,
+                    },
+                    derived_from="graph decoupling component pins + decoupling_target_ref",
+                    enforced=bool(target_ref),
+                    rationale="" if target_ref else "Cap-to-IC association is not modelled in the netlist; proximity enforcement is deferred.",
                 )
             )
 
@@ -327,6 +343,283 @@ def _derive_constraints(spec: dict[str, Any], graph: dict[str, Any]) -> list[Pla
             )
 
     return constraints
+
+
+def _solve_placement_cost(
+    placements: dict[str, Placement],
+    constraints: list[PlacementConstraint],
+    graph: dict[str, Any],
+    spec: dict[str, Any],
+    width: float,
+    height: float,
+) -> tuple[dict[str, Placement], float, dict[str, float], int]:
+    """Run a deterministic local-search pass over physically meaningful candidates.
+
+    This is intentionally not an autorouter or native PCB placer. It only moves a
+    component when a generated candidate lowers explicit, auditable constraint
+    costs enough to overcome a small movement penalty.
+    """
+    solved = dict(placements)
+    original = dict(placements)
+    iterations = 0
+    best_cost, _best_breakdown = _placement_cost(solved, original, constraints, graph, spec, width, height)
+
+    for _ in range(3):
+        improved = False
+        for ref in sorted(solved):
+            current = solved[ref]
+            ref_best = current
+            ref_best_cost = best_cost
+            for x, y, source, rationale in _candidate_positions_for_ref(ref, solved, constraints, graph, spec, width, height):
+                candidate = replace(
+                    current,
+                    x_mm=round(_clamp(x, 2.0, max(2.0, width - 2.0)), 3),
+                    y_mm=round(_clamp(y, 2.0, max(2.0, height - 2.0)), 3),
+                    source=source,
+                    rationale=rationale,
+                )
+                trial = dict(solved)
+                trial[ref] = candidate
+                trial_cost, _ = _placement_cost(trial, original, constraints, graph, spec, width, height)
+                if trial_cost + 1e-6 < ref_best_cost:
+                    ref_best = candidate
+                    ref_best_cost = trial_cost
+            if ref_best is not current:
+                solved[ref] = ref_best
+                best_cost = ref_best_cost
+                improved = True
+                iterations += 1
+        if not improved:
+            break
+
+    final_cost, final_breakdown = _placement_cost(solved, original, constraints, graph, spec, width, height)
+    return solved, round(final_cost, 6), {key: round(value, 6) for key, value in sorted(final_breakdown.items())}, iterations
+
+
+def _candidate_positions_for_ref(
+    ref: str,
+    placements: dict[str, Placement],
+    constraints: list[PlacementConstraint],
+    graph: dict[str, Any],
+    spec: dict[str, Any],
+    width: float,
+    height: float,
+) -> list[tuple[float, float, str, str]]:
+    current = placements[ref]
+    candidates: list[tuple[float, float, str, str]] = [
+        (current.x_mm, current.y_mm, current.source, current.rationale),
+    ]
+
+    for constraint in constraints:
+        if constraint.target_ref != ref:
+            continue
+        if constraint.kind == "connector_edge":
+            side = constraint.params.get("side", "front")
+            edge = min(float(constraint.params.get("max_edge_distance_mm", 6.0)) * 0.5, 3.0)
+            candidates.append((*_edge_aligned_position(current, side, width, height, edge), "solver_connector_edge", f"Cost solver aligned {ref} to the {side} connector edge."))
+        elif constraint.kind == "decoupling_proximity" and constraint.enforced:
+            target = placements.get(constraint.params.get("target_ref"))
+            if target is not None:
+                for dx, dy in ((3.0, 0.0), (-3.0, 0.0), (0.0, 3.0), (0.0, -3.0)):
+                    candidates.append((target.x_mm + dx, target.y_mm + dy, "solver_decoupling_proximity", f"Cost solver placed {ref} near decoupling target {target.ref}."))
+        elif constraint.kind == "agent_adjacent_to":
+            target = placements.get(constraint.params.get("target"))
+            if target is not None:
+                max_d = float(constraint.params.get("max_distance_mm", 5.0))
+                offset = max(1.5, min(max_d * 0.7, 5.0))
+                for dx, dy in ((offset, 0.0), (-offset, 0.0), (0.0, offset), (0.0, -offset)):
+                    candidates.append((target.x_mm + dx, target.y_mm + dy, "solver_agent_adjacent_to", f"Cost solver satisfied adjacent_to relation with {target.ref}."))
+
+    components = {component.get("ref"): component for component in graph.get("components", []) if component.get("ref")}
+    component = components.get(ref, {})
+    basis = graph.get("design_basis", {})
+    is_rf = (
+        RF_CONSTRAINT_MARKERS & set(component.get("constraints", []))
+        or (component.get("category") == "mcu" and basis.get("integral_pcb_antenna_required"))
+    )
+    if is_rf:
+        edge = min(RF_EDGE_DISTANCE_MAX_MM * 0.5, 4.0)
+        for x, y in (
+            (current.x_mm, edge),
+            (current.x_mm, height - edge),
+            (edge, current.y_mm),
+            (width - edge, current.y_mm),
+        ):
+            candidates.append((x, y, "solver_rf_edge_keepout", f"Cost solver moved {ref} toward a board edge for integral antenna keepout."))
+
+    if component.get("category") in RF_NOISY_CATEGORIES:
+        for rf_ref, rf_component in components.items():
+            if rf_ref == ref or rf_ref not in placements:
+                continue
+            rf_is_constrained = (
+                RF_CONSTRAINT_MARKERS & set(rf_component.get("constraints", []))
+                or (rf_component.get("category") == "mcu" and basis.get("integral_pcb_antenna_required"))
+            )
+            if rf_is_constrained:
+                candidates.append(_away_candidate(current, placements[rf_ref], RF_NOISY_COMPONENT_KEEP_OUT_MM + 2.0, "solver_rf_noise_keepout", f"Cost solver separated noisy component {ref} from RF component {rf_ref}."))
+
+    if component.get("category") in THERMAL_RISK_CATEGORIES:
+        for sensitive_ref, sensitive_component in components.items():
+            if sensitive_ref == ref or sensitive_ref not in placements:
+                continue
+            if sensitive_component.get("category") in SENSITIVE_CATEGORIES:
+                candidates.append(_away_candidate(current, placements[sensitive_ref], MIN_THERMAL_TO_SENSITIVE_MM + 2.0, "solver_thermal_zone", f"Cost solver separated thermal-risk component {ref} from sensitive component {sensitive_ref}."))
+
+    if component.get("category") in {"usb_esd", "tvs"} and {"USB_DP_RAW", "USB_DM_RAW", "USB_DP", "USB_DM"} <= _component_nets(component):
+        usb_connectors = [
+            other_ref for other_ref, other in components.items()
+            if other_ref in placements and {"USB_DP_RAW", "USB_DM_RAW"} <= _component_nets(other) and not {"USB_DP", "USB_DM"} & _component_nets(other)
+        ]
+        for connector_ref in usb_connectors:
+            connector = placements[connector_ref]
+            candidates.append((connector.x_mm, connector.y_mm + 4.0, "solver_usb_esd_connector_side", f"Cost solver placed {ref} near USB connector {connector_ref}."))
+
+    if _declared_peak_current_a(spec) >= HIGH_CURRENT_THRESHOLD_A and ref in _high_current_chain_refs(graph):
+        chain = _high_current_chain_refs(graph)
+        index = chain.index(ref)
+        neighbors = [chain[i] for i in (index - 1, index + 1) if 0 <= i < len(chain) and chain[i] in placements]
+        if neighbors:
+            avg_x = sum(placements[item].x_mm for item in neighbors) / len(neighbors)
+            avg_y = sum(placements[item].y_mm for item in neighbors) / len(neighbors)
+            candidates.append((avg_x, avg_y, "solver_high_current_loop", f"Cost solver shortened high-current chain around {ref}."))
+
+    return candidates
+
+
+def _placement_cost(
+    placements: dict[str, Placement],
+    original: dict[str, Placement],
+    constraints: list[PlacementConstraint],
+    graph: dict[str, Any],
+    spec: dict[str, Any],
+    width: float,
+    height: float,
+) -> tuple[float, dict[str, float]]:
+    components = {component.get("ref"): component for component in graph.get("components", []) if component.get("ref")}
+    basis = graph.get("design_basis", {})
+    breakdown: dict[str, float] = {}
+
+    def add(kind: str, value: float) -> None:
+        if value > 0:
+            breakdown[kind] = breakdown.get(kind, 0.0) + value
+
+    for ref, placement in placements.items():
+        if not (0.0 <= placement.x_mm <= width and 0.0 <= placement.y_mm <= height):
+            add("off_board", 10000.0)
+        origin = original.get(ref)
+        if origin is not None:
+            add("movement", _placement_distance_mm(placement, origin) * 0.02)
+
+    for constraint in constraints:
+        placement = placements.get(constraint.target_ref) if constraint.target_ref else None
+        if constraint.kind == "connector_edge" and placement is not None:
+            distance, span = _edge_distance(placement, constraint.params.get("side", "front"), width, height)
+            max_edge = float(constraint.params.get("max_edge_distance_mm", 6.0))
+            add("connector_wrong_side", max(0.0, distance - span / 2.0) * 200.0)
+            add("connector_edge", max(0.0, distance - max_edge) * 15.0)
+        elif constraint.kind == "decoupling_proximity" and constraint.enforced and placement is not None:
+            target = placements.get(constraint.params.get("target_ref"))
+            if target is None:
+                add("decoupling_target_missing", 1000.0)
+            else:
+                distance = _placement_distance_mm(placement, target)
+                add("decoupling_proximity", max(0.0, distance - float(constraint.params.get("max_distance_mm", MAX_DECOUPLING_TARGET_DISTANCE_MM))) * 25.0)
+        elif constraint.kind == "agent_adjacent_to" and placement is not None:
+            target = placements.get(constraint.params.get("target"))
+            if target is not None:
+                distance = _placement_distance_mm(placement, target)
+                add("agent_adjacent_to", max(0.0, distance - float(constraint.params.get("max_distance_mm", 5.0))) * 50.0)
+
+    rf_refs = [
+        ref for ref, component in components.items()
+        if ref in placements and (
+            RF_CONSTRAINT_MARKERS & set(component.get("constraints", []))
+            or (component.get("category") == "mcu" and basis.get("integral_pcb_antenna_required"))
+        )
+    ]
+    noisy_refs = [
+        ref for ref, component in components.items()
+        if ref in placements and component.get("category") in RF_NOISY_CATEGORIES
+    ]
+    for rf_ref in rf_refs:
+        rf = placements[rf_ref]
+        edge_distance = min(rf.x_mm, width - rf.x_mm, rf.y_mm, height - rf.y_mm)
+        add("rf_edge_keepout", max(0.0, edge_distance - RF_EDGE_DISTANCE_MAX_MM) * 30.0)
+        for noisy_ref in noisy_refs:
+            if noisy_ref == rf_ref:
+                continue
+            distance = _placement_distance_mm(rf, placements[noisy_ref])
+            add("rf_noisy_keepout", max(0.0, RF_NOISY_COMPONENT_KEEP_OUT_MM - distance) * 40.0)
+
+    thermal_refs = [
+        ref for ref, component in components.items()
+        if ref in placements and component.get("category") in THERMAL_RISK_CATEGORIES
+    ]
+    sensitive_refs = [
+        ref for ref, component in components.items()
+        if ref in placements and component.get("category") in SENSITIVE_CATEGORIES
+    ]
+    for hot_ref in thermal_refs:
+        for sensitive_ref in sensitive_refs:
+            distance = _placement_distance_mm(placements[hot_ref], placements[sensitive_ref])
+            add("thermal_zone", max(0.0, MIN_THERMAL_TO_SENSITIVE_MM - distance) * 20.0)
+
+    usb_connector_refs = [
+        ref for ref, component in components.items()
+        if ref in placements and {"USB_DP_RAW", "USB_DM_RAW"} <= _component_nets(component) and not {"USB_DP", "USB_DM"} & _component_nets(component)
+    ]
+    usb_esd_refs = [
+        ref for ref, component in components.items()
+        if ref in placements and component.get("category") in {"usb_esd", "tvs"} and {"USB_DP_RAW", "USB_DM_RAW", "USB_DP", "USB_DM"} <= _component_nets(component)
+    ]
+    for esd_ref in usb_esd_refs:
+        connector_distances = [_placement_distance_mm(placements[esd_ref], placements[connector_ref]) for connector_ref in usb_connector_refs]
+        if connector_distances:
+            add("usb_esd_connector_distance", max(0.0, min(connector_distances) - USB_ESD_MAX_CONNECTOR_DISTANCE_MM) * 25.0)
+
+    if _declared_peak_current_a(spec) >= HIGH_CURRENT_THRESHOLD_A:
+        chain = _high_current_chain_refs(graph)
+        for left, right in zip(chain, chain[1:]):
+            if left in placements and right in placements:
+                distance = _placement_distance_mm(placements[left], placements[right])
+                add("high_current_loop", max(0.0, distance - MAX_HIGH_CURRENT_CHAIN_STEP_MM) * 10.0)
+
+    for constraint in constraints:
+        if constraint.kind == "mounting_hole_keepout":
+            hx = constraint.params["x_mm"]
+            hy = constraint.params["y_mm"]
+            radius = constraint.params["keepout_radius_mm"]
+            for placement in placements.values():
+                dist = math.hypot(placement.x_mm - hx, placement.y_mm - hy)
+                if dist < radius:
+                    add("mounting_hole_keepout", (radius - dist) * 500.0)
+
+    return sum(breakdown.values()), breakdown
+
+
+def _edge_aligned_position(placement: Placement, side: str, width: float, height: float, edge_distance: float) -> tuple[float, float]:
+    if side == "front":
+        return placement.x_mm, edge_distance
+    if side == "rear":
+        return placement.x_mm, height - edge_distance
+    if side == "left":
+        return edge_distance, placement.y_mm
+    if side == "right":
+        return width - edge_distance, placement.y_mm
+    return placement.x_mm, edge_distance
+
+
+def _away_candidate(placement: Placement, obstacle: Placement, distance: float, source: str, rationale: str) -> tuple[float, float, str, str]:
+    dx = placement.x_mm - obstacle.x_mm
+    dy = placement.y_mm - obstacle.y_mm
+    norm = math.hypot(dx, dy)
+    if norm < 1e-6:
+        dx, dy, norm = 1.0, 0.0, 1.0
+    return obstacle.x_mm + dx / norm * distance, obstacle.y_mm + dy / norm * distance, source, rationale
+
+
+def _clamp(value: float, lower: float, upper: float) -> float:
+    return max(lower, min(value, upper))
 
 
 def _rect_overlap(a: Placement, b: Placement) -> bool:
@@ -493,13 +786,39 @@ def check_placement(proposal: PlacementProposal, graph: dict[str, Any]) -> GateR
                         side=side,
                         axis=axis,
                     )
-        elif constraint.kind == "decoupling_proximity" and not constraint.enforced:
-            record(
-                "info",
-                "decoupling_proximity_deferred",
-                f"{constraint.target_ref} decoupling proximity not enforced: {constraint.rationale}",
-                ref=constraint.target_ref,
-            )
+        elif constraint.kind == "decoupling_proximity":
+            if not constraint.enforced:
+                record(
+                    "info",
+                    "decoupling_proximity_deferred",
+                    f"{constraint.target_ref} decoupling proximity not enforced: {constraint.rationale}",
+                    ref=constraint.target_ref,
+                )
+                continue
+            decap = placements.get(constraint.target_ref)
+            target_ref = constraint.params.get("target_ref")
+            target = placements.get(target_ref) if target_ref else None
+            if decap is None or target is None:
+                record(
+                    "error",
+                    "decoupling_target_missing",
+                    f"{constraint.target_ref} declares missing decoupling target {target_ref}",
+                    ref=constraint.target_ref,
+                    target=target_ref,
+                )
+                continue
+            distance = math.hypot(decap.x_mm - target.x_mm, decap.y_mm - target.y_mm)
+            max_d = float(constraint.params.get("max_distance_mm", MAX_DECOUPLING_TARGET_DISTANCE_MM))
+            if distance > max_d:
+                record(
+                    "error",
+                    "decoupling_too_far_from_target",
+                    f"{constraint.target_ref} is {distance:.2f} mm from decoupling target {target_ref} (limit {max_d} mm)",
+                    ref=constraint.target_ref,
+                    target=target_ref,
+                    distance_mm=round(distance, 3),
+                    max_distance_mm=max_d,
+                )
 
     # Advisory thermal spacing between power components.
     thermal_refs = [c.target_ref for c in proposal.constraints if c.kind == "thermal_spacing"]
@@ -526,6 +845,9 @@ def check_placement(proposal: PlacementProposal, graph: dict[str, Any]) -> GateR
         "authoritative": False,
         "placements": len(placements),
         "constraints": len(proposal.constraints),
+        "cost": proposal.cost,
+        "cost_breakdown": proposal.cost_breakdown,
+        "solver_iterations": proposal.solver_iterations,
         "errors": len(blocking),
         "warnings": sum(1 for failure in failures if failure.severity == "warning"),
         "finding_counts": counts,

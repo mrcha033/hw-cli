@@ -22,13 +22,16 @@ _BOARD_EXTRA_MODULES: dict[str, list[str]] = {
     "nordic": ["hal_nordic"],
     "nrf52": ["hal_nordic"],
     "nrf52840": ["hal_nordic"],
+    "nrf52840dk": ["hal_nordic"],
     "nrf5340": ["hal_nordic"],
 }
 
 
 def _board_family(board: str) -> str:
     """Return a normalised family prefix for module selection."""
-    return board.lower().split("_")[0]
+    # Strip Zephyr 4.x board revision suffix (e.g. "nrf52840dk/nrf52840" → "nrf52840dk")
+    base = board.lower().split("/")[0]
+    return base.split("_")[0] if "_" in base else base
 
 
 class ZephyrBackend:

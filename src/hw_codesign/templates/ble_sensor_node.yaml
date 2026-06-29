@@ -69,7 +69,7 @@ mechanical:
     - {ref: J1, side: front, opening_mm: [10.0, 7.0], center_z_mm: 6.0, position_tolerance_mm: 0.5}
 firmware:
   framework: zephyr
-  target: nrf52840dk
+  target: nrf52840dk/nrf52840
   outputs: [devicetree_overlay, pinmap, driver_stubs, bringup_tests]
 manufacturing:
   pcb:

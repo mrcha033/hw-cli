@@ -96,7 +96,7 @@ mechanical:
     - {ref: J22, side: right, opening_mm: [12.0, 10.0], center_z_mm: 11.0, position_tolerance_mm: 0.5}
 firmware:
   framework: zephyr
-  target: stm32h7
+  target: nucleo_h743zi/stm32h743xx
   outputs: [devicetree_overlay, pinmap, board_definition, driver_stubs, bringup_tests]
   modules:
     - id: motor_estop_watchdog

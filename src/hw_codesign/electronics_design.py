@@ -139,8 +139,8 @@ def build_sensor_data_logger_graph(spec: dict[str, Any]) -> dict[str, Any]:
         component("R1", "pullup", "4K7", "RC0603FR-074K7L", "R0603", [pin(1, "VCC", "V3V3", "passive"), pin(2, "SCL", "I2C_IMU_SCL", "passive")], manufacturer="Yageo"),
         component("R2", "pullup", "4K7", "RC0603FR-074K7L", "R0603", [pin(1, "VCC", "V3V3", "passive"), pin(2, "SDA", "I2C_IMU_SDA", "passive")], manufacturer="Yageo"),
         component("R3", "pullup", "4K7", "RC0603FR-074K7L", "R0603", [pin(1, "VCC", "V3V3", "passive"), pin(2, "EN", "ESP_EN", "passive")], manufacturer="Yageo"),
-        component("C1", "decoupling", "100nF", "GRM188R71C104KA01D", "C0603", [pin(1, "VCC", "V3V3", "passive"), pin(2, "GND", "GND", "ground")], manufacturer="Murata"),
-        component("C2", "decoupling", "100nF", "GRM188R71C104KA01D", "C0603", [pin(1, "VCC", "V3V3", "passive"), pin(2, "GND", "GND", "ground")], manufacturer="Murata"),
+        component("C1", "decoupling", "100nF", "GRM188R71C104KA01D", "C0603", [pin(1, "VCC", "V3V3", "passive"), pin(2, "GND", "GND", "ground")], manufacturer="Murata", decoupling_target_ref="U1"),
+        component("C2", "decoupling", "100nF", "GRM188R71C104KA01D", "C0603", [pin(1, "VCC", "V3V3", "passive"), pin(2, "GND", "GND", "ground")], manufacturer="Murata", decoupling_target_ref="U1"),
         component("C9", "bulk_cap", "22uF", "GRM31CR61E226ME15L", "C1206", [pin(1, "VCC", "V3V3", "passive"), pin(2, "GND", "GND", "ground")], manufacturer="Murata"),
     ]
     net_classes = {"GND": "ground", "USB_VBUS": "power", "USB_FUSED": "power", "USB_PROT": "power", "V3V3": "power", "USB_DP": "usb", "USB_DM": "usb", "USB_DP_RAW": "usb", "USB_DM_RAW": "usb"}
@@ -269,7 +269,7 @@ def build_ble_sensor_node_graph(spec: dict[str, Any]) -> dict[str, Any]:
         component("R3", "led_resistor", "1K", "RC0603FR-071KL", "R0603", [pin(1, "A", "V3V3", "passive"), pin(2, "K", "LED_BLE", "passive")], manufacturer="Yageo"),
         component("R4", "charge_set", "10K", "RC0603FR-0710KL", "R0603", [pin(1, "A", "CHG_ISET", "passive"), pin(2, "GND", "GND", "passive")], manufacturer="Yageo"),
         component("C1", "decoupling", "100nF", "GRM188R71C104KA01D", "C0603", [pin(1, "VCC", "V3V3", "passive"), pin(2, "GND", "GND", "ground")], manufacturer="Murata"),
-        component("C2", "decoupling", "100nF", "GRM188R71C104KA01D", "C0603", [pin(1, "VCC", "V3V3", "passive"), pin(2, "GND", "GND", "ground")], manufacturer="Murata"),
+        component("C2", "decoupling", "100nF", "GRM188R71C104KA01D", "C0603", [pin(1, "VCC", "V3V3", "passive"), pin(2, "GND", "GND", "ground")], manufacturer="Murata", decoupling_target_ref="U1"),
         component("C3", "bulk_cap", "10uF", "GRM188R60J106ME47D", "C0603", [pin(1, "VCC", "VBAT", "passive"), pin(2, "GND", "GND", "ground")], manufacturer="Murata"),
         component("C4", "bulk_cap", "10uF", "GRM188R60J106ME47D", "C0603", [pin(1, "VCC", "V3V3", "passive"), pin(2, "GND", "GND", "ground")], manufacturer="Murata"),
         component("D1", "tvs", "USB ESD", "USBLC6-2SC6", "SOT23-6", [
