@@ -9,15 +9,29 @@ import kicad_sch_api as ksa
 
 UUID_PATTERN = re.compile(r"[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}")
 
+# Minimum vertical gap (mm) between the bottom of one symbol and the top of the next.
+_SYMBOL_GAP_MM = 5.08
+
 
 def generate_kicad_schematic(name: str, graph: dict[str, Any], output: Path) -> None:
     schematic = ksa.create_schematic(name)
     components = sorted(graph["components"], key=lambda item: _reference_key(item["ref"]))
     ordinary = [item for item in components if item["ref"] != "U1"]
-    positions = {
-        item["ref"]: (35.0 + (index // 10) * 52.0, 22.0 + (index % 10) * 30.48)
-        for index, item in enumerate(ordinary)
-    }
+
+    # Compute y positions adaptively so symbols never overlap.
+    # kicad_sch_api places Conn_01xN with pin ceil(N/2) at the passed y-coordinate.
+    # Pin 1 is above that center by (ceil(N/2) - 1) * 2.54 mm.
+    positions: dict[str, tuple[float, float]] = {}
+    y_cursor = 22.0  # nominal y of pin-1 of the first symbol
+    for index, item in enumerate(ordinary):
+        n = len(item["pins"])
+        center_pin = (n + 1) // 2          # ceil(N/2) — the pin placed at passed y
+        above_mm = (center_pin - 1) * 2.54  # distance from pin-1 to center
+        col = index // 10
+        x = 35.0 + col * 52.0
+        positions[item["ref"]] = (x, y_cursor + above_mm)
+        # Advance cursor past the last pin of this symbol plus the gap.
+        y_cursor += (n - 1) * 2.54 + _SYMBOL_GAP_MM
     positions["U1"] = (282.0, 105.0)
 
     for item in components:
@@ -63,11 +77,6 @@ def _normalize_uuids(path: Path, namespace: str) -> None:
         return replacements[source]
 
     path.write_text(UUID_PATTERN.sub(replace, text), encoding="utf-8")
-
-
-def _symbol_pin_count(pins: list[dict[str, Any]]) -> int:
-    numeric = [int(str(pin["number"])) for pin in pins if str(pin.get("number", "")).isdigit()]
-    return max(numeric, default=len(pins))
 
 
 def _reference_key(reference: str) -> tuple[str, int]:

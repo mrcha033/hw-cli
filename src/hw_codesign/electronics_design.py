@@ -1209,11 +1209,11 @@ def build_rp2040_usb_device_graph(spec: dict[str, Any]) -> dict[str, Any]:
     flash_pins = [
         pin(1, "~CS",   "QSPI_CS",   "input"),
         pin(2, "IO1",   "QSPI_MISO", "bidirectional"),
-        pin(3, "~WP",   "V3V3",      "power_in"),
+        pin(3, "~WP",   "QSPI_D2",   "bidirectional"),
         pin(4, "GND",   "GND",       "ground"),
         pin(5, "IO0",   "QSPI_MOSI", "bidirectional"),
         pin(6, "CLK",   "QSPI_CLK",  "input"),
-        pin(7, "~HOLD", "V3V3",      "power_in"),
+        pin(7, "~HOLD", "QSPI_D3",   "bidirectional"),
         pin(8, "VCC",   "V3V3",      "power_in"),
     ]
     xtal_pins = [

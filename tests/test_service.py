@@ -7,6 +7,7 @@ import pytest
 
 from hw_codesign.backends.freerouting import FreeroutingBackend
 from hw_codesign.errors import UnsafeChangeError
+from hw_codesign.schematic_generator import generate_kicad_schematic
 
 
 def test_generation_is_deterministic_and_cross_domain(service, project):
@@ -38,6 +39,55 @@ def test_robotics_controller_kicad_artifacts_keep_four_layer_stackup(service, pr
     assert '(31 "B.Cu" signal)' in board
     assert '(net_name "GND") (layer "In1.Cu")' in board
     assert '(net_name "V5") (layer "In2.Cu")' in board
+
+
+def test_rp2040_qspi_flash_uses_all_quad_data_lines(service):
+    project = "rp2040_usb_device_check"
+    service.create_project(project, template="rp2040_usb_device")
+    service.generate_electronics_only(project)
+    path = service.workspace.require_project(project)
+    graph = json.loads((path / "electronics" / "generated" / "electrical_graph.json").read_text(encoding="utf-8"))
+
+    flash = next(item for item in graph["components"] if item["ref"] == "U3")
+    flash_pins = {pin["number"]: pin for pin in flash["pins"]}
+    assert flash_pins["3"]["name"] == "~WP"
+    assert flash_pins["3"]["net"] == "QSPI_D2"
+    assert flash_pins["3"]["role"] == "bidirectional"
+    assert flash_pins["7"]["name"] == "~HOLD"
+    assert flash_pins["7"]["net"] == "QSPI_D3"
+    assert flash_pins["7"]["role"] == "bidirectional"
+
+    nets = {net["name"]: set(net["connected_pins"]) for net in graph["nets"]}
+    assert {"U2.2", "U3.3"} <= nets["QSPI_D2"]
+    assert {"U2.1", "U3.7"} <= nets["QSPI_D3"]
+
+
+def test_kicad_schematic_preserves_duplicate_power_pins(tmp_path):
+    graph = {
+        "components": [{
+            "ref": "J1",
+            "value": "DUPLICATE_POWER_PINS",
+            "footprint": "Connector_Generic:Conn_01x04",
+            "mpn": "TEST",
+            "manufacturer": "test",
+            "supplier_sku": "TEST",
+            "pins": [
+                {"number": "1", "name": "GND1", "net": "GND"},
+                {"number": "2", "name": "GND2", "net": "GND"},
+                {"number": "3", "name": "VDD1", "net": "V3V3"},
+                {"number": "4", "name": "VDD2", "net": "V3V3"},
+            ],
+        }],
+        "nets": [{"name": "GND"}, {"name": "V3V3"}],
+    }
+    output = tmp_path / "duplicate_power_pins.kicad_sch"
+
+    generate_kicad_schematic("duplicate_power_pins", graph, output)
+
+    text = output.read_text(encoding="utf-8")
+    assert "Connector_Generic:Conn_01x04" in text
+    assert text.count('"GND"') >= 2
+    assert text.count('"V3V3"') >= 2
 
 
 def test_freerouting_log_parser_distinguishes_complete_and_incomplete():
