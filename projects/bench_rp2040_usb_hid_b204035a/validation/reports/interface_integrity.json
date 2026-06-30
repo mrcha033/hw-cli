@@ -1,34 +1,15 @@
 {
   "artifacts": [],
   "backend": {},
-  "failures": [
-    {
-      "category": "ELECTRICAL_SEMANTIC_ERROR",
-      "code": "usb_differential_pair_incomplete",
-      "details": {
-        "missing_nets": [
-          "USB_DM_RAW",
-          "USB_DP_RAW"
-        ],
-        "present_nets": [
-          "USB_DM",
-          "USB_DP"
-        ]
-      },
-      "message": "USB interface is missing raw or protected D+/D- nets",
-      "path": "electronics.nets",
-      "requires_user_decision": false,
-      "severity": "error"
-    }
-  ],
+  "failures": [],
   "gate": "interface_integrity",
   "metrics": {
     "can_pair_present": false,
-    "errors": 1,
+    "errors": 0,
     "i2c_nets_checked": 0,
-    "usb_bridge_present": false,
-    "usb_nets_checked": 2,
+    "usb_bridge_present": true,
+    "usb_nets_checked": 4,
     "warnings": 0
   },
-  "status": "fail"
+  "status": "pass"
 }

@@ -95,27 +95,43 @@
       "pins": [
         {
           "mcu_pin": null,
-          "name": "A",
-          "net": "USB_DP",
+          "name": "DP_IN",
+          "net": "USB_DP_RAW",
           "number": "1",
           "role": "bidirectional",
           "voltage_domain": null
         },
         {
           "mcu_pin": null,
-          "name": "K",
-          "net": "GND",
+          "name": "DP_OUT",
+          "net": "USB_DP",
           "number": "2",
-          "role": "ground",
-          "voltage_domain": "GND"
+          "role": "bidirectional",
+          "voltage_domain": null
         },
         {
           "mcu_pin": null,
-          "name": "A2",
-          "net": "USB_DM",
+          "name": "DM_IN",
+          "net": "USB_DM_RAW",
           "number": "3",
           "role": "bidirectional",
           "voltage_domain": null
+        },
+        {
+          "mcu_pin": null,
+          "name": "DM_OUT",
+          "net": "USB_DM",
+          "number": "4",
+          "role": "bidirectional",
+          "voltage_domain": null
+        },
+        {
+          "mcu_pin": null,
+          "name": "GND",
+          "net": "GND",
+          "number": "5",
+          "role": "ground",
+          "voltage_domain": "GND"
         }
       ],
       "ref": "D1",
@@ -140,7 +156,7 @@
         {
           "mcu_pin": null,
           "name": "DP",
-          "net": "USB_DP",
+          "net": "USB_DP_RAW",
           "number": "2",
           "role": "bidirectional",
           "voltage_domain": null
@@ -148,7 +164,7 @@
         {
           "mcu_pin": null,
           "name": "DM",
-          "net": "USB_DM",
+          "net": "USB_DM_RAW",
           "number": "3",
           "role": "bidirectional",
           "voltage_domain": null
@@ -603,8 +619,8 @@
           "component_ref": "D1",
           "component_role": "tvs",
           "mcu_pin": null,
-          "pin_name": "K",
-          "pin_number": "2",
+          "pin_name": "GND",
+          "pin_number": "5",
           "pin_role": "ground"
         },
         {
@@ -915,16 +931,8 @@
           "component_ref": "D1",
           "component_role": "tvs",
           "mcu_pin": null,
-          "pin_name": "A2",
-          "pin_number": "3",
-          "pin_role": "bidirectional"
-        },
-        {
-          "component_ref": "J1",
-          "component_role": "power_input",
-          "mcu_pin": null,
-          "pin_name": "DM",
-          "pin_number": "3",
+          "pin_name": "DM_OUT",
+          "pin_number": "4",
           "pin_role": "bidirectional"
         },
         {
@@ -941,21 +949,37 @@
       "voltage_domain": "V3V3"
     },
     {
-      "name": "USB_DP",
+      "name": "USB_DM_RAW",
       "pin_name_connections": [
         {
           "component_ref": "D1",
           "component_role": "tvs",
           "mcu_pin": null,
-          "pin_name": "A",
-          "pin_number": "1",
+          "pin_name": "DM_IN",
+          "pin_number": "3",
           "pin_role": "bidirectional"
         },
         {
           "component_ref": "J1",
           "component_role": "power_input",
           "mcu_pin": null,
-          "pin_name": "DP",
+          "pin_name": "DM",
+          "pin_number": "3",
+          "pin_role": "bidirectional"
+        }
+      ],
+      "required_track_width_mm": 0.15,
+      "signal_class": "usb",
+      "voltage_domain": "V3V3"
+    },
+    {
+      "name": "USB_DP",
+      "pin_name_connections": [
+        {
+          "component_ref": "D1",
+          "component_role": "tvs",
+          "mcu_pin": null,
+          "pin_name": "DP_OUT",
           "pin_number": "2",
           "pin_role": "bidirectional"
         },
@@ -965,6 +989,30 @@
           "mcu_pin": null,
           "pin_name": "USB_DP",
           "pin_number": "12",
+          "pin_role": "bidirectional"
+        }
+      ],
+      "required_track_width_mm": 0.15,
+      "signal_class": "usb",
+      "voltage_domain": "V3V3"
+    },
+    {
+      "name": "USB_DP_RAW",
+      "pin_name_connections": [
+        {
+          "component_ref": "D1",
+          "component_role": "tvs",
+          "mcu_pin": null,
+          "pin_name": "DP_IN",
+          "pin_number": "1",
+          "pin_role": "bidirectional"
+        },
+        {
+          "component_ref": "J1",
+          "component_role": "power_input",
+          "mcu_pin": null,
+          "pin_name": "DP",
+          "pin_number": "2",
           "pin_role": "bidirectional"
         }
       ],
@@ -1273,8 +1321,8 @@
         "y_mm": 5.0
       },
       "D1": {
-        "courtyard_h_mm": 5.196,
-        "courtyard_w_mm": 5.196,
+        "courtyard_h_mm": 6.708,
+        "courtyard_w_mm": 6.708,
         "rationale": "",
         "ref": "D1",
         "rotation_deg": 0.0,

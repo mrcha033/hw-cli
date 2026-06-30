@@ -1170,14 +1170,16 @@ def build_stm32g0_power_monitor_graph(spec: dict[str, Any]) -> dict[str, Any]:
 def build_rp2040_usb_device_graph(spec: dict[str, Any]) -> dict[str, Any]:
     usbc_pins = [
         pin(1, "VBUS", "USB_VBUS", "power_in"),
-        pin(2, "DP",   "USB_DP",   "bidirectional"),
-        pin(3, "DM",   "USB_DM",   "bidirectional"),
+        pin(2, "DP",   "USB_DP_RAW", "bidirectional"),
+        pin(3, "DM",   "USB_DM_RAW", "bidirectional"),
         pin(4, "GND",  "GND",      "ground"),
     ]
     tvs_pins = [
-        pin(1, "A",  "USB_DP", "bidirectional"),
-        pin(2, "K",  "GND",    "ground"),
-        pin(3, "A2", "USB_DM", "bidirectional"),
+        pin(1, "DP_IN",  "USB_DP_RAW", "bidirectional"),
+        pin(2, "DP_OUT", "USB_DP",     "bidirectional"),
+        pin(3, "DM_IN",  "USB_DM_RAW", "bidirectional"),
+        pin(4, "DM_OUT", "USB_DM",     "bidirectional"),
+        pin(5, "GND",    "GND",        "ground"),
     ]
     ldo_pins = [
         pin(1, "VIN",  "USB_VBUS", "power_in"),
@@ -1249,7 +1251,7 @@ def build_rp2040_usb_device_graph(spec: dict[str, Any]) -> dict[str, Any]:
     ]
     net_classes = {
         "GND": "ground", "USB_VBUS": "power", "V3V3": "power",
-        "USB_DP": "usb", "USB_DM": "usb",
+        "USB_DP": "usb", "USB_DM": "usb", "USB_DP_RAW": "usb", "USB_DM_RAW": "usb",
         "QSPI_CLK": "signal", "QSPI_MOSI": "signal", "QSPI_MISO": "signal",
         "QSPI_CS": "signal", "QSPI_D2": "signal", "QSPI_D3": "signal",
         "SWDIO": "signal", "SWCLK": "signal",

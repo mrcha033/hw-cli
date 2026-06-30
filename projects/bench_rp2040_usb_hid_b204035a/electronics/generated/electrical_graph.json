@@ -2087,14 +2087,14 @@
         },
         {
           "name": "DP",
-          "net": "USB_DP",
+          "net": "USB_DP_RAW",
           "number": "2",
           "role": "bidirectional",
           "voltage_domain": null
         },
         {
           "name": "DM",
-          "net": "USB_DM",
+          "net": "USB_DM_RAW",
           "number": "3",
           "role": "bidirectional",
           "voltage_domain": null
@@ -2232,25 +2232,39 @@
       ],
       "pins": [
         {
-          "name": "A",
-          "net": "USB_DP",
+          "name": "DP_IN",
+          "net": "USB_DP_RAW",
           "number": "1",
           "role": "bidirectional",
           "voltage_domain": null
         },
         {
-          "name": "K",
-          "net": "GND",
+          "name": "DP_OUT",
+          "net": "USB_DP",
           "number": "2",
-          "role": "ground",
-          "voltage_domain": "GND"
+          "role": "bidirectional",
+          "voltage_domain": null
         },
         {
-          "name": "A2",
-          "net": "USB_DM",
+          "name": "DM_IN",
+          "net": "USB_DM_RAW",
           "number": "3",
           "role": "bidirectional",
           "voltage_domain": null
+        },
+        {
+          "name": "DM_OUT",
+          "net": "USB_DM",
+          "number": "4",
+          "role": "bidirectional",
+          "voltage_domain": null
+        },
+        {
+          "name": "GND",
+          "net": "GND",
+          "number": "5",
+          "role": "ground",
+          "voltage_domain": "GND"
         }
       ],
       "ref": "D1",
@@ -3806,7 +3820,7 @@
         "C1.2",
         "C2.2",
         "C3.2",
-        "D1.2",
+        "D1.5",
         "J1.4",
         "J2.10",
         "J2.3",
@@ -3908,8 +3922,7 @@
     },
     {
       "connected_pins": [
-        "D1.3",
-        "J1.3",
+        "D1.4",
         "U2.11"
       ],
       "name": "USB_DM",
@@ -3919,11 +3932,30 @@
     },
     {
       "connected_pins": [
-        "D1.1",
-        "J1.2",
+        "D1.3",
+        "J1.3"
+      ],
+      "name": "USB_DM_RAW",
+      "required_track_width_mm": 0.15,
+      "signal_class": "usb",
+      "voltage_domain": "V3V3"
+    },
+    {
+      "connected_pins": [
+        "D1.2",
         "U2.12"
       ],
       "name": "USB_DP",
+      "required_track_width_mm": 0.15,
+      "signal_class": "usb",
+      "voltage_domain": "V3V3"
+    },
+    {
+      "connected_pins": [
+        "D1.1",
+        "J1.2"
+      ],
+      "name": "USB_DP_RAW",
       "required_track_width_mm": 0.15,
       "signal_class": "usb",
       "voltage_domain": "V3V3"
@@ -4110,8 +4142,8 @@
         "y_mm": 5.0
       },
       "D1": {
-        "courtyard_h_mm": 5.196,
-        "courtyard_w_mm": 5.196,
+        "courtyard_h_mm": 6.708,
+        "courtyard_w_mm": 6.708,
         "rationale": "",
         "ref": "D1",
         "rotation_deg": 0.0,

@@ -21,8 +21,8 @@
   "metrics": {
     "footprints": 10,
     "layers": 2,
-    "pads": 56,
-    "segments": 45
+    "pads": 58,
+    "segments": 123
   },
   "status": "fail"
 }

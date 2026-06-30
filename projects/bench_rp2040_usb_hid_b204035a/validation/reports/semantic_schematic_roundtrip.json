@@ -12,8 +12,8 @@
   "metrics": {
     "code_roundtrip_exact": true,
     "components": 10,
-    "nets": 15,
-    "pin_name_connections": 56
+    "nets": 17,
+    "pin_name_connections": 58
   },
   "status": "pass"
 }

@@ -48,6 +48,19 @@
       "category": "RELEASE_ERROR",
       "code": "dependency_prerequisite_not_passed",
       "details": {
+        "gate": "interface_integrity",
+        "prerequisite": "power_tree_integrity",
+        "prerequisite_status": "fail"
+      },
+      "message": "interface_integrity passed before prerequisite power_tree_integrity passed",
+      "path": "gates.interface_integrity",
+      "requires_user_decision": false,
+      "severity": "error"
+    },
+    {
+      "category": "RELEASE_ERROR",
+      "code": "dependency_prerequisite_not_passed",
+      "details": {
         "gate": "support_circuit_completeness",
         "prerequisite": "semantic_electrical",
         "prerequisite_status": "fail"
@@ -74,51 +87,12 @@
       "category": "RELEASE_ERROR",
       "code": "dependency_prerequisite_not_passed",
       "details": {
-        "gate": "support_circuit_completeness",
-        "prerequisite": "interface_integrity",
-        "prerequisite_status": "fail"
-      },
-      "message": "support_circuit_completeness passed before prerequisite interface_integrity passed",
-      "path": "gates.support_circuit_completeness",
-      "requires_user_decision": false,
-      "severity": "error"
-    },
-    {
-      "category": "RELEASE_ERROR",
-      "code": "dependency_prerequisite_not_passed",
-      "details": {
         "gate": "layout_thermal_integrity",
         "prerequisite": "power_tree_integrity",
         "prerequisite_status": "fail"
       },
       "message": "layout_thermal_integrity passed before prerequisite power_tree_integrity passed",
       "path": "gates.layout_thermal_integrity",
-      "requires_user_decision": false,
-      "severity": "error"
-    },
-    {
-      "category": "RELEASE_ERROR",
-      "code": "dependency_prerequisite_not_passed",
-      "details": {
-        "gate": "layout_thermal_integrity",
-        "prerequisite": "interface_integrity",
-        "prerequisite_status": "fail"
-      },
-      "message": "layout_thermal_integrity passed before prerequisite interface_integrity passed",
-      "path": "gates.layout_thermal_integrity",
-      "requires_user_decision": false,
-      "severity": "error"
-    },
-    {
-      "category": "RELEASE_ERROR",
-      "code": "dependency_prerequisite_not_passed",
-      "details": {
-        "gate": "layout_signal_integrity",
-        "prerequisite": "interface_integrity",
-        "prerequisite_status": "fail"
-      },
-      "message": "layout_signal_integrity passed before prerequisite interface_integrity passed",
-      "path": "gates.layout_signal_integrity",
       "requires_user_decision": false,
       "severity": "error"
     },
@@ -195,7 +169,6 @@
       "firmware_modules",
       "firmware_pinmap",
       "hw_sw_parity",
-      "interface_integrity",
       "ir_pcb_sanity",
       "native_mechanical_validation",
       "native_zephyr_build",
@@ -208,7 +181,7 @@
       "supplier_availability"
     ],
     "declared_edges": 88,
-    "evaluated_edges": 36,
+    "evaluated_edges": 38,
     "nodes": 45
   },
   "status": "fail"

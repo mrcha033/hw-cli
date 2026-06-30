@@ -77,9 +77,11 @@ component(
     package='SOT-23-6',
     footprint='Package_TO_SOT_SMD:SOT-23-6',
     pins=[
-        pin('1', 'A', net='USB_DP', role='bidirectional', voltage_domain=None, mcu_pin=None),
-        pin('2', 'K', net='GND', role='ground', voltage_domain='GND', mcu_pin=None),
-        pin('3', 'A2', net='USB_DM', role='bidirectional', voltage_domain=None, mcu_pin=None),
+        pin('1', 'DP_IN', net='USB_DP_RAW', role='bidirectional', voltage_domain=None, mcu_pin=None),
+        pin('2', 'DP_OUT', net='USB_DP', role='bidirectional', voltage_domain=None, mcu_pin=None),
+        pin('3', 'DM_IN', net='USB_DM_RAW', role='bidirectional', voltage_domain=None, mcu_pin=None),
+        pin('4', 'DM_OUT', net='USB_DM', role='bidirectional', voltage_domain=None, mcu_pin=None),
+        pin('5', 'GND', net='GND', role='ground', voltage_domain='GND', mcu_pin=None),
     ],
 )
 
@@ -94,8 +96,8 @@ component(
     footprint='Connector_USB:USB_C_GCT_USB4105',
     pins=[
         pin('1', 'VBUS', net='USB_VBUS', role='power_in', voltage_domain='USB_5V', mcu_pin=None),
-        pin('2', 'DP', net='USB_DP', role='bidirectional', voltage_domain=None, mcu_pin=None),
-        pin('3', 'DM', net='USB_DM', role='bidirectional', voltage_domain=None, mcu_pin=None),
+        pin('2', 'DP', net='USB_DP_RAW', role='bidirectional', voltage_domain=None, mcu_pin=None),
+        pin('3', 'DM', net='USB_DM_RAW', role='bidirectional', voltage_domain=None, mcu_pin=None),
         pin('4', 'GND', net='GND', role='ground', voltage_domain='GND', mcu_pin=None),
     ],
 )
@@ -213,7 +215,7 @@ net('GND', signal_class='ground', voltage_domain='GND', required_track_width_mm=
 connect('C1', pin='GND', number='2', net='GND', role='ground', mcu_pin=None)
 connect('C2', pin='GND', number='2', net='GND', role='ground', mcu_pin=None)
 connect('C3', pin='GND', number='2', net='GND', role='ground', mcu_pin=None)
-connect('D1', pin='K', number='2', net='GND', role='ground', mcu_pin=None)
+connect('D1', pin='GND', number='5', net='GND', role='ground', mcu_pin=None)
 connect('J1', pin='GND', number='4', net='GND', role='ground', mcu_pin=None)
 connect('J2', pin='P10', number='10', net='GND', role='ground', mcu_pin=None)
 connect('J2', pin='P3', number='3', net='GND', role='ground', mcu_pin=None)
@@ -261,14 +263,20 @@ connect('J2', pin='P2', number='2', net='SWDIO', role='passive', mcu_pin=None)
 connect('U2', pin='SWDIO', number='41', net='SWDIO', role='bidirectional', mcu_pin=None)
 
 net('USB_DM', signal_class='usb', voltage_domain='V3V3', required_track_width_mm=0.15)
-connect('D1', pin='A2', number='3', net='USB_DM', role='bidirectional', mcu_pin=None)
-connect('J1', pin='DM', number='3', net='USB_DM', role='bidirectional', mcu_pin=None)
+connect('D1', pin='DM_OUT', number='4', net='USB_DM', role='bidirectional', mcu_pin=None)
 connect('U2', pin='USB_DM', number='11', net='USB_DM', role='bidirectional', mcu_pin=None)
 
+net('USB_DM_RAW', signal_class='usb', voltage_domain='V3V3', required_track_width_mm=0.15)
+connect('D1', pin='DM_IN', number='3', net='USB_DM_RAW', role='bidirectional', mcu_pin=None)
+connect('J1', pin='DM', number='3', net='USB_DM_RAW', role='bidirectional', mcu_pin=None)
+
 net('USB_DP', signal_class='usb', voltage_domain='V3V3', required_track_width_mm=0.15)
-connect('D1', pin='A', number='1', net='USB_DP', role='bidirectional', mcu_pin=None)
-connect('J1', pin='DP', number='2', net='USB_DP', role='bidirectional', mcu_pin=None)
+connect('D1', pin='DP_OUT', number='2', net='USB_DP', role='bidirectional', mcu_pin=None)
 connect('U2', pin='USB_DP', number='12', net='USB_DP', role='bidirectional', mcu_pin=None)
+
+net('USB_DP_RAW', signal_class='usb', voltage_domain='V3V3', required_track_width_mm=0.15)
+connect('D1', pin='DP_IN', number='1', net='USB_DP_RAW', role='bidirectional', mcu_pin=None)
+connect('J1', pin='DP', number='2', net='USB_DP_RAW', role='bidirectional', mcu_pin=None)
 
 net('USB_VBUS', signal_class='power', voltage_domain='USB_5V', required_track_width_mm=0.5)
 connect('J1', pin='VBUS', number='1', net='USB_VBUS', role='power_in', mcu_pin=None)
@@ -299,7 +307,7 @@ connect('X1', pin='XOUT', number='2', net='XOUT', role='passive', mcu_pin=None)
 place('C1', data={'ref': 'C1', 'x_mm': 3.0, 'y_mm': 5.0, 'rotation_deg': 0.0, 'side': 'top', 'courtyard_w_mm': 4.243, 'courtyard_h_mm': 4.243, 'source': 'rp2040_usb_hid_anchor', 'rationale': ''})
 place('C2', data={'ref': 'C2', 'x_mm': 7.0, 'y_mm': 5.0, 'rotation_deg': 0.0, 'side': 'top', 'courtyard_w_mm': 4.243, 'courtyard_h_mm': 4.243, 'source': 'rp2040_usb_hid_anchor', 'rationale': ''})
 place('C3', data={'ref': 'C3', 'x_mm': 11.0, 'y_mm': 5.0, 'rotation_deg': 0.0, 'side': 'top', 'courtyard_w_mm': 4.243, 'courtyard_h_mm': 4.243, 'source': 'rp2040_usb_hid_anchor', 'rationale': ''})
-place('D1', data={'ref': 'D1', 'x_mm': 10.0, 'y_mm': 10.0, 'rotation_deg': 0.0, 'side': 'top', 'courtyard_w_mm': 5.196, 'courtyard_h_mm': 5.196, 'source': 'rp2040_usb_hid_anchor', 'rationale': ''})
+place('D1', data={'ref': 'D1', 'x_mm': 10.0, 'y_mm': 10.0, 'rotation_deg': 0.0, 'side': 'top', 'courtyard_w_mm': 6.708, 'courtyard_h_mm': 6.708, 'source': 'rp2040_usb_hid_anchor', 'rationale': ''})
 place('J1', data={'ref': 'J1', 'x_mm': 3.0, 'y_mm': 10.0, 'rotation_deg': 0.0, 'side': 'top', 'courtyard_w_mm': 6.0, 'courtyard_h_mm': 6.0, 'source': 'rp2040_usb_hid_anchor', 'rationale': ''})
 place('J2', data={'ref': 'J2', 'x_mm': 18.0, 'y_mm': 12.0, 'rotation_deg': 0.0, 'side': 'top', 'courtyard_w_mm': 9.487, 'courtyard_h_mm': 9.487, 'source': 'rp2040_usb_hid_anchor', 'rationale': ''})
 place('U1', data={'ref': 'U1', 'x_mm': 3.0, 'y_mm': 15.0, 'rotation_deg': 0.0, 'side': 'top', 'courtyard_w_mm': 5.196, 'courtyard_h_mm': 5.196, 'source': 'rp2040_usb_hid_anchor', 'rationale': ''})

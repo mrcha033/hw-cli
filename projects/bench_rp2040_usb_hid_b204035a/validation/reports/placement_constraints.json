@@ -67,6 +67,48 @@
       "code": "estimated_courtyard_overlap",
       "details": {
         "refs": [
+          "D1",
+          "J2"
+        ]
+      },
+      "message": "D1 and J2 estimated courtyards overlap (coarse estimate; native DRC is authoritative)",
+      "path": null,
+      "requires_user_decision": false,
+      "severity": "warning"
+    },
+    {
+      "category": "MECHANICAL_ERROR",
+      "code": "estimated_courtyard_overlap",
+      "details": {
+        "refs": [
+          "D1",
+          "C2"
+        ]
+      },
+      "message": "D1 and C2 estimated courtyards overlap (coarse estimate; native DRC is authoritative)",
+      "path": null,
+      "requires_user_decision": false,
+      "severity": "warning"
+    },
+    {
+      "category": "MECHANICAL_ERROR",
+      "code": "estimated_courtyard_overlap",
+      "details": {
+        "refs": [
+          "D1",
+          "C3"
+        ]
+      },
+      "message": "D1 and C3 estimated courtyards overlap (coarse estimate; native DRC is authoritative)",
+      "path": null,
+      "requires_user_decision": false,
+      "severity": "warning"
+    },
+    {
+      "category": "MECHANICAL_ERROR",
+      "code": "estimated_courtyard_overlap",
+      "details": {
+        "refs": [
           "U2",
           "J2"
         ]
@@ -150,12 +192,12 @@
     "errors": 0,
     "finding_counts": {
       "decoupling_proximity_deferred": 2,
-      "estimated_courtyard_overlap": 8
+      "estimated_courtyard_overlap": 11
     },
     "method": "constraint_driven_placement_proposal",
     "placements": 10,
     "solver_iterations": 0,
-    "warnings": 8
+    "warnings": 11
   },
   "status": "pass"
 }

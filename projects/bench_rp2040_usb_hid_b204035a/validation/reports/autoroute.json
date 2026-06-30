@@ -1,40 +1,17 @@
 {
   "artifacts": [
     "/Users/mrcha033/Documents/hw-cli/projects/bench_rp2040_usb_hid_b204035a/electronics/generated/kicad/bench_rp2040_usb_hid_b204035a.kicad_pcb",
-    "/Users/mrcha033/Documents/hw-cli/projects/bench_rp2040_usb_hid_b204035a/electronics/generated/kicad/bench_rp2040_usb_hid_b204035a.dsn",
-    "/Users/mrcha033/Documents/hw-cli/projects/bench_rp2040_usb_hid_b204035a/electronics/generated/kicad/bench_rp2040_usb_hid_b204035a.ses",
     "/Users/mrcha033/Documents/hw-cli/projects/bench_rp2040_usb_hid_b204035a/electronics/generated/kicad/routing.json"
   ],
   "backend": {
-    "command": [
-      "/Users/mrcha033/Documents/hw-cli/.toolchains/java25/Contents/Home/bin/java",
-      "-Djava.awt.headless=true",
-      "-jar",
-      "/Users/mrcha033/Documents/hw-cli/.toolchains/freerouting/freerouting-2.2.4.jar",
-      "-de",
-      "/Users/mrcha033/Documents/hw-cli/projects/bench_rp2040_usb_hid_b204035a/electronics/generated/kicad/bench_rp2040_usb_hid_b204035a.dsn",
-      "-do",
-      "/Users/mrcha033/Documents/hw-cli/projects/bench_rp2040_usb_hid_b204035a/electronics/generated/kicad/bench_rp2040_usb_hid_b204035a.ses",
-      "-mp",
-      "20",
-      "-mt",
-      "4",
-      "-l",
-      "en"
-    ],
-    "log_tail": "2026-06-30 11:15:08.108 INFO   Freerouting v2.2.4 (build-date: 2026-05-13)\n2026-06-30 11:15:08.140 WARN   Couldn't get screen resolution. If you are running in a headless environment, disable the GUI by setting gui.enabled to false.\n2026-06-30 11:15:09.286 INFO   [CF63AA\\13977F] Job 'CF63AA\\13977F' started at 2026-06-30T02:15:09.286226Z.\n2026-06-30 11:15:09.578 INFO   New version available: v2.2.4\n2026-06-30 11:15:09.854 INFO   [CF63AA\\13977F] Auto-router pass #1 on board '7efc5216b8e5d3f15f51edbb11ef63cc' was completed in 0.51 seconds with the score of 996.59.\n2026-06-30 11:15:09.865 INFO   [CF63AA\\13977F] Auto-router pass #2 on board 'f387eaa0b7cb927597090812565934f5' was completed in 0.00 seconds with the score of 996.59.\n2026-06-30 11:15:09.872 INFO   [CF63AA\\13977F] Auto-router session completed: started with 25 unrouted nets, completed in 0.56 seconds, final score: 996.59, using 0.00 total CPU seconds, 0.00 GB total allocated, and 0.00 MB peak heap usage.\n\n",
+    "cached": true,
     "name": "freerouting",
-    "returncode": 0,
-    "tools": {
-      "jar": "/Users/mrcha033/Documents/hw-cli/.toolchains/freerouting/freerouting-2.2.4.jar",
-      "java": "/Users/mrcha033/Documents/hw-cli/.toolchains/java25/Contents/Home/bin/java",
-      "kicad_python": "/Applications/KiCad/KiCad.app/Contents/Frameworks/Python.framework/Versions/3.9/bin/python3.9"
-    },
     "version": "2.2.4"
   },
   "failures": [],
   "gate": "autoroute",
   "metrics": {
+    "cached": true,
     "max_passes": 20,
     "unrouted": 0
   },

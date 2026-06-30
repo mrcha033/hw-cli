@@ -12,9 +12,9 @@
     "rf_components": 0,
     "rf_edge_distance_max_mm": 8.0,
     "rf_noisy_keepout_mm": 10.0,
-    "usb_connectors": 0,
-    "usb_devices": 2,
-    "usb_esd_components": 0,
+    "usb_connectors": 1,
+    "usb_devices": 1,
+    "usb_esd_components": 1,
     "usb_esd_max_connector_distance_mm": 15.0
   },
   "status": "pass"

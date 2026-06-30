@@ -44,11 +44,11 @@
   "sources": [
     {
       "path": "board.compiler.mjs",
-      "sha256": "c0ffe86cd2784284edcfd1b05553b02ca147305a14a5fc57d50f764f89e58659"
+      "sha256": "b228e85b4025d9bee56e8d587166c980c4bd144a6f61e0b27e663bfb3b538ecb"
     },
     {
       "path": "board.tsx",
-      "sha256": "11e8bad2d5dd39ef3204089341dbe3150064ced075c5d178e43ea375ce7ba165"
+      "sha256": "8ccf1a66d189ad3d5fea383c09001ec5b319757f6e4e180534e21fabc01afb32"
     }
   ],
   "unsupported_footprints": []
