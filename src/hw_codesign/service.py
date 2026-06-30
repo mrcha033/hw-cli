@@ -256,6 +256,13 @@ class HardwareService:
         changed: list[str] = []
         lowered_fields: list[dict[str, Any]] = []
 
+        def _source_range(match: re.Match[str]) -> dict[str, int]:
+            return {"start": match.start(), "end": match.end()}
+
+        def _literal_range(token: str) -> dict[str, int] | None:
+            start = requirements_text.lower().find(token.lower())
+            return {"start": start, "end": start + len(token)} if start >= 0 else None
+
         _PATTERNS: list[tuple[str, list[str], Any, str]] = [
             (r"(\d+)\s*(?:채널|channel)", ["actuation", "motor_channels"], int, "integer"),
             (r"(?:각\s*채널\s*)?(?:피크\s*)?(\d+(?:\.\d+)?)\s*A", ["actuation", "motor_channel_peak_current_a"], float, "number"),
@@ -290,6 +297,7 @@ class HardwareService:
                     "value": value,
                     "field_type": field_type,
                     "source_span": match.group(0),
+                    "source_range": _source_range(match),
                     "affected_gates": _AFFECTED_GATES_BY_ROOT.get(keys[0], []),
                     "status": "lowered",
                 })
@@ -303,6 +311,7 @@ class HardwareService:
                 "value": "zephyr",
                 "field_type": "string",
                 "source_span": "zephyr",
+                "source_range": _literal_range("zephyr"),
                 "affected_gates": _AFFECTED_GATES_BY_ROOT["firmware"],
                 "status": "lowered",
             })
@@ -317,6 +326,7 @@ class HardwareService:
                     "value": "required",
                     "field_type": "enum",
                     "source_span": token,
+                    "source_range": _literal_range(token),
                     "affected_gates": _AFFECTED_GATES_BY_ROOT["sensing"],
                     "status": "lowered",
                 })
@@ -352,19 +362,26 @@ class HardwareService:
             "manufacturing_service": ["component_provenance", "manufacturing_export", "artifact_integrity"],
             "pcb_stackup": ["layout_signal_integrity", "native_drc", "manufacturing_export"],
         }
-        matched = [(cat, label) for pat, cat, label in _unsupported if re.search(pat, requirements_text, re.IGNORECASE)]
-        unsupported_constraints = [label for _, label in matched]
+        matched = [
+            {"category": cat, "label": label, "match": match}
+            for pat, cat, label in _unsupported
+            if (match := re.search(pat, requirements_text, re.IGNORECASE))
+        ]
+        unsupported_constraints = [item["label"] for item in matched]
         unresolved_items = [
             {
-                "source": label,
-                "category": cat,
+                "source": item["label"],
+                "source_span": item["match"].group(0),
+                "source_range": _source_range(item["match"]),
+                "category": item["category"],
+                "field_type": "unsupported_constraint",
                 "status": "unresolved",
                 "release_blocking": True,
-                "reason": _reasons[cat],
-                "required_human_approvals": [f"approve_or_lower_{cat}"],
-                "affected_gates": _affected_gates_by_category.get(cat, []),
+                "reason": _reasons[item["category"]],
+                "required_human_approvals": [f"approve_or_lower_{item['category']}"],
+                "affected_gates": _affected_gates_by_category.get(item["category"], []),
             }
-            for cat, label in matched
+            for item in matched
         ]
         req_file = read_yaml(req_path)
         if "requirements" not in req_file:
@@ -391,6 +408,52 @@ class HardwareService:
             for item in unresolved_items
             for approval in item.get("required_human_approvals", [])
         })
+        lowered_tokens = [
+            {
+                "id": f"req_token_lowered_{i:04d}",
+                "kind": "lowered_field",
+                "status": item["status"],
+                "spec_path": item["spec_path"],
+                "field_type": item["field_type"],
+                "value": item["value"],
+                "source_span": item.get("source_span"),
+                "source_range": item.get("source_range"),
+                "affected_gates": item.get("affected_gates", []),
+                "required_human_approvals": [],
+            }
+            for i, item in enumerate(sorted(lowered_fields, key=lambda field: field["spec_path"]), start=1)
+        ]
+        unresolved_tokens = [
+            {
+                "id": f"req_token_unresolved_{i:04d}",
+                "kind": "unsupported_constraint",
+                "status": item["status"],
+                "category": item["category"],
+                "field_type": item["field_type"],
+                "source": item["source"],
+                "source_span": item.get("source_span"),
+                "source_range": item.get("source_range"),
+                "release_blocking": item["release_blocking"],
+                "reason": item["reason"],
+                "affected_gates": item.get("affected_gates", []),
+                "required_human_approvals": item.get("required_human_approvals", []),
+            }
+            for i, item in enumerate(unresolved_items, start=1)
+        ]
+        assumption_tokens = [
+            {
+                "id": f"req_token_assumption_{i:04d}",
+                "kind": "retained_assumption",
+                "status": "retained_from_spec_assumption",
+                "source": item,
+                "source_span": None,
+                "source_range": None,
+                "release_blocking": False,
+                "affected_gates": ["release_preparation"],
+                "required_human_approvals": [],
+            }
+            for i, item in enumerate(unresolved_ambiguous, start=1)
+        ]
         compiler_ir = {
             "version": "requirements_ir_v1",
             "input_id": input_id,
@@ -406,6 +469,7 @@ class HardwareService:
                 for item in unresolved_ambiguous
             ],
             "unsupported_constraints": unresolved_items,
+            "tokens": [*lowered_tokens, *unresolved_tokens, *assumption_tokens],
             "required_human_approvals": required_human_approvals,
             "affected_gates": affected_gates,
         }

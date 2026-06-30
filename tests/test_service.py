@@ -290,7 +290,10 @@ def test_natural_language_requirements_update_structured_spec(service, project):
     lowered = {item["spec_path"]: item for item in ir["lowered_fields"]}
     assert lowered["actuation.motor_channels"]["value"] == 16
     assert lowered["actuation.motor_channels"]["field_type"] == "integer"
+    assert lowered["actuation.motor_channels"]["source_range"] == {"start": 0, "end": 10}
     assert "power_budget" in lowered["actuation.motor_channels"]["affected_gates"]
+    lowered_tokens = [item for item in ir["tokens"] if item["kind"] == "lowered_field"]
+    assert any(item["spec_path"] == "actuation.motor_channels" and item["source_span"] == "16 channel" for item in lowered_tokens)
     assert ir["required_human_approvals"] == []
 
 
@@ -313,7 +316,12 @@ def test_unsupported_constraints_persist_to_spec_and_block_validation(service, p
     unresolved = spec["requirements"]["active_unresolved"]
     assert all(item["required_human_approvals"] for item in unresolved)
     assert all(item["affected_gates"] for item in unresolved)
+    assert all(item["source_range"]["end"] > item["source_range"]["start"] for item in unresolved)
+    assert all(item["field_type"] == "unsupported_constraint" for item in unresolved)
     assert spec["requirements"]["compiler_ir"]["unsupported_constraints"]
+    unresolved_tokens = [item for item in spec["requirements"]["compiler_ir"]["tokens"] if item["kind"] == "unsupported_constraint"]
+    assert {item["category"] for item in unresolved_tokens} >= {"ip_protection", "bus_protocol", "functional_safety", "current_rating", "manufacturing_service", "pcb_stackup"}
+    assert all(item["required_human_approvals"] for item in unresolved_tokens)
     checks = service.run_all_checks(project, include_external=False)
     assert checks["status"] != "pass"
     codes = {f["code"] for report in checks["reports"] for f in report["failures"]}
