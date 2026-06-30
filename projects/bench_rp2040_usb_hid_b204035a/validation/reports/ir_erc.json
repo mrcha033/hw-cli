@@ -80,7 +80,7 @@
   ],
   "gate": "ir_erc",
   "metrics": {
-    "components": 10,
+    "components": 11,
     "nets": 17
   },
   "status": "fail"

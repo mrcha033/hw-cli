@@ -488,7 +488,7 @@ def generate_firmware(project: Path, spec: dict[str, Any], graph: dict[str, Any]
 def generate_bom(project: Path) -> str:
     graph = json.loads((project / "electronics" / "generated" / "electrical_graph.json").read_text(encoding="utf-8"))
     output = io.StringIO()
-    writer = csv.DictWriter(output, fieldnames=["reference", "category", "mpn", "quantity", "risk"])
+    writer = csv.DictWriter(output, fieldnames=["reference", "category", "mpn", "quantity", "risk"], lineterminator="\n")
     writer.writeheader()
     for component in graph["components"]:
         writer.writerow({"reference": component["ref"], "category": component["category"], "mpn": component["mpn"] or "UNRESOLVED", "quantity": 1, "risk": "high" if not component["mpn"] else "normal"})

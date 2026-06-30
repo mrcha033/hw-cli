@@ -13,5 +13,6 @@ export default () => (
       <chip name="C1" footprint="kicad:Capacitor_SMD/C_0402_1005Metric" pcbX={-17.500} pcbY={5.500} supplierPartNumbers={{lcsc: []}} pinLabels={{"pin1": "VCC_1", "pin2": "GND_2"}} connections={{"pin1": sel.net.V3V3, "pin2": sel.net.GND}} />
       <chip name="C2" footprint="kicad:Capacitor_SMD/C_0402_1005Metric" pcbX={-9.500} pcbY={5.500} supplierPartNumbers={{lcsc: []}} pinLabels={{"pin1": "VCC_1", "pin2": "GND_2"}} connections={{"pin1": sel.net.V3V3, "pin2": sel.net.GND}} />
       <chip name="C3" footprint="kicad:Capacitor_SMD/C_0603_1608Metric" pcbX={-1.500} pcbY={5.500} supplierPartNumbers={{lcsc: []}} pinLabels={{"pin1": "VCC_1", "pin2": "GND_2"}} connections={{"pin1": sel.net.V3V3, "pin2": sel.net.GND}} />
+      <chip name="C4" footprint="kicad:Capacitor_SMD/C_0603_1608Metric" pcbX={6.500} pcbY={5.500} supplierPartNumbers={{lcsc: []}} pinLabels={{"pin1": "VCC_1", "pin2": "GND_2"}} connections={{"pin1": sel.net.USB_VBUS, "pin2": sel.net.GND}} />
   </board>
 )

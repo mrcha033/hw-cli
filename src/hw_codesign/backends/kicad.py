@@ -277,5 +277,12 @@ class KiCadBackend(ElectronicsBackendAdapter):
     def _design_file(project: Path, pattern: str) -> Path | None:
         source = project / "electronics" / "source" / "kicad"
         generated = project / "electronics" / "generated" / "kicad"
-        source_match = next(source.glob(pattern), None) if source.is_dir() else None
-        return source_match or next(generated.glob(pattern), None)
+        if pattern.startswith("*."):
+            canonical = f"{project.name}{pattern[1:]}"
+            for root in (source, generated):
+                candidate = root / canonical
+                if candidate.is_file():
+                    return candidate
+        source_match = next(iter(sorted(source.glob(pattern))), None) if source.is_dir() else None
+        generated_match = next(iter(sorted(generated.glob(pattern))), None) if generated.is_dir() else None
+        return source_match or generated_match

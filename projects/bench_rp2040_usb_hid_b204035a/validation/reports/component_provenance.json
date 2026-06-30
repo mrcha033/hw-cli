@@ -4,7 +4,7 @@
   "failures": [],
   "gate": "component_provenance",
   "metrics": {
-    "components_checked": 10
+    "components_checked": 11
   },
   "status": "pass"
 }

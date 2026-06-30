@@ -150,6 +150,7 @@ _RP2040_USB_HID_ANCHORS: dict[str, tuple[float, float]] = {
     "C1": (3.0,   5.0),   # 100 nF decoupling; pads (3-5, 5)
     "C2": (7.0,   5.0),   # 100 nF decoupling; pads (7-9, 5)
     "C3": (11.0,  5.0),   # 10 uF bulk cap; pads (11-13, 5)
+    "C4": (9.0,  15.0),   # 10 uF USB_VBUS input bulk cap, near USB/LDO input path.
 }
 
 

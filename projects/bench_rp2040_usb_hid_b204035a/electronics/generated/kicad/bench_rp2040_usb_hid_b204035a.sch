@@ -96,4 +96,13 @@ F 1 "10uF" H 3580 2800 50  0000 C CNN
 F 2 "Capacitor_SMD:C_0603_1608Metric" H 3500 3000 50  0001 C CNN
 	1    0    0    -1
 $EndComp
+$Comp
+L Connector_Generic:Conn_01x02 C4
+U 1 1 3F2
+P 5500 3000
+F 0 "C4" H 5580 3200 50  0000 C CNN
+F 1 "10uF USB_IN" H 5580 2800 50  0000 C CNN
+F 2 "Capacitor_SMD:C_0603_1608Metric" H 5500 3000 50  0001 C CNN
+	1    0    0    -1
+$EndComp
 $EndSCHEMATC

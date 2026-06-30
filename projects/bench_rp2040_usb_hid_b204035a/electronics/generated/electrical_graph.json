@@ -102,6 +102,40 @@
         "stock": null
       }
     },
+    "C4": {
+      "database_file": "/Users/mrcha033/Documents/hw-cli/parts/components/common_passives.yaml",
+      "database_file_sha256": "3da1d087b1bdab80d807626d6aab29189b226f35e03d471576f8c15566018661",
+      "datasheet_catalog": "/Users/mrcha033/Documents/hw-cli/parts/evidence/datasheets.yaml",
+      "datasheet_catalog_sha256": "672d91caee2212c0eb4c711843b9470a48be62688bc9412608e83eae262db930",
+      "datasheet_evidence_ids": [
+        "datasheet_grm188_10u"
+      ],
+      "resolver": "in_repo_curated_v2",
+      "role_set": "/Users/mrcha033/Documents/hw-cli/parts/role_sets/rp2040_usb_device.yaml",
+      "role_set_sha256": "13d0d5f618235c5f66ef565235e9a72730c332e20471c4d4aaecc319973f6e1c",
+      "supplier_catalog": "/Users/mrcha033/Documents/hw-cli/parts/suppliers/curated.yaml",
+      "supplier_catalog_sha256": "328691c71d874c1d9a18e1cfa1abcfdbd6f5ff77628e7efed409b99a99439e9a",
+      "supplier_provider": "curated",
+      "supplier_record": {
+        "availability": "unknown",
+        "component_id": "grm188_10u",
+        "observed_at": null,
+        "provider": "curated",
+        "sku": "GRM188R60J106ME47D",
+        "source_record": {
+          "availability": "unknown",
+          "component_id": "grm188_10u",
+          "observed_at": null,
+          "provenance": {
+            "reviewed_at": "2026-06-21",
+            "source": "curated_component_db"
+          },
+          "stock": null,
+          "supplier_sku": "GRM188R60J106ME47D"
+        },
+        "stock": null
+      }
+    },
     "D1": {
       "database_file": "/Users/mrcha033/Documents/hw-cli/parts/components/robotics_controller.yaml",
       "database_file_sha256": "ec3e3c7e396330ad5d9900b674eb87966e5fa7f4742d67181a36248f6b2a365b",
@@ -2011,6 +2045,135 @@
       "ref": "C3",
       "resolution": "curated",
       "role": "capacitor_10u_50v"
+    },
+    {
+      "component_id": "grm188_10u",
+      "data": {
+        "constraints": [
+          "bulk_capacitor"
+        ],
+        "datasheet_evidence": [
+          {
+            "component_id": "grm188_10u",
+            "content_sha256": null,
+            "id": "datasheet_grm188_10u",
+            "kind": "datasheet",
+            "locator": "GRM188R60J106ME47D",
+            "review_status": "approved",
+            "reviewed_at": "2026-06-21",
+            "source": "manufacturer",
+            "supports": [
+              "identity",
+              "pins",
+              "symbol",
+              "package",
+              "footprint"
+            ],
+            "uri": null
+          }
+        ],
+        "footprint": {
+          "expected_pads": [
+            "1",
+            "2"
+          ],
+          "library_id": "Capacitor_SMD:C_0603_1608Metric",
+          "verified": true
+        },
+        "id": "grm188_10u",
+        "lifecycle": "active",
+        "manufacturer": "Murata",
+        "mpn": "GRM188R60J106ME47D",
+        "package": "0603",
+        "pins": [
+          {
+            "electrical_type": "passive",
+            "name": "VCC",
+            "number": "1"
+          },
+          {
+            "electrical_type": "ground",
+            "name": "GND",
+            "number": "2",
+            "voltage_domain": "GND"
+          }
+        ],
+        "resolution_provenance": {
+          "reviewed_at": "2026-06-21",
+          "source": "manufacturer_datasheet"
+        },
+        "review_status": "approved",
+        "sourcing": {
+          "status": "resolved",
+          "supplier_skus": [
+            "GRM188R60J106ME47D"
+          ]
+        },
+        "supplier_offer": {
+          "availability": "unknown",
+          "component_id": "grm188_10u",
+          "observed_at": null,
+          "provider": "curated",
+          "sku": "GRM188R60J106ME47D",
+          "source_record": {
+            "availability": "unknown",
+            "component_id": "grm188_10u",
+            "observed_at": null,
+            "provenance": {
+              "reviewed_at": "2026-06-21",
+              "source": "curated_component_db"
+            },
+            "stock": null,
+            "supplier_sku": "GRM188R60J106ME47D"
+          },
+          "stock": null
+        },
+        "symbol": {
+          "expected_pins": [
+            "1",
+            "2"
+          ],
+          "library_id": "Device:C",
+          "verified": true
+        }
+      },
+      "provenance": {
+        "database_file": "/Users/mrcha033/Documents/hw-cli/parts/components/common_passives.yaml",
+        "database_file_sha256": "3da1d087b1bdab80d807626d6aab29189b226f35e03d471576f8c15566018661",
+        "datasheet_catalog": "/Users/mrcha033/Documents/hw-cli/parts/evidence/datasheets.yaml",
+        "datasheet_catalog_sha256": "672d91caee2212c0eb4c711843b9470a48be62688bc9412608e83eae262db930",
+        "datasheet_evidence_ids": [
+          "datasheet_grm188_10u"
+        ],
+        "resolver": "in_repo_curated_v2",
+        "role_set": "/Users/mrcha033/Documents/hw-cli/parts/role_sets/rp2040_usb_device.yaml",
+        "role_set_sha256": "13d0d5f618235c5f66ef565235e9a72730c332e20471c4d4aaecc319973f6e1c",
+        "supplier_catalog": "/Users/mrcha033/Documents/hw-cli/parts/suppliers/curated.yaml",
+        "supplier_catalog_sha256": "328691c71d874c1d9a18e1cfa1abcfdbd6f5ff77628e7efed409b99a99439e9a",
+        "supplier_provider": "curated",
+        "supplier_record": {
+          "availability": "unknown",
+          "component_id": "grm188_10u",
+          "observed_at": null,
+          "provider": "curated",
+          "sku": "GRM188R60J106ME47D",
+          "source_record": {
+            "availability": "unknown",
+            "component_id": "grm188_10u",
+            "observed_at": null,
+            "provenance": {
+              "reviewed_at": "2026-06-21",
+              "source": "curated_component_db"
+            },
+            "stock": null,
+            "supplier_sku": "GRM188R60J106ME47D"
+          },
+          "stock": null
+        }
+      },
+      "ref": "C4",
+      "resolution": "curated",
+      "role": "capacitor_10u_50v"
     }
   ],
   "component_resolution_report": {
@@ -2025,8 +2188,8 @@
     "gate": "component_resolution",
     "metrics": {
       "critical_roles": 5,
-      "requested": 10,
-      "resolved": 10,
+      "requested": 11,
+      "resolved": 11,
       "supplier_provider": "curated"
     },
     "status": "pass"
@@ -3793,6 +3956,139 @@
         "verified": true
       },
       "value": "10uF"
+    },
+    {
+      "category": "bulk_cap",
+      "component_id": "grm188_10u",
+      "constraints": [
+        "bulk_capacitor"
+      ],
+      "datasheet_evidence": [
+        {
+          "component_id": "grm188_10u",
+          "content_sha256": null,
+          "id": "datasheet_grm188_10u",
+          "kind": "datasheet",
+          "locator": "GRM188R60J106ME47D",
+          "review_status": "approved",
+          "reviewed_at": "2026-06-21",
+          "source": "manufacturer",
+          "supports": [
+            "identity",
+            "pins",
+            "symbol",
+            "package",
+            "footprint"
+          ],
+          "uri": null
+        }
+      ],
+      "footprint": "Capacitor_SMD:C_0603_1608Metric",
+      "footprint_metadata": {
+        "expected_pads": [
+          "1",
+          "2"
+        ],
+        "library_id": "Capacitor_SMD:C_0603_1608Metric",
+        "verified": true
+      },
+      "lifecycle": "active",
+      "manufacturer": "Murata",
+      "mpn": "GRM188R60J106ME47D",
+      "package": "0603",
+      "pcb_position_mm": [
+        9.0,
+        15.0
+      ],
+      "pins": [
+        {
+          "name": "VCC",
+          "net": "USB_VBUS",
+          "number": "1",
+          "role": "power_in",
+          "voltage_domain": "USB_5V"
+        },
+        {
+          "name": "GND",
+          "net": "GND",
+          "number": "2",
+          "role": "ground",
+          "voltage_domain": "GND"
+        }
+      ],
+      "ref": "C4",
+      "resolution": "curated",
+      "resolution_provenance": {
+        "database_file": "/Users/mrcha033/Documents/hw-cli/parts/components/common_passives.yaml",
+        "database_file_sha256": "3da1d087b1bdab80d807626d6aab29189b226f35e03d471576f8c15566018661",
+        "datasheet_catalog": "/Users/mrcha033/Documents/hw-cli/parts/evidence/datasheets.yaml",
+        "datasheet_catalog_sha256": "672d91caee2212c0eb4c711843b9470a48be62688bc9412608e83eae262db930",
+        "datasheet_evidence_ids": [
+          "datasheet_grm188_10u"
+        ],
+        "resolver": "in_repo_curated_v2",
+        "role_set": "/Users/mrcha033/Documents/hw-cli/parts/role_sets/rp2040_usb_device.yaml",
+        "role_set_sha256": "13d0d5f618235c5f66ef565235e9a72730c332e20471c4d4aaecc319973f6e1c",
+        "supplier_catalog": "/Users/mrcha033/Documents/hw-cli/parts/suppliers/curated.yaml",
+        "supplier_catalog_sha256": "328691c71d874c1d9a18e1cfa1abcfdbd6f5ff77628e7efed409b99a99439e9a",
+        "supplier_provider": "curated",
+        "supplier_record": {
+          "availability": "unknown",
+          "component_id": "grm188_10u",
+          "observed_at": null,
+          "provider": "curated",
+          "sku": "GRM188R60J106ME47D",
+          "source_record": {
+            "availability": "unknown",
+            "component_id": "grm188_10u",
+            "observed_at": null,
+            "provenance": {
+              "reviewed_at": "2026-06-21",
+              "source": "curated_component_db"
+            },
+            "stock": null,
+            "supplier_sku": "GRM188R60J106ME47D"
+          },
+          "stock": null
+        }
+      },
+      "review_status": "approved",
+      "sourcing": {
+        "status": "resolved",
+        "supplier_skus": [
+          "GRM188R60J106ME47D"
+        ]
+      },
+      "substitute_mpn": null,
+      "supplier_offer": {
+        "availability": "unknown",
+        "component_id": "grm188_10u",
+        "observed_at": null,
+        "provider": "curated",
+        "sku": "GRM188R60J106ME47D",
+        "source_record": {
+          "availability": "unknown",
+          "component_id": "grm188_10u",
+          "observed_at": null,
+          "provenance": {
+            "reviewed_at": "2026-06-21",
+            "source": "curated_component_db"
+          },
+          "stock": null,
+          "supplier_sku": "GRM188R60J106ME47D"
+        },
+        "stock": null
+      },
+      "supplier_sku": "GRM188R60J106ME47D",
+      "symbol": {
+        "expected_pins": [
+          "1",
+          "2"
+        ],
+        "library_id": "Device:C",
+        "verified": true
+      },
+      "value": "10uF USB_IN"
     }
   ],
   "datasheet_evidence_report": {
@@ -3803,7 +4099,7 @@
     "failures": [],
     "gate": "datasheet_evidence",
     "metrics": {
-      "components_checked": 10
+      "components_checked": 11
     },
     "status": "pass"
   },
@@ -3820,6 +4116,7 @@
         "C1.2",
         "C2.2",
         "C3.2",
+        "C4.2",
         "D1.5",
         "J1.4",
         "J2.10",
@@ -3836,7 +4133,7 @@
         "U3.4"
       ],
       "name": "GND",
-      "required_track_width_mm": 0.15,
+      "required_track_width_mm": 0.2,
       "signal_class": "ground",
       "voltage_domain": "GND"
     },
@@ -3962,6 +4259,7 @@
     },
     {
       "connected_pins": [
+        "C4.1",
         "J1.1",
         "U1.1"
       ],
@@ -4140,6 +4438,17 @@
         "source": "rp2040_usb_hid_anchor",
         "x_mm": 11.0,
         "y_mm": 5.0
+      },
+      "C4": {
+        "courtyard_h_mm": 4.243,
+        "courtyard_w_mm": 4.243,
+        "rationale": "",
+        "ref": "C4",
+        "rotation_deg": 0.0,
+        "side": "top",
+        "source": "rp2040_usb_hid_anchor",
+        "x_mm": 9.0,
+        "y_mm": 15.0
       },
       "D1": {
         "courtyard_h_mm": 6.708,
@@ -4336,11 +4645,20 @@
         "path": "C3",
         "requires_user_decision": false,
         "severity": "error"
+      },
+      {
+        "category": "BOM_ERROR",
+        "code": "supplier_availability_unknown",
+        "details": {},
+        "message": "Current availability is not evidenced for C4 at curated",
+        "path": "C4",
+        "requires_user_decision": false,
+        "severity": "error"
       }
     ],
     "gate": "supplier_availability",
     "metrics": {
-      "components_checked": 10,
+      "components_checked": 11,
       "provider": "curated"
     },
     "status": "blocked"

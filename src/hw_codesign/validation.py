@@ -648,7 +648,7 @@ class Validator:
                 power_outputs |= {pin.get("net") for pin in component.get("pins", []) if str(pin.get("name", "")).upper() == "OUT" and pin.get("net")}
             if category in source_categories:
                 reachable |= power_inputs
-            if category in transfer_categories:
+            if _component_category_matches(component, transfer_categories):
                 transfers.append((component, power_inputs, power_outputs))
                 if not power_inputs or not power_outputs:
                     failures.append(_failure(
@@ -762,7 +762,8 @@ class Validator:
             loads = sorted({
                 str(component.get("ref"))
                 for component in components
-                if component.get("category") not in source_categories | capacitor_categories | transfer_categories
+                if component.get("category") not in source_categories | capacitor_categories
+                and not _component_category_matches(component, transfer_categories)
                 and any(pin.get("role") == "power_in" and pin.get("net") == rail for pin in component.get("pins", []))
             })
             if not loads:
@@ -1391,7 +1392,10 @@ def _component_nets(component: dict[str, Any]) -> set[str]:
 
 
 def _component_category_matches(component: dict[str, Any], categories: set[str]) -> bool:
-    if component.get("category") in categories:
+    category = str(component.get("category", ""))
+    if category in categories:
+        return True
+    if "regulator" in categories and category.startswith("regulator_"):
         return True
     return bool(set(component.get("constraints", [])) & categories)
 

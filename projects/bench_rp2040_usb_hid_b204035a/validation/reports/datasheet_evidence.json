@@ -6,7 +6,7 @@
   "failures": [],
   "gate": "datasheet_evidence",
   "metrics": {
-    "components_checked": 10
+    "components_checked": 11
   },
   "status": "pass"
 }

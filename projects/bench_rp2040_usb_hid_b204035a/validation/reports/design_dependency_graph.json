@@ -48,51 +48,12 @@
       "category": "RELEASE_ERROR",
       "code": "dependency_prerequisite_not_passed",
       "details": {
-        "gate": "interface_integrity",
-        "prerequisite": "power_tree_integrity",
-        "prerequisite_status": "fail"
-      },
-      "message": "interface_integrity passed before prerequisite power_tree_integrity passed",
-      "path": "gates.interface_integrity",
-      "requires_user_decision": false,
-      "severity": "error"
-    },
-    {
-      "category": "RELEASE_ERROR",
-      "code": "dependency_prerequisite_not_passed",
-      "details": {
         "gate": "support_circuit_completeness",
         "prerequisite": "semantic_electrical",
         "prerequisite_status": "fail"
       },
       "message": "support_circuit_completeness passed before prerequisite semantic_electrical passed",
       "path": "gates.support_circuit_completeness",
-      "requires_user_decision": false,
-      "severity": "error"
-    },
-    {
-      "category": "RELEASE_ERROR",
-      "code": "dependency_prerequisite_not_passed",
-      "details": {
-        "gate": "support_circuit_completeness",
-        "prerequisite": "power_tree_integrity",
-        "prerequisite_status": "fail"
-      },
-      "message": "support_circuit_completeness passed before prerequisite power_tree_integrity passed",
-      "path": "gates.support_circuit_completeness",
-      "requires_user_decision": false,
-      "severity": "error"
-    },
-    {
-      "category": "RELEASE_ERROR",
-      "code": "dependency_prerequisite_not_passed",
-      "details": {
-        "gate": "layout_thermal_integrity",
-        "prerequisite": "power_tree_integrity",
-        "prerequisite_status": "fail"
-      },
-      "message": "layout_thermal_integrity passed before prerequisite power_tree_integrity passed",
-      "path": "gates.layout_thermal_integrity",
       "requires_user_decision": false,
       "severity": "error"
     },
@@ -169,14 +130,12 @@
       "native_mechanical_validation",
       "native_zephyr_build",
       "physical_qualification",
-      "power_integrity_estimate",
-      "power_tree_integrity",
       "semantic_electrical",
       "sourcing_resilience",
       "supplier_availability"
     ],
     "declared_edges": 88,
-    "evaluated_edges": 52,
+    "evaluated_edges": 56,
     "nodes": 45
   },
   "status": "fail"

@@ -96,11 +96,20 @@
       "path": "C3",
       "requires_user_decision": false,
       "severity": "error"
+    },
+    {
+      "category": "BOM_ERROR",
+      "code": "supplier_availability_unknown",
+      "details": {},
+      "message": "Current availability is not evidenced for C4 at curated",
+      "path": "C4",
+      "requires_user_decision": false,
+      "severity": "error"
     }
   ],
   "gate": "supplier_availability",
   "metrics": {
-    "components_checked": 10,
+    "components_checked": 11,
     "provider": "curated"
   },
   "status": "blocked"

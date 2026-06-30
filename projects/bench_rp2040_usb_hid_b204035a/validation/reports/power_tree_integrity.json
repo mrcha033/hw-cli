@@ -1,147 +1,17 @@
 {
   "artifacts": [],
   "backend": {},
-  "failures": [
-    {
-      "category": "ELECTRICAL_SEMANTIC_ERROR",
-      "code": "power_net_unreachable",
-      "details": {
-        "net_name": "V3V3",
-        "pin_number": "44",
-        "ref": "U2"
-      },
-      "message": "U2.44 requires unreachable power net V3V3",
-      "path": "electronics.components",
-      "requires_user_decision": false,
-      "severity": "error"
-    },
-    {
-      "category": "ELECTRICAL_SEMANTIC_ERROR",
-      "code": "power_net_unreachable",
-      "details": {
-        "net_name": "V3V3",
-        "pin_number": "45",
-        "ref": "U2"
-      },
-      "message": "U2.45 requires unreachable power net V3V3",
-      "path": "electronics.components",
-      "requires_user_decision": false,
-      "severity": "error"
-    },
-    {
-      "category": "ELECTRICAL_SEMANTIC_ERROR",
-      "code": "power_net_unreachable",
-      "details": {
-        "net_name": "V3V3",
-        "pin_number": "46",
-        "ref": "U2"
-      },
-      "message": "U2.46 requires unreachable power net V3V3",
-      "path": "electronics.components",
-      "requires_user_decision": false,
-      "severity": "error"
-    },
-    {
-      "category": "ELECTRICAL_SEMANTIC_ERROR",
-      "code": "power_net_unreachable",
-      "details": {
-        "net_name": "V3V3",
-        "pin_number": "47",
-        "ref": "U2"
-      },
-      "message": "U2.47 requires unreachable power net V3V3",
-      "path": "electronics.components",
-      "requires_user_decision": false,
-      "severity": "error"
-    },
-    {
-      "category": "ELECTRICAL_SEMANTIC_ERROR",
-      "code": "power_net_unreachable",
-      "details": {
-        "net_name": "V3V3",
-        "pin_number": "48",
-        "ref": "U2"
-      },
-      "message": "U2.48 requires unreachable power net V3V3",
-      "path": "electronics.components",
-      "requires_user_decision": false,
-      "severity": "error"
-    },
-    {
-      "category": "ELECTRICAL_SEMANTIC_ERROR",
-      "code": "power_net_unreachable",
-      "details": {
-        "net_name": "V3V3",
-        "pin_number": "8",
-        "ref": "U3"
-      },
-      "message": "U3.8 requires unreachable power net V3V3",
-      "path": "electronics.components",
-      "requires_user_decision": false,
-      "severity": "error"
-    },
-    {
-      "category": "ELECTRICAL_SEMANTIC_ERROR",
-      "code": "power_net_unreachable",
-      "details": {
-        "net_name": "V3V3",
-        "pin_number": "1",
-        "ref": "J2"
-      },
-      "message": "J2.1 requires unreachable power net V3V3",
-      "path": "electronics.components",
-      "requires_user_decision": false,
-      "severity": "error"
-    },
-    {
-      "category": "ELECTRICAL_SEMANTIC_ERROR",
-      "code": "power_net_unreachable",
-      "details": {
-        "net_name": "V3V3",
-        "pin_number": "1",
-        "ref": "C1"
-      },
-      "message": "C1.1 requires unreachable power net V3V3",
-      "path": "electronics.components",
-      "requires_user_decision": false,
-      "severity": "error"
-    },
-    {
-      "category": "ELECTRICAL_SEMANTIC_ERROR",
-      "code": "power_net_unreachable",
-      "details": {
-        "net_name": "V3V3",
-        "pin_number": "1",
-        "ref": "C2"
-      },
-      "message": "C2.1 requires unreachable power net V3V3",
-      "path": "electronics.components",
-      "requires_user_decision": false,
-      "severity": "error"
-    },
-    {
-      "category": "ELECTRICAL_SEMANTIC_ERROR",
-      "code": "power_net_unreachable",
-      "details": {
-        "net_name": "V3V3",
-        "pin_number": "1",
-        "ref": "C3"
-      },
-      "message": "C3.1 requires unreachable power net V3V3",
-      "path": "electronics.components",
-      "requires_user_decision": false,
-      "severity": "error"
-    }
-  ],
+  "failures": [],
   "gate": "power_tree_integrity",
   "metrics": {
-    "errors": 10,
-    "power_loads_checked": 11,
+    "errors": 0,
+    "power_loads_checked": 12,
     "source_nets": [
-      "USB_VBUS"
+      "USB_VBUS",
+      "V3V3"
     ],
-    "transfer_components": 0,
+    "transfer_components": 1,
     "warnings": 0
   },
-  "status": "fail"
+  "status": "pass"
 }

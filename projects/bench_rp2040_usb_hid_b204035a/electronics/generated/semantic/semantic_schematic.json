@@ -87,6 +87,34 @@
       "value": "10uF"
     },
     {
+      "component_id": "grm188_10u",
+      "footprint": "Capacitor_SMD:C_0603_1608Metric",
+      "manufacturer": "Murata",
+      "mpn": "GRM188R60J106ME47D",
+      "package": "0603",
+      "pins": [
+        {
+          "mcu_pin": null,
+          "name": "VCC",
+          "net": "USB_VBUS",
+          "number": "1",
+          "role": "power_in",
+          "voltage_domain": "USB_5V"
+        },
+        {
+          "mcu_pin": null,
+          "name": "GND",
+          "net": "GND",
+          "number": "2",
+          "role": "ground",
+          "voltage_domain": "GND"
+        }
+      ],
+      "ref": "C4",
+      "role": "bulk_cap",
+      "value": "10uF USB_IN"
+    },
+    {
       "component_id": "usblc6_2sc6",
       "footprint": "Package_TO_SOT_SMD:SOT-23-6",
       "manufacturer": "STMicroelectronics",
@@ -616,6 +644,14 @@
           "pin_role": "ground"
         },
         {
+          "component_ref": "C4",
+          "component_role": "bulk_cap",
+          "mcu_pin": null,
+          "pin_name": "GND",
+          "pin_number": "2",
+          "pin_role": "ground"
+        },
+        {
           "component_ref": "D1",
           "component_role": "tvs",
           "mcu_pin": null,
@@ -728,7 +764,7 @@
           "pin_role": "ground"
         }
       ],
-      "required_track_width_mm": 0.15,
+      "required_track_width_mm": 0.2,
       "signal_class": "ground",
       "voltage_domain": "GND"
     },
@@ -1023,6 +1059,14 @@
     {
       "name": "USB_VBUS",
       "pin_name_connections": [
+        {
+          "component_ref": "C4",
+          "component_role": "bulk_cap",
+          "mcu_pin": null,
+          "pin_name": "VCC",
+          "pin_number": "1",
+          "pin_role": "power_in"
+        },
         {
           "component_ref": "J1",
           "component_role": "power_input",
@@ -1319,6 +1363,17 @@
         "source": "rp2040_usb_hid_anchor",
         "x_mm": 11.0,
         "y_mm": 5.0
+      },
+      "C4": {
+        "courtyard_h_mm": 4.243,
+        "courtyard_w_mm": 4.243,
+        "rationale": "",
+        "ref": "C4",
+        "rotation_deg": 0.0,
+        "side": "top",
+        "source": "rp2040_usb_hid_anchor",
+        "x_mm": 9.0,
+        "y_mm": 15.0
       },
       "D1": {
         "courtyard_h_mm": 6.708,

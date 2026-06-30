@@ -11,9 +11,9 @@
   "gate": "semantic_schematic_roundtrip",
   "metrics": {
     "code_roundtrip_exact": true,
-    "components": 10,
+    "components": 11,
     "nets": 17,
-    "pin_name_connections": 58
+    "pin_name_connections": 60
   },
   "status": "pass"
 }

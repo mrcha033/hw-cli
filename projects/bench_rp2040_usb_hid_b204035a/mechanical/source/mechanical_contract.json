@@ -70,6 +70,13 @@
         "ref": "C3",
         "x_mm": 11.0,
         "y_mm": 5.0
+      },
+      {
+        "category": "bulk_cap",
+        "height_mm": 4.0,
+        "ref": "C4",
+        "x_mm": 9.0,
+        "y_mm": 15.0
       }
     ],
     "height_mm": 21.0,

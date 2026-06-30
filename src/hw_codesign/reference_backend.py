@@ -36,8 +36,8 @@ def generate_kicad(project: Path, spec: dict[str, Any], graph: dict[str, Any]) -
     target.mkdir(parents=True, exist_ok=True)
     name = project.name
     for pattern in (
-        f"{name}*.dsn", f"{name}*.ses", f"{name}.*.kicad_pcb",
-        f"{name}*.kicad_prl", f"{name}.*.kicad_pro", f"~{name}*.lck",
+        f"{name}*.dsn", f"{name}*.ses", f"{name}*.kicad_pcb",
+        f"{name}*.kicad_prl", f"{name}*.kicad_pro", f"~{name}*.lck",
     ):
         for stale in target.glob(pattern):
             stale.unlink()
@@ -339,14 +339,14 @@ def export_fabrication(project: Path, spec: dict[str, Any], graph: dict[str, Any
     write_json(fab / "panelization.json", panel_spec)
 
     # BOM CSV
-    bom_out = io.StringIO(); bom_writer = csv.writer(bom_out)
+    bom_out = io.StringIO(); bom_writer = csv.writer(bom_out, lineterminator="\n")
     bom_writer.writerow(("Reference", "Value", "MPN", "Footprint", "Manufacturer", "Quantity"))
     for item in graph["components"]:
         bom_writer.writerow((item["ref"], item["value"], item["mpn"], item["footprint"], item.get("manufacturer", ""), 1))
     atomic_write_text(fab / "bom.csv", bom_out.getvalue())
 
     # Pick-and-place CSV with real board positions
-    pnp_out = io.StringIO(); pnp_writer = csv.writer(pnp_out)
+    pnp_out = io.StringIO(); pnp_writer = csv.writer(pnp_out, lineterminator="\n")
     pnp_writer.writerow(("Ref", "Val", "PosX", "PosY", "Rotation", "Side"))
     for i, item in enumerate(graph["components"]):
         x, y = positions.get(item["ref"], (10.0 + (i % 6) * 24.0, 12.0 + (i // 6) * 18.0))

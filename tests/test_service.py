@@ -5,6 +5,7 @@ from pathlib import Path
 
 import pytest
 
+from hw_codesign.backends.kicad import KiCadBackend
 from hw_codesign.backends.freerouting import FreeroutingBackend
 from hw_codesign.errors import UnsafeChangeError
 from hw_codesign.schematic_generator import generate_kicad_schematic
@@ -41,6 +42,23 @@ def test_robotics_controller_kicad_artifacts_keep_four_layer_stackup(service, pr
     assert '(net_name "V5") (layer "In2.Cu")' in board
 
 
+def test_kicad_artifact_selection_prefers_canonical_board(service):
+    project = "rp2040_kicad_stale_duplicate_check"
+    service.create_project(project, template="rp2040_usb_device")
+    service.generate_electronics_only(project)
+    path = service.workspace.require_project(project)
+    kicad_dir = path / "electronics" / "generated" / "kicad"
+    canonical = kicad_dir / f"{project}.kicad_pcb"
+    stale = kicad_dir / f"{project} 2.kicad_pcb"
+    stale.write_text('(kicad_pcb (version 20240108) (generator stale_duplicate))\n', encoding="utf-8")
+
+    assert KiCadBackend()._design_file(path, "*.kicad_pcb") == canonical
+
+    service.generate_electronics_only(project)
+    assert canonical.is_file()
+    assert not stale.exists()
+
+
 def test_rp2040_qspi_flash_uses_all_quad_data_lines(service):
     project = "rp2040_usb_device_check"
     service.create_project(project, template="rp2040_usb_device")
@@ -52,6 +70,14 @@ def test_rp2040_qspi_flash_uses_all_quad_data_lines(service):
     interface_report = service.validator.check_interface_integrity(graph)
     assert interface_report.status.value == "pass"
     assert interface_report.metrics["usb_bridge_present"] is True
+    power_tree_report = service.validator.check_power_tree(graph, service.read_spec(project))
+    assert power_tree_report.status.value == "pass"
+    assert {"USB_VBUS", "V3V3"} <= set(power_tree_report.metrics["source_nets"])
+    power_integrity_report = service.validator.check_power_integrity_estimate(graph, service.read_spec(project))
+    assert power_integrity_report.status.value == "pass"
+    input_bulk = next(item for item in graph["components"] if item["ref"] == "C4")
+    assert input_bulk["category"] == "bulk_cap"
+    assert {pin["net"] for pin in input_bulk["pins"]} == {"USB_VBUS", "GND"}
 
     flash = next(item for item in graph["components"] if item["ref"] == "U3")
     flash_pins = {pin["number"]: pin for pin in flash["pins"]}

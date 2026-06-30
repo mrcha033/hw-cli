@@ -9,7 +9,7 @@
   "failures": [],
   "gate": "support_circuit_completeness",
   "metrics": {
-    "components": 10,
+    "components": 11,
     "critical_roles": 5,
     "net_contract_checks": 0,
     "resolved_critical_roles": 5,

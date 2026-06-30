@@ -109,6 +109,20 @@
       "code": "estimated_courtyard_overlap",
       "details": {
         "refs": [
+          "D1",
+          "C4"
+        ]
+      },
+      "message": "D1 and C4 estimated courtyards overlap (coarse estimate; native DRC is authoritative)",
+      "path": null,
+      "requires_user_decision": false,
+      "severity": "warning"
+    },
+    {
+      "category": "MECHANICAL_ERROR",
+      "code": "estimated_courtyard_overlap",
+      "details": {
+        "refs": [
           "U2",
           "J2"
         ]
@@ -192,12 +206,12 @@
     "errors": 0,
     "finding_counts": {
       "decoupling_proximity_deferred": 2,
-      "estimated_courtyard_overlap": 11
+      "estimated_courtyard_overlap": 12
     },
     "method": "constraint_driven_placement_proposal",
-    "placements": 10,
+    "placements": 11,
     "solver_iterations": 0,
-    "warnings": 11
+    "warnings": 12
   },
   "status": "pass"
 }

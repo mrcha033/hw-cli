@@ -4,34 +4,10 @@
     "authority": "heuristic",
     "name": "power-integrity-estimator"
   },
-  "failures": [
-    {
-      "category": "ELECTRICAL_SEMANTIC_ERROR",
-      "code": "rail_decoupling_missing",
-      "details": {
-        "loads": [
-          "U1"
-        ],
-        "rail": "USB_VBUS"
-      },
-      "message": "Rail USB_VBUS feeds active loads without any local decoupling or bulk capacitor in the graph",
-      "path": "electronics.components",
-      "requires_user_decision": false,
-      "severity": "error"
-    }
-  ],
+  "failures": [],
   "gate": "power_integrity_estimate",
   "metrics": {
     "coverage": {
-      "USB_VBUS": {
-        "bulk": [],
-        "declared_peak_current_a": 0.0,
-        "decoupling": [],
-        "high_current_connector_loads": [],
-        "loads": [
-          "U1"
-        ]
-      },
       "V3V3": {
         "bulk": [
           "C3"
@@ -49,10 +25,10 @@
         ]
       }
     },
-    "errors": 1,
+    "errors": 0,
     "oracle_boundary": "Heuristic decoupling and bulk-cap coverage only; transient, impedance, and stability still require simulation or bench evidence.",
-    "rails_checked": 2,
+    "rails_checked": 1,
     "warnings": 0
   },
-  "status": "fail"
+  "status": "pass"
 }

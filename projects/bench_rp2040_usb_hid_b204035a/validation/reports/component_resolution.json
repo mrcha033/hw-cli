@@ -10,8 +10,8 @@
   "gate": "component_resolution",
   "metrics": {
     "critical_roles": 5,
-    "requested": 10,
-    "resolved": 10,
+    "requested": 11,
+    "resolved": 11,
     "supplier_provider": "curated"
   },
   "status": "pass"

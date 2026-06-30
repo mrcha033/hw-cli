@@ -68,6 +68,21 @@ component(
 )
 
 component(
+    'C4',
+    role='bulk_cap',
+    value='10uF USB_IN',
+    component_id='grm188_10u',
+    mpn='GRM188R60J106ME47D',
+    manufacturer='Murata',
+    package='0603',
+    footprint='Capacitor_SMD:C_0603_1608Metric',
+    pins=[
+        pin('1', 'VCC', net='USB_VBUS', role='power_in', voltage_domain='USB_5V', mcu_pin=None),
+        pin('2', 'GND', net='GND', role='ground', voltage_domain='GND', mcu_pin=None),
+    ],
+)
+
+component(
     'D1',
     role='tvs',
     value='USB ESD',
@@ -211,10 +226,11 @@ component(
 )
 
 
-net('GND', signal_class='ground', voltage_domain='GND', required_track_width_mm=0.15)
+net('GND', signal_class='ground', voltage_domain='GND', required_track_width_mm=0.2)
 connect('C1', pin='GND', number='2', net='GND', role='ground', mcu_pin=None)
 connect('C2', pin='GND', number='2', net='GND', role='ground', mcu_pin=None)
 connect('C3', pin='GND', number='2', net='GND', role='ground', mcu_pin=None)
+connect('C4', pin='GND', number='2', net='GND', role='ground', mcu_pin=None)
 connect('D1', pin='GND', number='5', net='GND', role='ground', mcu_pin=None)
 connect('J1', pin='GND', number='4', net='GND', role='ground', mcu_pin=None)
 connect('J2', pin='P10', number='10', net='GND', role='ground', mcu_pin=None)
@@ -279,6 +295,7 @@ connect('D1', pin='DP_IN', number='1', net='USB_DP_RAW', role='bidirectional', m
 connect('J1', pin='DP', number='2', net='USB_DP_RAW', role='bidirectional', mcu_pin=None)
 
 net('USB_VBUS', signal_class='power', voltage_domain='USB_5V', required_track_width_mm=0.5)
+connect('C4', pin='VCC', number='1', net='USB_VBUS', role='power_in', mcu_pin=None)
 connect('J1', pin='VBUS', number='1', net='USB_VBUS', role='power_in', mcu_pin=None)
 connect('U1', pin='VIN', number='1', net='USB_VBUS', role='power_in', mcu_pin=None)
 
@@ -307,6 +324,7 @@ connect('X1', pin='XOUT', number='2', net='XOUT', role='passive', mcu_pin=None)
 place('C1', data={'ref': 'C1', 'x_mm': 3.0, 'y_mm': 5.0, 'rotation_deg': 0.0, 'side': 'top', 'courtyard_w_mm': 4.243, 'courtyard_h_mm': 4.243, 'source': 'rp2040_usb_hid_anchor', 'rationale': ''})
 place('C2', data={'ref': 'C2', 'x_mm': 7.0, 'y_mm': 5.0, 'rotation_deg': 0.0, 'side': 'top', 'courtyard_w_mm': 4.243, 'courtyard_h_mm': 4.243, 'source': 'rp2040_usb_hid_anchor', 'rationale': ''})
 place('C3', data={'ref': 'C3', 'x_mm': 11.0, 'y_mm': 5.0, 'rotation_deg': 0.0, 'side': 'top', 'courtyard_w_mm': 4.243, 'courtyard_h_mm': 4.243, 'source': 'rp2040_usb_hid_anchor', 'rationale': ''})
+place('C4', data={'ref': 'C4', 'x_mm': 9.0, 'y_mm': 15.0, 'rotation_deg': 0.0, 'side': 'top', 'courtyard_w_mm': 4.243, 'courtyard_h_mm': 4.243, 'source': 'rp2040_usb_hid_anchor', 'rationale': ''})
 place('D1', data={'ref': 'D1', 'x_mm': 10.0, 'y_mm': 10.0, 'rotation_deg': 0.0, 'side': 'top', 'courtyard_w_mm': 6.708, 'courtyard_h_mm': 6.708, 'source': 'rp2040_usb_hid_anchor', 'rationale': ''})
 place('J1', data={'ref': 'J1', 'x_mm': 3.0, 'y_mm': 10.0, 'rotation_deg': 0.0, 'side': 'top', 'courtyard_w_mm': 6.0, 'courtyard_h_mm': 6.0, 'source': 'rp2040_usb_hid_anchor', 'rationale': ''})
 place('J2', data={'ref': 'J2', 'x_mm': 18.0, 'y_mm': 12.0, 'rotation_deg': 0.0, 'side': 'top', 'courtyard_w_mm': 9.487, 'courtyard_h_mm': 9.487, 'source': 'rp2040_usb_hid_anchor', 'rationale': ''})

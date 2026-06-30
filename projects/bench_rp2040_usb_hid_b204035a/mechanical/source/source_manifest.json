@@ -15,7 +15,7 @@
     },
     {
       "path": "enclosure.py",
-      "sha256": "c5425dc4053d10791347c6e0aa404de1ccab0ce855401a7306518306f0b43da8"
+      "sha256": "f26a6ffe82d834ad2a455c319174e3eb54b0160ba5ab3c3531a5a6c81b0f3a07"
     },
     {
       "path": "enclosure_variants.py",
@@ -27,7 +27,7 @@
     },
     {
       "path": "mechanical_contract.json",
-      "sha256": "1ee479cd58ab607da541c497f8ba3530546322e58e51c2c3dd930a0fb99fceb2"
+      "sha256": "58f5b31c6591269cf367bb32aa62f678f824f48c55ef911e7fbc16c0c15cb633"
     }
   ],
   "variants": [

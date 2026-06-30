@@ -154,7 +154,7 @@ def build_sensor_data_logger_graph(spec: dict[str, Any]) -> dict[str, Any]:
             "signal_class": net_classes.get(name, "i2c" if name.startswith("I2C_") else "signal"),
             "voltage_domain": _domain(name),
             "connected_pins": sorted(pins),
-            "required_track_width_mm": 0.5 if net_classes.get(name) == "power" else 0.15,
+            "required_track_width_mm": 0.5 if net_classes.get(name) == "power" else (0.2 if net_classes.get(name) == "ground" else 0.15),
         }
         for name, pins in sorted(endpoints.items())
     ]
@@ -296,7 +296,7 @@ def build_ble_sensor_node_graph(spec: dict[str, Any]) -> dict[str, Any]:
             "signal_class": net_classes.get(name, "signal"),
             "voltage_domain": _domain(name),
             "connected_pins": sorted(pins),
-            "required_track_width_mm": 0.5 if net_classes.get(name) == "power" else 0.15,
+            "required_track_width_mm": 0.5 if net_classes.get(name) == "power" else (0.2 if net_classes.get(name) == "ground" else 0.15),
         }
         for name, pins in sorted(endpoints.items())
     ]
@@ -1236,6 +1236,7 @@ def build_rp2040_usb_device_graph(spec: dict[str, Any]) -> dict[str, Any]:
     ]
     decap_pins = [pin(1, "VCC", "V3V3", "power_in"), pin(2, "GND", "GND", "ground")]
     bulk_pins  = [pin(1, "VCC", "V3V3", "power_in"), pin(2, "GND", "GND", "ground")]
+    input_bulk_pins = [pin(1, "VCC", "USB_VBUS", "power_in"), pin(2, "GND", "GND", "ground")]
 
     components = [
         component("J1",  "power_input",  "USB-C POWER",  "USB4105-GF-A",        "USB_C_16Pin",       usbc_pins),
@@ -1248,6 +1249,7 @@ def build_rp2040_usb_device_graph(spec: dict[str, Any]) -> dict[str, Any]:
         component("C1",  "decoupling",   "100nF",        "GRM155R71C104KA88D",  "0402",              decap_pins),
         component("C2",  "decoupling",   "100nF",        "GRM155R71C104KA88D",  "0402",              decap_pins),
         component("C3",  "bulk_cap",     "10uF",         "GRM188R60J106ME47D",  "0603",              bulk_pins),
+        component("C4",  "bulk_cap",     "10uF USB_IN",  "GRM188R60J106ME47D",  "0603",              input_bulk_pins),
     ]
     net_classes = {
         "GND": "ground", "USB_VBUS": "power", "V3V3": "power",
@@ -1267,7 +1269,7 @@ def build_rp2040_usb_device_graph(spec: dict[str, Any]) -> dict[str, Any]:
             "signal_class": net_classes.get(name, "signal"),
             "voltage_domain": _domain(name),
             "connected_pins": sorted(pins),
-            "required_track_width_mm": 0.5 if net_classes.get(name) == "power" else 0.15,
+            "required_track_width_mm": 0.5 if net_classes.get(name) == "power" else (0.2 if net_classes.get(name) == "ground" else 0.15),
         }
         for name, pins in sorted(endpoints.items())
     ]
