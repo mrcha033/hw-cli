@@ -2717,6 +2717,39 @@ class HardwareService:
             ["footprint_pad_missing"],
         )
 
+        components_bad_role = deepcopy(graph["components"])
+        role_mutation = None
+        for item in components_bad_role:
+            if item.get("category") != "usb":
+                continue
+            for pin in item.get("pins", []):
+                if pin.get("name") == "VBUS":
+                    role_mutation = f"{item['ref']}.{pin['number']}"
+                    pin["role"] = "bidirectional"
+                    break
+            if role_mutation:
+                break
+        if role_mutation:
+            record(
+                "wrong_pin_role_contract",
+                "pinout_package_grounding",
+                f"Changed USB VBUS pin {role_mutation} from power input to bidirectional",
+                self.validator.check_component_metadata(components_bad_role),
+                ["component_pin_role_mismatch"],
+            )
+        else:
+            record(
+                "wrong_pin_role_contract",
+                "pinout_package_grounding",
+                "No USB VBUS pin was available to mutate",
+                GateReport(
+                    "component_provenance",
+                    Status.BLOCKED,
+                    [Failure(FailureCategory.BOM_ERROR, "benchmark_fixture_unavailable", "No USB VBUS pin was available to mutate")],
+                ),
+                ["component_pin_role_mismatch"],
+            )
+
         role_set_name = spec.get("electronics", {}).get("role_set", "robotics_controller")
         role_path = self.parts_root / "role_sets" / f"{role_set_name}.yaml"
         role_data = read_yaml(role_path) if role_path.is_file() else {}

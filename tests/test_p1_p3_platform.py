@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from copy import deepcopy
 import json
 import runpy
 from pathlib import Path
@@ -41,6 +42,21 @@ def test_curated_resolver_and_pin_contracts_pass(service, project):
     by_gate = {item["gate"]: item for item in checks["reports"]}
     assert by_gate["component_provenance"]["status"] == "pass"
     assert by_gate["pin_symbol_footprint"]["status"] == "pass"
+
+
+def test_component_provenance_rejects_wrong_pin_role_contract(service, project):
+    service.generate_all(project)
+    graph_path = service.workspace.require_project(project) / "electronics" / "generated" / "electrical_graph.json"
+    graph = json.loads(graph_path.read_text(encoding="utf-8"))
+    components = deepcopy(graph["components"])
+    usb = next(item for item in components if item["category"] == "usb")
+    vbus = next(pin for pin in usb["pins"] if pin["name"] == "VBUS")
+    vbus["role"] = "bidirectional"
+
+    report = service.validator.check_component_metadata(components)
+
+    assert report.status.value == "fail"
+    assert "component_pin_role_mismatch" in {failure.code for failure in report.failures}
 
 
 def test_iteration_writes_candidate_only_bundle(service, project):

@@ -16,6 +16,85 @@ from .resolver import SUPPLIER_EVIDENCE_MAX_AGE_DAYS, _evidence_is_stale
 CONNECTOR_CATEGORIES = {"power_input", "can_connector", "usb", "estop", "motor_io"}
 
 
+CATEGORY_PIN_ROLE_CONTRACTS: dict[str, list[dict[str, Any]]] = {
+    "power_input": [
+        {"names": ("VBAT", "VBUS"), "roles": ("power_in",)},
+        {"names": ("GND",), "roles": ("ground",), "voltage_domains": ("GND",)},
+    ],
+    "reverse_polarity": [
+        {"names": ("ANODE",), "roles": ("power_in",)},
+        {"names": ("CATHODE",), "roles": ("power_out",)},
+        {"names": ("GND",), "roles": ("ground",), "voltage_domains": ("GND",)},
+    ],
+    "efuse": [
+        {"names": ("IN",), "roles": ("power_in",)},
+        {"names": ("OUT",), "roles": ("power_out",)},
+        {"names": ("GND",), "roles": ("ground",), "voltage_domains": ("GND",)},
+        {"names": ("SHDN", "EN"), "roles": ("input",)},
+    ],
+    "regulator": [
+        {"names": ("VIN",), "roles": ("power_in",)},
+        {"names": ("VOUT",), "roles": ("power_out",)},
+        {"names": ("GND",), "roles": ("ground",), "voltage_domains": ("GND",)},
+    ],
+    "mcu": [
+        {"roles": ("power_in",)},
+        {"roles": ("ground",), "voltage_domains": ("GND",)},
+    ],
+    "imu": [
+        {"names": ("VDD",), "roles": ("power_in",)},
+        {"names": ("GND",), "roles": ("ground",), "voltage_domains": ("GND",)},
+        {"names": ("SCL",), "roles": ("open_drain", "input", "bidirectional")},
+        {"names": ("SDA",), "roles": ("open_drain", "bidirectional")},
+        {"names": ("INT1", "INT"), "roles": ("output", "input")},
+    ],
+    "can": [
+        {"names": ("VCC",), "roles": ("power_in",)},
+        {"names": ("GND",), "roles": ("ground",), "voltage_domains": ("GND",)},
+        {"names": ("RXD",), "roles": ("output",)},
+        {"names": ("TXD",), "roles": ("input",)},
+        {"names": ("CANH",), "roles": ("bidirectional",)},
+        {"names": ("CANL",), "roles": ("bidirectional",)},
+    ],
+    "can_connector": [
+        {"names": ("CANH",), "roles": ("bidirectional",)},
+        {"names": ("CANL",), "roles": ("bidirectional",)},
+        {"names": ("GND",), "roles": ("ground",), "voltage_domains": ("GND",)},
+    ],
+    "estop": [
+        {"names": ("ESTOP",), "roles": ("input",)},
+        {"names": ("GND",), "roles": ("ground",), "voltage_domains": ("GND",)},
+    ],
+    "safety_gate": [
+        {"names": ("VCC",), "roles": ("power_in",)},
+        {"names": ("IN",), "roles": ("input",)},
+        {"names": ("OUT",), "roles": ("output",)},
+        {"names": ("GND",), "roles": ("ground",), "voltage_domains": ("GND",)},
+    ],
+    "usb": [
+        {"names": ("VBUS",), "roles": ("power_in",), "voltage_domains": ("USB_5V",)},
+        {"names": ("GND",), "roles": ("ground",), "voltage_domains": ("GND",)},
+        {"names": ("D+", "DP", "USB_D+"), "roles": ("bidirectional",)},
+        {"names": ("D-", "DM", "USB_D-"), "roles": ("bidirectional",)},
+    ],
+    "usb_esd": [
+        {"names": ("DP_IN",), "roles": ("bidirectional",)},
+        {"names": ("DP_OUT",), "roles": ("bidirectional",)},
+        {"names": ("DM_IN",), "roles": ("bidirectional",)},
+        {"names": ("DM_OUT",), "roles": ("bidirectional",)},
+        {"names": ("GND",), "roles": ("ground",), "voltage_domains": ("GND",)},
+    ],
+    "motor_io": [
+        {"names": ("V5",), "roles": ("power_out",), "voltage_domains": ("V5",)},
+        {"names": ("GND",), "roles": ("ground",), "voltage_domains": ("GND",)},
+        {"names": ("PWM",), "roles": ("output",)},
+        {"names": ("CURRENT",), "roles": ("analog",)},
+        {"names": ("ENC",), "roles": ("input",)},
+        {"names": ("ESTOP",), "roles": ("output",)},
+    ],
+}
+
+
 def _failure(category: FailureCategory, code: str, message: str, path: str | None = None, **details: Any) -> Failure:
     return Failure(category=category, code=code, message=message, path=path, details=details)
 
@@ -507,6 +586,7 @@ class Validator:
                     failures.append(_failure(FailureCategory.BOM_ERROR, "footprint_pad_missing", f"{ref}.{number} is absent from curated footprint contract", ref))
                 if pin.get("role") in {"power_in", "power_out", "ground"} and not pin.get("voltage_domain"):
                     failures.append(_failure(FailureCategory.ELECTRICAL_SEMANTIC_ERROR, "power_pin_domain_missing", f"{ref}.{number} lacks a voltage domain", ref))
+            failures.extend(_component_pin_role_contract_failures(component))
             if component.get("sourcing", {}).get("status") not in {"resolved", "waived"}:
                 failures.append(_failure(FailureCategory.BOM_ERROR, "sourcing_unresolved", f"{ref} sourcing is unresolved", ref))
         report = self._report("component_provenance", failures)
@@ -1192,6 +1272,63 @@ def _infer_power_domain(net_name: str | None) -> str | None:
     if net_name == "V3V3":
         return "V3V3"
     return None
+
+
+def _component_pin_role_contract_failures(component: dict[str, Any]) -> list[Failure]:
+    category = component.get("category")
+    contract = CATEGORY_PIN_ROLE_CONTRACTS.get(str(category))
+    if not contract:
+        return []
+    pins = component.get("pins", [])
+    failures: list[Failure] = []
+    ref = component.get("ref", "?")
+    for requirement in contract:
+        expected_names = {str(name).upper() for name in requirement.get("names", [])}
+        expected_roles = set(requirement.get("roles", []))
+        expected_domains = set(requirement.get("voltage_domains", []))
+        matching_pins = [
+            pin for pin in pins
+            if not expected_names or str(pin.get("name", "")).upper() in expected_names
+        ]
+        if not matching_pins:
+            failures.append(_failure(
+                FailureCategory.ELECTRICAL_SEMANTIC_ERROR,
+                "component_pin_contract_missing",
+                f"{ref} is missing a required {category} pin contract",
+                "electronics.components",
+                ref=ref,
+                component_category=category,
+                expected_pin_names=sorted(expected_names),
+                expected_roles=sorted(expected_roles),
+            ))
+            continue
+        role_matches = [pin for pin in matching_pins if not expected_roles or pin.get("role") in expected_roles]
+        if not role_matches:
+            failures.append(_failure(
+                FailureCategory.ELECTRICAL_SEMANTIC_ERROR,
+                "component_pin_role_mismatch",
+                f"{ref} has the required {category} pin by name, but its electrical role is wrong",
+                "electronics.components",
+                ref=ref,
+                component_category=category,
+                expected_pin_names=sorted(expected_names),
+                expected_roles=sorted(expected_roles),
+                observed=[{"number": pin.get("number"), "name": pin.get("name"), "role": pin.get("role")} for pin in matching_pins],
+            ))
+            continue
+        if expected_domains and not any(pin.get("voltage_domain") in expected_domains for pin in role_matches):
+            failures.append(_failure(
+                FailureCategory.ELECTRICAL_SEMANTIC_ERROR,
+                "component_pin_voltage_domain_mismatch",
+                f"{ref} has the required {category} pin role, but its voltage domain is wrong",
+                "electronics.components",
+                ref=ref,
+                component_category=category,
+                expected_pin_names=sorted(expected_names),
+                expected_voltage_domains=sorted(expected_domains),
+                observed=[{"number": pin.get("number"), "name": pin.get("name"), "voltage_domain": pin.get("voltage_domain")} for pin in role_matches],
+            ))
+    return failures
 
 
 def _rail_nominal_voltages(spec: dict[str, Any]) -> dict[str, float]:

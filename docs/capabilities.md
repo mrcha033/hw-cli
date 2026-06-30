@@ -108,7 +108,7 @@
 - `hw_explore_design_space` enumerates backend, component, mechanical variant, and supplier axes
   and scores each against the current gates; result written to `history/design_space/exploration.json`
 - `hw_run_grounding_benchmark` adversarially mutates generated artifacts (pinout, footprint,
-  power tree, interface wiring, layout, decoupling placement, RF, connector retention, sourcing,
+  pin electrical roles, power tree, interface wiring, layout, decoupling placement, RF, connector retention, sourcing,
   critical-role alternate integrity, connector cutout alignment, mounting keepout intrusion,
   firmware pin assignment, motor PWM channel coverage) and confirms every relevant gate catches
   the injected defect; a missed case fails the benchmark
