@@ -64,7 +64,8 @@
   a retention fixture, method, and covered connector refs before the candidate can promote
 - `mechanical_connector_cutouts` cross-checks declared enclosure connector interfaces against
   the electrical connector refs and PCB placements, so a connector moved away from its panel edge
-  cannot pass merely because the schematic and enclosure source both look plausible
+  or assigned an impossible panel opening cannot pass merely because the schematic and enclosure
+  source both look plausible
 - `mechanical_mounting_integrity` blocks mounting holes that violate board-edge clearance and
   components placed inside screw/standoff keepouts; native CAD/DRC remains authoritative for
   exact courtyard and fastener geometry

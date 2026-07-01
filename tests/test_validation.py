@@ -74,6 +74,23 @@ def test_mechanical_connector_cutouts_reject_edge_misalignment(service, project)
     assert "connector_cutout_alignment_failed" in {item.code for item in report.failures}
 
 
+def test_mechanical_connector_cutouts_reject_invalid_opening_geometry(service, project):
+    service.generate_all(project)
+    project_path = service.workspace.require_project(project)
+    graph = json.loads((project_path / "electronics" / "generated" / "electrical_graph.json").read_text(encoding="utf-8"))
+    spec = deepcopy(service.read_spec(project))
+    next(item for item in spec["mechanical"]["connector_interfaces"] if item["ref"] == "J1")["opening_mm"] = [0.0, 10.0]
+    next(item for item in spec["mechanical"]["connector_interfaces"] if item["ref"] == "J2")["center_z_mm"] = 27.0
+
+    report = service.validator.check_mechanical_connector_cutouts(spec, graph)
+
+    assert report.status == "fail"
+    codes = {item.code for item in report.failures}
+    assert "connector_cutout_opening_invalid" in codes
+    assert "connector_cutout_opening_out_of_bounds" in codes
+    assert {"J1", "J2"} <= set(report.metrics["invalid_opening_refs"])
+
+
 def test_mechanical_mounting_integrity_passes_generated_template(service, project):
     service.generate_all(project)
     project_path = service.workspace.require_project(project)

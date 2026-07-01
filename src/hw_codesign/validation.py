@@ -311,10 +311,71 @@ class Validator:
         global_tolerance = float(clearances.get("tolerance_mm", 0.0))
         alignment_failures: list[str] = []
         missing_component_refs: list[str] = []
+        invalid_opening_refs: list[str] = []
         out_of_bounds_refs: list[str] = []
 
         for cutout in contract.get("connector_cutouts", []):
             ref = str(cutout.get("ref"))
+            opening = cutout.get("opening_mm")
+            center_z = cutout.get("center_z_mm")
+            if not isinstance(opening, list) or len(opening) < 2:
+                invalid_opening_refs.append(ref)
+                failures.append(_failure(
+                    FailureCategory.MECHANICAL_ERROR,
+                    "connector_cutout_opening_invalid",
+                    f"Connector {ref} cutout must declare width and height",
+                    "mechanical.connector_interfaces.opening_mm",
+                    ref=ref,
+                    opening_mm=opening,
+                ))
+            else:
+                numeric_opening = True
+                try:
+                    opening_width = float(opening[0])
+                    opening_height = float(opening[1])
+                    center_z_mm = float(center_z) if center_z is not None else None
+                except (TypeError, ValueError):
+                    numeric_opening = False
+                    invalid_opening_refs.append(ref)
+                    failures.append(_failure(
+                        FailureCategory.MECHANICAL_ERROR,
+                        "connector_cutout_opening_invalid",
+                        f"Connector {ref} cutout opening and center height must be numeric",
+                        "mechanical.connector_interfaces",
+                        ref=ref,
+                        opening_mm=opening,
+                        center_z_mm=center_z,
+                    ))
+                    opening_width = 0.0
+                    opening_height = 0.0
+                    center_z_mm = None
+                if numeric_opening and (opening_width <= 0.0 or opening_height <= 0.0):
+                    invalid_opening_refs.append(ref)
+                    failures.append(_failure(
+                        FailureCategory.MECHANICAL_ERROR,
+                        "connector_cutout_opening_invalid",
+                        f"Connector {ref} cutout opening dimensions must be positive",
+                        "mechanical.connector_interfaces.opening_mm",
+                        ref=ref,
+                        opening_mm=opening,
+                    ))
+                elif center_z_mm is not None and len(internal) >= 3:
+                    lower_z = center_z_mm - (opening_height / 2.0)
+                    upper_z = center_z_mm + (opening_height / 2.0)
+                    if lower_z < -global_tolerance or upper_z > float(internal[2]) + global_tolerance:
+                        invalid_opening_refs.append(ref)
+                        failures.append(_failure(
+                            FailureCategory.MECHANICAL_ERROR,
+                            "connector_cutout_opening_out_of_bounds",
+                            f"Connector {ref} cutout opening does not fit within enclosure height",
+                            "mechanical.connector_interfaces",
+                            ref=ref,
+                            opening_mm=opening,
+                            center_z_mm=center_z_mm,
+                            opening_lower_z_mm=lower_z,
+                            opening_upper_z_mm=upper_z,
+                            enclosure_height_mm=float(internal[2]),
+                        ))
             if not cutout.get("component_present"):
                 missing_component_refs.append(ref)
                 failures.append(_failure(
@@ -406,6 +467,7 @@ class Validator:
             "interface_refs": sorted(interface_refs),
             "missing_cutout_refs": missing_cutout_refs,
             "missing_component_refs": sorted(missing_component_refs),
+            "invalid_opening_refs": sorted(set(invalid_opening_refs)),
             "alignment_failure_refs": sorted(alignment_failures),
             "out_of_bounds_refs": sorted(out_of_bounds_refs),
             "max_connector_edge_distance_mm": max_edge_distance,
