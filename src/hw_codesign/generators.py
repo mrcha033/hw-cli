@@ -43,7 +43,7 @@ def generate_electronics(project: Path, spec: dict[str, Any], parts_root: Path, 
             component["resolution"] = "unresolved"
             continue
         data = match.data
-        component.update({"mpn": data["mpn"], "manufacturer": data["manufacturer"], "package": data["package"], "symbol": data["symbol"], "footprint": data["footprint"]["library_id"], "footprint_metadata": data["footprint"], "lifecycle": data["lifecycle"], "sourcing": data["sourcing"], "supplier_offer": data.get("supplier_offer"), "datasheet_evidence": data.get("datasheet_evidence", []), "constraints": data["constraints"], "review_status": data["review_status"], "resolution": match.resolution, "component_id": match.component_id, "resolution_provenance": match.provenance})
+        component.update({"mpn": data["mpn"], "manufacturer": data["manufacturer"], "package": data["package"], "symbol": data["symbol"], "footprint": data["footprint"]["library_id"], "footprint_metadata": data["footprint"], "pin_contracts": _curated_pin_contracts(data), "lifecycle": data["lifecycle"], "sourcing": data["sourcing"], "supplier_offer": data.get("supplier_offer"), "datasheet_evidence": data.get("datasheet_evidence", []), "constraints": data["constraints"], "review_status": data["review_status"], "resolution": match.resolution, "component_id": match.component_id, "resolution_provenance": match.provenance})
         _complete_unmapped_package_pins(component)
     proposal = propose_placement(spec, graph)
     for component in graph["components"]:
@@ -84,6 +84,23 @@ def _complete_unmapped_package_pins(component: dict[str, Any]) -> None:
             "generated_no_connect": True,
         })
     component["pins"] = pins
+
+
+def _curated_pin_contracts(component_data: dict[str, Any]) -> dict[str, dict[str, Any]]:
+    contracts: dict[str, dict[str, Any]] = {}
+    for pin in component_data.get("pins", []):
+        number = str(pin.get("number"))
+        if not number:
+            continue
+        contract = {
+            key: pin[key]
+            for key in ("number", "name", "electrical_type", "voltage_domain")
+            if key in pin
+        }
+        if contract:
+            contract["number"] = number
+            contracts[number] = contract
+    return contracts
 
 
 def _pin_sort_key(value: str) -> tuple[int, int | str]:
@@ -130,6 +147,7 @@ def _write_semantic_schematic(project: Path, spec: dict[str, Any], graph: dict[s
                 "manufacturer": item.get("manufacturer"),
                 "package": item.get("package"),
                 "footprint": item.get("footprint"),
+                "pin_contracts": item.get("pin_contracts", {}),
                 "pins": [
                     {
                         "number": pin.get("number"),
@@ -205,6 +223,7 @@ def _semantic_schematic_code(semantic: dict[str, Any]) -> str:
             f"    manufacturer={component.get('manufacturer')!r},",
             f"    package={component.get('package')!r},",
             f"    footprint={component.get('footprint')!r},",
+            f"    pin_contracts={component.get('pin_contracts', {})!r},",
             "    pins=[",
         ])
         for item in component.get("pins", []):

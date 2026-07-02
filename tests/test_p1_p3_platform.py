@@ -43,6 +43,9 @@ def test_curated_resolver_and_pin_contracts_pass(service, project):
     generated = service.generate_all(project)
     assert generated["resolution_report"]["status"] == "pass"
     assert all(item["resolution"] == "curated" for item in generated["component_resolution"])
+    graph_path = service.workspace.require_project(project) / "electronics" / "generated" / "electrical_graph.json"
+    graph = json.loads(graph_path.read_text(encoding="utf-8"))
+    assert any(component.get("pin_contracts") for component in graph["components"])
     checks = service.run_all_checks(project, include_external=False)
     by_gate = {item["gate"]: item for item in checks["reports"]}
     assert by_gate["component_provenance"]["status"] == "pass"
@@ -102,6 +105,32 @@ def test_component_provenance_rejects_wired_no_connect_pin(service, project):
     assert report.status.value == "fail"
     assert "no_connect_pin_wired" in failures
     assert failures["no_connect_pin_wired"].details["net"] == "GND"
+
+
+def test_component_provenance_rejects_curated_no_connect_contract_violation(service, project):
+    service.generate_all(project)
+    graph_path = service.workspace.require_project(project) / "electronics" / "generated" / "electrical_graph.json"
+    graph = json.loads(graph_path.read_text(encoding="utf-8"))
+    components = deepcopy(graph["components"])
+    target = next(
+        (component, pin)
+        for component in components
+        for pin in component.get("pins", [])
+        if pin.get("net") and pin.get("role") != "no_connect"
+    )
+    component, pin = target
+    component.setdefault("pin_contracts", {})[str(pin["number"])] = {
+        "number": str(pin["number"]),
+        "name": "NC",
+        "electrical_type": "no_connect",
+    }
+
+    report = service.validator.check_component_metadata(components)
+
+    failures = {failure.code: failure for failure in report.failures}
+    assert report.status.value == "fail"
+    assert "curated_no_connect_pin_contract_violation" in failures
+    assert failures["curated_no_connect_pin_contract_violation"].details["pin_number"] == str(pin["number"])
 
 
 def test_iteration_writes_candidate_only_bundle(service, project):
@@ -196,6 +225,7 @@ def test_design_candidate_is_cross_domain_primary_workflow(service, project):
         "wrong_footprint_contract",
         "missing_expected_pin_mapping",
         "wired_no_connect_pin",
+        "curated_no_connect_pin_contract_violation",
         "missing_support_circuit",
         "miswired_support_circuit",
         "bad_power_assumption",

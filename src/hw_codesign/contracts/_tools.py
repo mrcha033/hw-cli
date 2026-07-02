@@ -598,7 +598,7 @@ TOOL_REGISTRY: dict[str, ToolDef] = {
         name="hw_run_grounding_benchmark",
         description=(
             "Run the deterministic hardware-grounding benchmark against generated artifacts. "
-            "Injects in-memory wrong pinout, wrong footprint, missing or miswired support circuit, bad power budget, "
+            "Injects in-memory wrong pinout, wrong footprint, exact-part no-connect pin contract violations, missing or miswired support circuit, bad power budget, "
             "unreachable power rail, regulator voltage-order violation, missing rail decoupling, missing I2C pull-up, missing CAN termination, "
             "missing USB ESD bridge, misplaced USB ESD placement, hot-block placement near sensitive logic, "
             "misplaced RF antenna/keepout, under-rated connector current, connector cutout misalignment, mounting keepout intrusion, missing critical-role sourcing resilience, missing curated alternate integrity, "

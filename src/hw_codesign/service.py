@@ -2885,6 +2885,32 @@ class HardwareService:
             ["no_connect_pin_wired"],
         )
 
+        components_curated_nc_violation = deepcopy(graph["components"])
+        curated_nc_violation = None
+        for item in components_curated_nc_violation:
+            for pin in item.get("pins", []):
+                if pin.get("net") and pin.get("role") != "no_connect":
+                    item.setdefault("pin_contracts", {})[str(pin.get("number"))] = {
+                        "number": str(pin.get("number")),
+                        "name": "NC",
+                        "electrical_type": "no_connect",
+                    }
+                    curated_nc_violation = f"{item.get('ref')}.{pin.get('number')}"
+                    break
+            if curated_nc_violation:
+                break
+        record(
+            "curated_no_connect_pin_contract_violation",
+            "pinout_package_grounding",
+            f"Changed curated pin contract for wired graph pin {curated_nc_violation or '<unavailable>'} to no-connect",
+            self.validator.check_component_metadata(components_curated_nc_violation) if curated_nc_violation else GateReport(
+                "component_provenance",
+                Status.FAIL,
+                [Failure(FailureCategory.BOM_ERROR, "benchmark_fixture_unavailable", "No wired pin was available for curated no-connect mutation")],
+            ),
+            ["curated_no_connect_pin_contract_violation"],
+        )
+
         components_bad_role = deepcopy(graph["components"])
         role_mutation = None
         for item in components_bad_role:

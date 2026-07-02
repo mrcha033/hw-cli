@@ -662,6 +662,7 @@ class Validator:
                     expected_pads=sorted(pads, key=_pin_sort_key),
                     mapped_pins=sorted(set(numbers), key=_pin_sort_key),
                 ))
+            pin_contracts = _pin_contracts_by_number(component)
             for pin in pins:
                 number = str(pin.get("number"))
                 footprint_only_no_connect = pin.get("footprint_only") is True and pin.get("role") == "no_connect"
@@ -676,6 +677,9 @@ class Validator:
                         pin_name=pin.get("name"),
                         net=pin.get("net"),
                     ))
+                contract = pin_contracts.get(number)
+                if contract:
+                    failures.extend(_curated_pin_contract_failures(component, pin, contract))
                 if number not in symbol_pins and not footprint_only_no_connect:
                     failures.append(_failure(FailureCategory.BOM_ERROR, "symbol_pin_missing", f"{ref}.{number} is absent from curated symbol contract", ref))
                 if number not in pads:
@@ -1495,6 +1499,74 @@ def _component_pin_role_contract_failures(component: dict[str, Any]) -> list[Fai
                 expected_voltage_domains=sorted(expected_domains),
                 observed=[{"number": pin.get("number"), "name": pin.get("name"), "voltage_domain": pin.get("voltage_domain")} for pin in role_matches],
             ))
+    return failures
+
+
+def _pin_contracts_by_number(component: dict[str, Any]) -> dict[str, dict[str, Any]]:
+    raw = component.get("pin_contracts") or {}
+    if isinstance(raw, dict):
+        return {
+            str(number): dict(contract)
+            for number, contract in raw.items()
+            if isinstance(contract, dict)
+        }
+    if isinstance(raw, list):
+        return {
+            str(contract.get("number")): dict(contract)
+            for contract in raw
+            if isinstance(contract, dict) and contract.get("number") is not None
+        }
+    return {}
+
+
+def _curated_pin_contract_failures(component: dict[str, Any], pin: dict[str, Any], contract: dict[str, Any]) -> list[Failure]:
+    ref = component.get("ref", "?")
+    number = str(pin.get("number"))
+    expected_type = str(contract.get("electrical_type", "")).lower()
+    observed_role = str(pin.get("role") or pin.get("electrical_type") or "").lower()
+    failures: list[Failure] = []
+    if expected_type == "no_connect" and (not _pin_is_no_connect(pin) or pin.get("net")):
+        failures.append(_failure(
+            FailureCategory.ELECTRICAL_SEMANTIC_ERROR,
+            "curated_no_connect_pin_contract_violation",
+            f"{ref}.{number} is a no-connect pin in the curated part contract but the graph models it as connected",
+            "electronics.components",
+            ref=ref,
+            pin_number=number,
+            pin_name=pin.get("name"),
+            net=pin.get("net"),
+            expected_pin_name=contract.get("name"),
+            expected_electrical_type=contract.get("electrical_type"),
+            observed_role=pin.get("role"),
+        ))
+    if expected_type in {"power_in", "power_out", "ground"} and observed_role != expected_type:
+        failures.append(_failure(
+            FailureCategory.ELECTRICAL_SEMANTIC_ERROR,
+            "curated_pin_electrical_type_mismatch",
+            f"{ref}.{number} is {expected_type} in the curated part contract but the graph models it as {observed_role or '<unset>'}",
+            "electronics.components",
+            ref=ref,
+            pin_number=number,
+            pin_name=pin.get("name"),
+            expected_pin_name=contract.get("name"),
+            expected_electrical_type=contract.get("electrical_type"),
+            observed_role=pin.get("role"),
+            observed_electrical_type=pin.get("electrical_type"),
+        ))
+    expected_domain = contract.get("voltage_domain")
+    if expected_domain and pin.get("voltage_domain") != expected_domain:
+        failures.append(_failure(
+            FailureCategory.ELECTRICAL_SEMANTIC_ERROR,
+            "curated_pin_voltage_domain_mismatch",
+            f"{ref}.{number} voltage domain does not match the curated part contract",
+            "electronics.components",
+            ref=ref,
+            pin_number=number,
+            pin_name=pin.get("name"),
+            expected_pin_name=contract.get("name"),
+            expected_voltage_domain=expected_domain,
+            observed_voltage_domain=pin.get("voltage_domain"),
+        ))
     return failures
 
 

@@ -48,6 +48,7 @@ class SemanticBoard:
         manufacturer: str | None = None,
         package: str | None = None,
         footprint: str | None = None,
+        pin_contracts: dict[str, dict[str, Any]] | None = None,
         pins: list[dict[str, Any]] | None = None,
     ) -> None:
         if ref in self._components:
@@ -61,6 +62,7 @@ class SemanticBoard:
             "manufacturer": manufacturer,
             "package": package,
             "footprint": footprint,
+            "pin_contracts": deepcopy(pin_contracts or {}),
             "pins": [deepcopy(item) for item in pins or []],
         }
 

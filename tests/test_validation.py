@@ -138,6 +138,32 @@ def test_component_metadata_rejects_no_connect_pin_wired_to_net(service):
     assert "no_connect_pin_wired" in {item.code for item in report.failures}
 
 
+def test_component_metadata_rejects_curated_no_connect_contract_violation(service):
+    component = {
+        "ref": "U1",
+        "resolution": "curated",
+        "review_status": "approved",
+        "symbol": {"verified": True, "expected_pins": ["1", "2"]},
+        "footprint_metadata": {"verified": True, "expected_pads": ["1", "2"]},
+        "pin_contracts": {
+            "1": {"number": "1", "name": "VIN", "electrical_type": "power_in", "voltage_domain": "V3V3"},
+            "2": {"number": "2", "name": "NC", "electrical_type": "no_connect"},
+        },
+        "pins": [
+            {"number": "1", "name": "VIN", "role": "power_in", "net": "V3V3", "voltage_domain": "V3V3"},
+            {"number": "2", "name": "GPIO", "role": "bidirectional", "net": "GPIO1"},
+        ],
+        "sourcing": {"status": "resolved"},
+    }
+
+    report = service.validator.check_component_metadata([component])
+
+    failures = {item.code: item for item in report.failures}
+    assert report.status == "fail"
+    assert "curated_no_connect_pin_contract_violation" in failures
+    assert failures["curated_no_connect_pin_contract_violation"].details["expected_pin_name"] == "NC"
+
+
 def test_mechanical_mounting_integrity_rejects_hole_edge_violation(service, project):
     service.generate_all(project)
     project_path = service.workspace.require_project(project)
