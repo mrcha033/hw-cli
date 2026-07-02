@@ -235,6 +235,59 @@ def test_python_netlist_manufacturing_export_never_creates_fabrication_artifacts
     assert not (release / "fabrication").exists()
 
 
+def test_prepare_release_filters_python_netlist_nonfabrication_gates(service, project):
+    _set_backend(service, project, "python_netlist")
+    reports = [
+        GateReport("python_netlist_compile", Status.PASS),
+        GateReport("python_netlist_netlist_extract", Status.PASS),
+        GateReport("python_netlist_graph_parity", Status.PASS),
+        GateReport("python_netlist_footprint_parity", Status.PASS),
+        GateReport("python_netlist_layout_completeness", Status.BLOCKED),
+        GateReport("python_netlist_manufacturing_export", Status.BLOCKED),
+        GateReport("physical_qualification", Status.BLOCKED),
+    ]
+
+    result = service.prepare_release(
+        project,
+        {"reports": [report.to_dict() for report in reports]},
+        native_checks_confirmed=True,
+    )
+
+    returned_gates = {report["gate"] for report in result["reports"]}
+    assert result["status"] == "blocked"
+    assert result["code"] == "release_gates_not_passed"
+    assert "physical_qualification" in returned_gates
+    assert "python_netlist_layout_completeness" not in returned_gates
+    assert "python_netlist_manufacturing_export" not in returned_gates
+
+
+def test_prepare_release_filters_atopile_fabrication_plugin_gates(service, project):
+    _set_backend(service, project, "atopile")
+    reports = [
+        GateReport("atopile_compile", Status.PASS),
+        GateReport("atopile_netlist_extract", Status.PASS),
+        GateReport("atopile_graph_parity", Status.PASS),
+        GateReport("atopile_footprint_parity", Status.BLOCKED),
+        GateReport("atopile_layout_completeness", Status.BLOCKED),
+        GateReport("atopile_manufacturing_export", Status.BLOCKED),
+        GateReport("physical_qualification", Status.BLOCKED),
+    ]
+
+    result = service.prepare_release(
+        project,
+        {"reports": [report.to_dict() for report in reports]},
+        native_checks_confirmed=True,
+    )
+
+    returned_gates = {report["gate"] for report in result["reports"]}
+    assert result["status"] == "blocked"
+    assert result["code"] == "release_gates_not_passed"
+    assert "physical_qualification" in returned_gates
+    assert "atopile_footprint_parity" not in returned_gates
+    assert "atopile_layout_completeness" not in returned_gates
+    assert "atopile_manufacturing_export" not in returned_gates
+
+
 def test_atopile_release_gate_requires_source_not_fabrication(service, project):
     _set_backend(service, project, "atopile")
     service.generate_all(project)

@@ -746,8 +746,12 @@ class HardwareService:
             return {"status": "blocked", "code": "compiled_electronics_backend_required", "reports": [GateReport("release_preparation", Status.BLOCKED, [Failure(FailureCategory.RELEASE_ERROR, "compiled_electronics_backend_required", "Release preparation requires a release-eligible electronics backend")]).to_dict()]}
         if not native_checks_confirmed:
             return {"status": "blocked", "code": "native_release_checks_required", "reports": checks["reports"]}
-        if any(item["status"] != "pass" for item in checks["reports"]):
-            return {"status": "blocked", "code": "release_gates_not_passed", "reports": checks["reports"]}
+        release_reports, _required_backend_gates = self._tier_release_reports(
+            backend,
+            [self._report_from_dict(item) for item in checks["reports"]],
+        )
+        if any(report.status != Status.PASS for report in release_reports):
+            return {"status": "blocked", "code": "release_gates_not_passed", "reports": [report.to_dict() for report in release_reports]}
         unresolved_assumptions = [name for name, a in _assumptions_as_dict(spec.get("assumptions", {})).items() if a.get("critical") and a.get("requires_user_review")]
         if unresolved_assumptions:
             return {"status": "blocked", "code": "unresolved_critical_assumptions", "unresolved": unresolved_assumptions, "reports": checks["reports"]}
@@ -830,6 +834,22 @@ class HardwareService:
     @staticmethod
     def _release_tier_for_backend(backend: str) -> str:
         return _RELEASE_TIER_BY_BACKEND.get(backend, "candidate")
+
+    @staticmethod
+    def _tier_release_reports(backend: str, reports: list[GateReport]) -> tuple[list[GateReport], set[str]]:
+        if backend == "atopile":
+            exempt = {"atopile_footprint_parity", "atopile_layout_completeness", "atopile_manufacturing_export"}
+            required = {f"atopile_{stage}" for stage in ("compile", "netlist_extract", "graph_parity")}
+        elif backend == "python_netlist":
+            exempt = {"python_netlist_layout_completeness", "python_netlist_manufacturing_export"}
+            required = {f"python_netlist_{stage}" for stage in ("compile", "netlist_extract", "graph_parity", "footprint_parity")}
+        elif backend in _FABRICATION_RELEASE_BACKENDS:
+            exempt = set()
+            required = {f"{backend}_{stage}" for stage in CONTRACT_STAGES}
+        else:
+            exempt = set()
+            required = set()
+        return [report for report in reports if report.gate not in exempt], required
 
     def _python_netlist_release_artifacts(self, project_path: Path, staging: Path) -> GateReport:
         compiled = project_path / "electronics" / "source" / "python_netlist" / "compiled_netlist.json"
@@ -1018,29 +1038,10 @@ class HardwareService:
                 required.extend([release / "mechanical" / "frame_bracket_left.step", release / "mechanical" / "frame_bracket_right.step"])
         if backend not in _RELEASE_ELIGIBLE_BACKENDS:
             reports = [*reports, GateReport("backend_release_policy", Status.BLOCKED, [Failure(FailureCategory.RELEASE_ERROR, "compiled_electronics_backend_required", f"Backend {backend} is not release eligible")])]
-        elif backend == "atopile":
-            # HDL-source release: compile/source parity gates are required; footprint,
-            # layout, and manufacturing export are KiCad-plugin fabrication evidence.
-            _ato_exempt = {"atopile_footprint_parity", "atopile_layout_completeness", "atopile_manufacturing_export"}
-            reports = [r for r in reports if r.gate not in _ato_exempt]
-            required_ato_gates = {f"atopile_{s}" for s in ("compile", "netlist_extract", "graph_parity")}
-            present_gates = {r.gate for r in reports}
-            for gate_name in sorted(required_ato_gates - present_gates):
-                reports = [*reports, GateReport(gate_name, Status.BLOCKED, [Failure(FailureCategory.RELEASE_ERROR, "gate_not_run", f"Required gate was not executed: {gate_name}")])]
-        elif backend == "python_netlist":
-            # layout_completeness and manufacturing_export are intentionally BLOCKED for python_netlist
-            # (it produces a compiled netlist, not PCB layout or gerbers). Strip them so they don't
-            # cause the release gate to fail — the backend's release_blocking_gates excludes them.
-            _pn_exempt = {"python_netlist_layout_completeness", "python_netlist_manufacturing_export"}
-            reports = [r for r in reports if r.gate not in _pn_exempt]
-            required_pn_gates = {f"python_netlist_{s}" for s in ("compile", "netlist_extract", "graph_parity", "footprint_parity")}
-            present_gates = {r.gate for r in reports}
-            for gate_name in sorted(required_pn_gates - present_gates):
-                reports = [*reports, GateReport(gate_name, Status.BLOCKED, [Failure(FailureCategory.RELEASE_ERROR, "gate_not_run", f"Required gate was not executed: {gate_name}")])]
         else:
-            required_tsc_gates = {f"{backend}_{stage}" for stage in CONTRACT_STAGES}
+            reports, required_tier_gates = self._tier_release_reports(backend, reports)
             present_gates = {r.gate for r in reports}
-            for gate_name in sorted(required_tsc_gates - present_gates):
+            for gate_name in sorted(required_tier_gates - present_gates):
                 reports = [*reports, GateReport(gate_name, Status.BLOCKED, [Failure(FailureCategory.RELEASE_ERROR, "gate_not_run", f"Required gate was not executed: {gate_name}")])]
         present_gates = {r.gate for r in reports}
         if "physical_qualification" not in present_gates:
