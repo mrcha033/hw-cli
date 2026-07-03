@@ -21,7 +21,8 @@ Design constraints (intentional, to keep the feature credible):
   proposal-level sanity layer.
 * Constraints we cannot ground in real data are represented as structured,
   *unenforced* constraints with provenance, not faked. Decoupling proximity is
-  enforced only when the generated graph names the target IC.
+  enforced when the generated graph names the target IC or when the power rail
+  and placement seed identify a concrete powered load.
 """
 
 from __future__ import annotations
@@ -318,12 +319,18 @@ def _derive_constraints(spec: dict[str, Any], graph: dict[str, Any]) -> list[Pla
             )
         )
 
-    # Decoupling proximity is enforced only when the generated graph carries an
-    # explicit target. Generic rail caps remain visible as deferred constraints.
+    seed_positions = component_positions(graph)
+
+    # Decoupling proximity is enforced when the graph carries an explicit target
+    # or the rail/load graph lets us infer a concrete powered component. Generic
+    # rail caps with no grounded load remain visible as deferred constraints.
     for item in graph.get("components", []):
         if item.get("category") == "decoupling":
             power_nets = sorted({pin["net"] for pin in item.get("pins", []) if pin.get("net")})
-            target_ref = item.get("decoupling_target_ref")
+            explicit_target = item.get("decoupling_target_ref")
+            inferred_target = None if explicit_target else _infer_decoupling_target_ref(item, graph, seed_positions)
+            target_ref = explicit_target or inferred_target
+            target_source = "explicit_decoupling_target_ref" if explicit_target else ("inferred_power_rail_consumer" if inferred_target else None)
             constraints.append(
                 PlacementConstraint(
                     kind="decoupling_proximity",
@@ -331,11 +338,12 @@ def _derive_constraints(spec: dict[str, Any], graph: dict[str, Any]) -> list[Pla
                     params={
                         "power_nets": power_nets,
                         "target_ref": target_ref,
+                        "target_source": target_source,
                         "max_distance_mm": MAX_DECOUPLING_TARGET_DISTANCE_MM,
                     },
-                    derived_from="graph decoupling component pins + decoupling_target_ref",
+                    derived_from="graph decoupling component pins + decoupling target inference",
                     enforced=bool(target_ref),
-                    rationale="" if target_ref else "Cap-to-IC association is not modelled in the netlist; proximity enforcement is deferred.",
+                    rationale="" if target_ref else "No explicit target or powered rail consumer is modelled for this decoupling capacitor; proximity enforcement is deferred.",
                 )
             )
 
@@ -432,7 +440,8 @@ def _candidate_positions_for_ref(
         elif constraint.kind == "decoupling_proximity" and constraint.enforced:
             target = placements.get(constraint.params.get("target_ref"))
             if target is not None:
-                for dx, dy in ((3.0, 0.0), (-3.0, 0.0), (0.0, 3.0), (0.0, -3.0)):
+                candidates.append(_away_candidate(current, target, 3.5, "solver_decoupling_proximity", f"Cost solver placed {ref} near decoupling target {target.ref}."))
+                for dx, dy in ((3.0, 0.0), (-3.0, 0.0), (0.0, 3.0), (0.0, -3.0), (2.5, 2.5), (-2.5, 2.5), (2.5, -2.5), (-2.5, -2.5)):
                     candidates.append((target.x_mm + dx, target.y_mm + dy, "solver_decoupling_proximity", f"Cost solver placed {ref} near decoupling target {target.ref}."))
         elif constraint.kind == "agent_adjacent_to":
             target = placements.get(constraint.params.get("target"))
@@ -521,6 +530,12 @@ def _placement_cost(
         origin = original.get(ref)
         if origin is not None:
             add("movement", _placement_distance_mm(placement, origin) * 0.02)
+
+    placement_items = list(placements.values())
+    for index, left in enumerate(placement_items):
+        for right in placement_items[index + 1:]:
+            center_distance = _placement_distance_mm(left, right)
+            add("coincident_components", max(0.0, MIN_CENTER_DISTANCE_MM - center_distance) * 500.0)
 
     for constraint in constraints:
         placement = placements.get(constraint.target_ref) if constraint.target_ref else None
@@ -850,6 +865,55 @@ def _edge_aligned_position(placement: Placement, side: str, width: float, height
     if side == "right":
         return width - edge_distance, placement.y_mm
     return placement.x_mm, edge_distance
+
+
+def _infer_decoupling_target_ref(
+    decap: dict[str, Any],
+    graph: dict[str, Any],
+    seed_positions: dict[str, tuple[float, float]],
+) -> str | None:
+    """Infer a decoupling target from a capacitor rail and powered loads.
+
+    The inference is intentionally conservative: it only considers non-ground
+    nets connected to the capacitor and components that consume that rail via a
+    power-in pin.  The nearest seed-positioned load is selected so the inference
+    is explainable and stable before the solver moves anything.
+    """
+    ref = decap.get("ref")
+    decap_position = seed_positions.get(ref)
+    if decap_position is None:
+        return None
+    power_nets = {
+        pin.get("net")
+        for pin in decap.get("pins", [])
+        if pin.get("net") and pin.get("net") != "GND"
+    }
+    if not power_nets:
+        return None
+
+    candidates: list[tuple[float, int, str]] = []
+    for component in graph.get("components", []):
+        candidate_ref = component.get("ref")
+        if not candidate_ref or candidate_ref == ref or candidate_ref not in seed_positions:
+            continue
+        if component.get("category") in {"decoupling", "bulk_cap"}:
+            continue
+        consumes_rail = False
+        for pin in component.get("pins", []):
+            role = pin.get("role") or pin.get("electrical_type")
+            if pin.get("net") in power_nets and role == "power_in":
+                consumes_rail = True
+                break
+        if not consumes_rail:
+            continue
+        category = component.get("category")
+        priority = 0 if category in SENSITIVE_CATEGORIES else 1 if category in THERMAL_RISK_CATEGORIES else 2
+        distance = math.dist(decap_position, seed_positions[candidate_ref])
+        candidates.append((distance, priority, str(candidate_ref)))
+
+    if not candidates:
+        return None
+    return min(candidates)[2]
 
 
 def _away_candidate(placement: Placement, obstacle: Placement, distance: float, source: str, rationale: str) -> tuple[float, float, str, str]:

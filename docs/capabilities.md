@@ -48,8 +48,9 @@
   modeled rail capacitors have a ground return, and flags high-current connector rails
   without bulk capacitance; it remains a heuristic precheck, not a substitute for
   transient simulation or bench measurements
-- Decoupling proximity is enforced when generated components declare a `decoupling_target_ref`;
-  generic rail caps without a target remain visible as deferred rather than guessed
+- Decoupling proximity is enforced when generated components declare a `decoupling_target_ref`
+  or when rail/load metadata identifies a concrete powered component; caps with no grounded
+  target remain visible as deferred rather than guessed
 - Not authoritative: native ERC/DRC and the mechanical interference gate remain the
   release-blocking arbiters
 

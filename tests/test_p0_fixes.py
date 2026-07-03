@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import json
+
 from hw_codesign.io import read_yaml, write_yaml
 from hw_codesign.models import Failure, FailureCategory, GateReport, Status
 
@@ -19,6 +21,18 @@ def test_reference_release_gate_is_blocked(service, project):
     result = service.check_release_gate(project, [service._report_from_dict(item) for item in checks["reports"]])
     assert result["status"] == "blocked"
     assert "compiled_electronics_backend_required" in {item["code"] for item in result["failures"]}
+
+
+def test_gate_report_to_dict_converts_backend_bytes_to_json_safe_text():
+    report = GateReport(
+        "tscircuit_compile",
+        Status.BLOCKED,
+        [Failure(FailureCategory.TOOL_ERROR, "tool_timeout", "compiler timed out", details={"stdout": b"partial log"})],
+    )
+    payload = report.to_dict()
+
+    assert payload["failures"][0]["details"]["stdout"] == "partial log"
+    json.dumps(payload)
 
 
 def test_reference_mode_never_creates_release_directory(service, project):

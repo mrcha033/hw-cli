@@ -77,12 +77,14 @@ def test_proposal_carries_provenance_and_constraints(spec: dict, graph: dict):
     assert {"board_keepout", "mounting_hole_keepout", "connector_edge", "decoupling_proximity", "thermal_spacing"} <= kinds
 
     # Constraints we cannot ground in real data are represented but unenforced,
-    # not faked.
+    # not faked. Decoupling is now grounded by rail/load inference for this
+    # graph, while thermal spacing remains advisory.
     unenforced = {c.kind for c in proposal.constraints if not c.enforced}
-    assert unenforced == {"decoupling_proximity", "thermal_spacing"}
-    decoupling = next(c for c in proposal.constraints if c.kind == "decoupling_proximity")
-    assert decoupling.enforced is False
-    assert decoupling.rationale
+    assert unenforced == {"thermal_spacing"}
+    decouplings = [c for c in proposal.constraints if c.kind == "decoupling_proximity"]
+    assert decouplings
+    assert all(c.enforced for c in decouplings)
+    assert {c.params["target_source"] for c in decouplings} == {"inferred_power_rail_consumer"}
 
     # Connector-edge distance is reused from the connector contract, not invented.
     connector = next(c for c in proposal.constraints if c.kind == "connector_edge")
@@ -134,7 +136,10 @@ def test_proposal_preserves_seed_coordinates_without_active_costs(spec: dict, gr
 
     proposal = propose_placement(quiet_spec, graph)
     seed = component_positions(graph)
+    active_refs = {c.target_ref for c in proposal.constraints if c.enforced and c.kind == "decoupling_proximity"}
     for ref, (x, y) in seed.items():
+        if ref in active_refs:
+            continue
         assert (proposal.placements[ref].x_mm, proposal.placements[ref].y_mm) == (x, y)
 
 
@@ -146,12 +151,12 @@ def test_seed_passes_hard_checks_with_honest_advisories(spec: dict, graph: dict)
     assert report.metrics["errors"] == 0
     assert not [failure for failure in report.failures if failure.severity == "error"]
 
-    # It honestly documents what is NOT enforced rather than claiming all-green:
-    # decoupling proximity is deferred for every decoupling cap.
+    # It infers concrete rail/load decoupling targets instead of deferring caps
+    # that can be grounded in the graph.
     deferred = [f for f in report.failures if f.code == "decoupling_proximity_deferred"]
     decoupling_caps = [c for c in graph["components"] if c.get("category") == "decoupling"]
-    assert len(deferred) == len(decoupling_caps) > 0
-    assert all(f.severity == "info" for f in deferred)
+    assert decoupling_caps
+    assert not deferred
     # The gate advertises that it is not authoritative for manufacturability.
     assert report.metrics["authoritative"] is False
     assert report.backend["release_authoritative"] is False
