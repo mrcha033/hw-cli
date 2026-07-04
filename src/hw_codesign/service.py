@@ -3176,6 +3176,28 @@ class HardwareService:
                 ["power_output_exceeds_input_voltage"],
             )
 
+            graph_bad_regulator_vin = deepcopy(graph)
+            regulator_vin = next(
+                (
+                    item for item in graph_bad_regulator_vin.get("components", [])
+                    if item.get("category") == "regulator"
+                    and any(pin.get("role") == "power_out" and pin.get("net") == "V3V3" for pin in item.get("pins", []))
+                ),
+                None,
+            )
+            if regulator_vin:
+                input_pin = next((pin for pin in regulator_vin.get("pins", []) if pin.get("role") == "power_in"), None)
+                if input_pin:
+                    input_pin["net"] = "VSYS"
+                    input_pin["voltage_domain"] = "VBAT"
+                record(
+                    "regulator_input_voltage_range_violation",
+                    "power_tree_grounding",
+                    f"Moved {regulator_vin.get('ref')} regulator input to VSYS outside its grounded VIN range",
+                    self.validator.check_power_tree(graph_bad_regulator_vin, spec),
+                    ["regulator_input_voltage_out_of_range"],
+                )
+
         graph_missing_decoupling = deepcopy(graph)
         graph_missing_decoupling["components"] = [
             component for component in graph_missing_decoupling.get("components", [])

@@ -24,6 +24,13 @@ CURATED_REGULATOR_OUTPUT_CURRENT_A: dict[str, float] = {
     "TPS62133RGTR": 3.0,
 }
 
+CURATED_REGULATOR_INPUT_VOLTAGE_RANGE_V: dict[str, tuple[float, float]] = {
+    "AP2112K-3.3TRG1": (2.5, 6.0),
+    "LM22678TJ-5.0": (4.5, 42.0),
+    "LM76005RNPR": (3.5, 60.0),
+    "TPS62133RGTR": (3.0, 17.0),
+}
+
 
 CATEGORY_PIN_ROLE_CONTRACTS: dict[str, list[dict[str, Any]]] = {
     "power_input": [
@@ -742,6 +749,7 @@ class Validator:
         transfer_categories = {"fuse", "reverse_polarity", "efuse", "regulator", "charger"}
         reachable: set[str] = set()
         transfers: list[tuple[dict[str, Any], set[str], set[str]]] = []
+        regulator_voltage_limits: dict[str, dict[str, Any]] = {}
 
         for component in graph.get("components", []):
             category = component.get("category")
@@ -822,6 +830,34 @@ class Validator:
             known_outputs = [value for net in outputs if (value := _net_nominal_voltage(net, rail_nominal)) is not None]
             input_domains = {_infer_power_domain(net) for net in inputs}
             output_domains = {_infer_power_domain(net) for net in outputs}
+            if _component_category_matches(component, {"regulator"}) and known_inputs:
+                input_range = _component_input_voltage_range_v(component)
+                if input_range is not None:
+                    min_input_v, max_input_v = input_range
+                    observed_min = min(known_inputs)
+                    observed_max = max(known_inputs)
+                    regulator_voltage_limits[str(component.get("ref", "?"))] = {
+                        "input_nets": sorted(inputs),
+                        "mpn": component.get("mpn"),
+                        "input_voltage_min_v": min_input_v,
+                        "input_voltage_max_v": max_input_v,
+                        "observed_input_voltage_min_v": observed_min,
+                        "observed_input_voltage_max_v": observed_max,
+                    }
+                    if observed_min < min_input_v - 0.05 or observed_max > max_input_v + 0.05:
+                        failures.append(_failure(
+                            FailureCategory.ELECTRICAL_SEMANTIC_ERROR,
+                            "regulator_input_voltage_out_of_range",
+                            f"{component.get('ref', '?')} input rail is outside the grounded regulator VIN range",
+                            "electronics.components",
+                            ref=component.get("ref"),
+                            mpn=component.get("mpn"),
+                            input_nets=sorted(inputs),
+                            input_voltage_min_v=min_input_v,
+                            input_voltage_max_v=max_input_v,
+                            observed_input_voltage_min_v=observed_min,
+                            observed_input_voltage_max_v=observed_max,
+                        ))
             if input_domains == output_domains:
                 continue
             if known_inputs and known_outputs and max(known_outputs) > max(known_inputs) + 0.05:
@@ -843,6 +879,7 @@ class Validator:
             **report.metrics,
             "source_nets": sorted(reachable),
             "transfer_components": len(transfers),
+            "regulator_voltage_limits": regulator_voltage_limits,
             "power_loads_checked": sum(
                 1
                 for component in graph.get("components", [])
@@ -1754,6 +1791,47 @@ def _component_output_current_limit_a(component: dict[str, Any]) -> float | None
             return value
     mpn = str(component.get("mpn") or "").upper()
     return CURATED_REGULATOR_OUTPUT_CURRENT_A.get(mpn)
+
+
+def _component_input_voltage_range_v(component: dict[str, Any]) -> tuple[float, float] | None:
+    for source in _rating_sources(component):
+        min_v = _number(source.get("input_voltage_min_v")) or _number(source.get("vin_min_v"))
+        max_v = _number(source.get("input_voltage_max_v")) or _number(source.get("vin_max_v"))
+        if min_v is not None and max_v is not None:
+            return min_v, max_v
+    constraint_range = _input_voltage_range_from_constraints(component.get("constraints", []))
+    if constraint_range is not None:
+        return constraint_range
+    mpn = str(component.get("mpn") or "").upper()
+    return CURATED_REGULATOR_INPUT_VOLTAGE_RANGE_V.get(mpn)
+
+
+def _rating_sources(component: dict[str, Any]) -> list[dict[str, Any]]:
+    sources = [component]
+    for key in ("electrical_limits", "ratings", "datasheet_limits"):
+        value = component.get(key)
+        if isinstance(value, dict):
+            sources.append(value)
+    return sources
+
+
+def _input_voltage_range_from_constraints(constraints: Iterable[Any]) -> tuple[float, float] | None:
+    minimum: float | None = None
+    maximum: float | None = None
+    for constraint in constraints:
+        text = str(constraint).strip().lower().replace("-", "_")
+        range_match = re.search(r"(?P<min>\d+(?:p\d+|\.\d+)?)v_to_(?P<max>\d+(?:p\d+|\.\d+)?)v_(?:input|vin|vm)\b", text)
+        if range_match:
+            return float(range_match.group("min").replace("p", ".")), float(range_match.group("max").replace("p", "."))
+        max_match = re.search(r"(?P<max>\d+(?:p\d+|\.\d+)?)v_(?:input|vin|max_input|max_vin)\b", text)
+        if max_match:
+            maximum = float(max_match.group("max").replace("p", "."))
+        min_match = re.search(r"(?:min_input|min_vin)_(?P<min>\d+(?:p\d+|\.\d+)?)v\b", text)
+        if min_match:
+            minimum = float(min_match.group("min").replace("p", "."))
+    if minimum is not None and maximum is not None:
+        return minimum, maximum
+    return None
 
 
 def _current_limit_from_constraint(text: str) -> float | None:

@@ -115,7 +115,7 @@ placement, and backend gates depend on this gate through
 `hw_run_grounding_benchmark` is an adversarial digital benchmark over generated
 artifacts. It mutates in-memory copies of the electrical graph, pin/footprint
 contracts, exact-part no-connect pin contracts, category-level pin electrical roles, support-role resolution and wiring, component pin/net consistency,
-power budget, power-tree reachability, regulator voltage ordering, rail
+power budget, power-tree reachability, regulator voltage ordering, regulator input voltage range, rail
 decoupling/bulk-cap coverage, bus-interface support subgraphs, layout/thermal precheck risks, targeted decoupling placement,
 connector current assumptions, sourcing metadata, critical-role resilience, curated alternate
 integrity, high-vibration connector retention contracts, PCB-to-enclosure connector cutout

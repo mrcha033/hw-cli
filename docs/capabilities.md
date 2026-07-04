@@ -44,6 +44,9 @@
 - `layout_thermal_integrity` and `layout_signal_integrity` are gated checks that block
   high-current designs on under-layered stackups, thermal-risk components placed next to
   sensitive devices, and misplaced RF antenna or USB ESD components
+- `power_tree_integrity` verifies reachable rails, regulator voltage ordering, and grounded
+  regulator input-voltage ranges so coherent-looking rail graphs cannot feed a part outside
+  its VIN contract
 - `power_integrity_estimate` checks rail-level decoupling/bulk-cap coverage, verifies
   modeled rail capacitors have a ground return, rejects declared rail peak current that
   exceeds grounded regulator output-current evidence, and flags high-current connector

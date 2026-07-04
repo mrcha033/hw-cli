@@ -138,7 +138,8 @@ Expected benchmark summary:
 
 This intentionally injects bad in-memory candidates, including wrong pinout,
 wrong footprint, missing or miswired support circuit, bad power budget,
-unreachable rail, regulator voltage-order violation, missing I2C pull-up,
+unreachable rail, regulator voltage-order violation, regulator input voltage range
+violation, missing I2C pull-up,
 missing CAN termination, missing USB ESD bridge, hot block near sensitive logic,
 misplaced USB ESD placement, misplaced RF antenna/keepout, under-rated connector
 current, missing critical-role sourcing resilience, unavailable part, invalid net

@@ -310,6 +310,25 @@ def test_power_tree_integrity_rejects_regulator_voltage_inversion(service, proje
     assert "power_output_exceeds_input_voltage" in {item.code for item in report.failures}
 
 
+def test_power_tree_integrity_rejects_regulator_input_voltage_range_violation(service, project):
+    service.generate_all(project)
+    project_path = service.workspace.require_project(project)
+    graph = json.loads((project_path / "electronics" / "generated" / "electrical_graph.json").read_text(encoding="utf-8"))
+    bad_graph = deepcopy(graph)
+    regulator = next(component for component in bad_graph["components"] if component["ref"] == "U5")
+    vin = next(pin for pin in regulator["pins"] if pin["role"] == "power_in")
+    vin["net"] = "VSYS"
+    vin["voltage_domain"] = "VBAT"
+
+    report = service.validator.check_power_tree(bad_graph, service.read_spec(project))
+
+    assert report.status == "fail"
+    failure = next(item for item in report.failures if item.code == "regulator_input_voltage_out_of_range")
+    assert failure.details["ref"] == "U5"
+    assert failure.details["input_voltage_max_v"] == 17.0
+    assert failure.details["observed_input_voltage_max_v"] == 24.0
+
+
 def test_power_integrity_estimate_passes_generated_graph(service, project):
     service.generate_all(project)
     project_path = service.workspace.require_project(project)
