@@ -117,12 +117,12 @@ def test_rp2040_qspi_flash_uses_all_quad_data_lines(service):
     assert flash_pins["7"]["role"] == "bidirectional"
 
     nets = {net["name"]: set(net["connected_pins"]) for net in graph["nets"]}
-    assert {"J1.2", "D1.1"} <= nets["USB_DP_RAW"]
-    assert {"J1.3", "D1.3"} <= nets["USB_DM_RAW"]
-    assert {"D1.2", "U2.12"} <= nets["USB_DP"]
-    assert {"D1.4", "U2.11"} <= nets["USB_DM"]
-    assert {"U2.2", "U3.3"} <= nets["QSPI_D2"]
-    assert {"U2.1", "U3.7"} <= nets["QSPI_D3"]
+    assert {"J1.3", "D1.1"} <= nets["USB_DP_RAW"]
+    assert {"J1.4", "D1.3"} <= nets["USB_DM_RAW"]
+    assert {"D1.2", "U2.4"} <= nets["USB_DP"]
+    assert {"D1.4", "U2.3"} <= nets["USB_DM"]
+    assert {"U2.10", "U3.3"} <= nets["QSPI_D2"]
+    assert {"U2.11", "U3.7"} <= nets["QSPI_D3"]
 
     positions = {item["ref"]: item["pcb_position_mm"] for item in graph["components"]}
     assert positions["J1"] == [3.0, 10.0]
