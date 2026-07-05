@@ -1057,9 +1057,9 @@ class Validator:
         for net_name in i2c_nets:
             pullup_components = [
                 component for component in components
-                if _component_category_matches(component, {"pullup"})
-                and net_name in _component_nets(component)
+                if _component_is_i2c_pullup(component, net_name, nets_by_name)
             ]
+            pullup_refs_for_net = {str(component.get("ref")) for component in pullup_components if component.get("ref")}
             pullup_rails = sorted({
                 str(pin.get("net"))
                 for component in pullup_components
@@ -1075,7 +1075,13 @@ class Validator:
                     "electronics.components",
                     net_name=net_name,
                 ))
-            endpoint_supply_nets = _signal_endpoint_supply_nets(net_name, nets_by_name, components, excluded_categories={"pullup"})
+            endpoint_supply_nets = _signal_endpoint_supply_nets(
+                net_name,
+                nets_by_name,
+                components,
+                excluded_categories={"pullup"},
+                excluded_refs=pullup_refs_for_net,
+            )
             if pullup_rails and endpoint_supply_nets and not (set(pullup_rails) & set(endpoint_supply_nets)):
                 failures.append(_failure(
                     FailureCategory.ELECTRICAL_SEMANTIC_ERROR,
@@ -1880,7 +1886,31 @@ def _component_category_matches(component: dict[str, Any], categories: set[str])
         return True
     if "regulator" in categories and category.startswith("regulator_"):
         return True
+    if "pullup" in categories and category.endswith("_pullup"):
+        return True
     return bool(set(component.get("constraints", [])) & categories)
+
+
+def _component_is_i2c_pullup(
+    component: dict[str, Any],
+    net_name: str,
+    nets_by_name: dict[str, dict[str, Any]],
+) -> bool:
+    if net_name not in _component_nets(component):
+        return False
+    positive_rails = {
+        str(pin.get("net"))
+        for pin in component.get("pins", [])
+        if pin.get("net") != net_name and _is_positive_supply_net(pin.get("net"), nets_by_name)
+    }
+    if not positive_rails:
+        return False
+    if _component_category_matches(component, {"pullup"}):
+        return True
+    category = str(component.get("category", "")).lower()
+    footprint = str(component.get("footprint", "")).upper()
+    resistor_like = category.startswith("resistor") or category.endswith("_resistor") or footprint.startswith("R")
+    return resistor_like and _component_resistance_ohms(component) is not None
 
 
 def _component_output_current_limit_a(component: dict[str, Any]) -> float | None:
@@ -2029,8 +2059,10 @@ def _signal_endpoint_supply_nets(
     nets_by_name: dict[str, dict[str, Any]],
     components: list[dict[str, Any]],
     excluded_categories: set[str] | None = None,
+    excluded_refs: set[str] | None = None,
 ) -> list[str]:
     excluded_categories = excluded_categories or set()
+    excluded_refs = excluded_refs or set()
     components_by_ref = {
         str(component.get("ref")): component
         for component in components
@@ -2044,6 +2076,8 @@ def _signal_endpoint_supply_nets(
     supply_nets: set[str] = set()
     for ref in endpoint_refs:
         component = components_by_ref.get(ref)
+        if ref in excluded_refs:
+            continue
         if not component or _component_category_matches(component, excluded_categories):
             continue
         for pin in component.get("pins", []):

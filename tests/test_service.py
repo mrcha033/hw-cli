@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 import subprocess
+from copy import deepcopy
 from pathlib import Path
 
 import pytest
@@ -182,6 +183,56 @@ def test_usb_templates_bridge_raw_connector_nets_to_protected_usb_nets(service, 
     assert {"J1.4", "D1.3"} <= nets["USB_DM_RAW"]
     assert "D1.2" in nets["USB_DP"]
     assert "D1.4" in nets["USB_DM"]
+
+
+@pytest.mark.parametrize("template", ["lora_sensor_node", "samd21_sensor_hub", "stm32g0_power_monitor"])
+def test_i2c_templates_include_recognized_pullups_to_logic_rail(service, template):
+    project = f"{template}_i2c_pullup_check"
+    service.create_project(project, template=template)
+    service.generate_electronics_only(project)
+    path = service.workspace.require_project(project)
+    graph = json.loads((path / "electronics" / "generated" / "electrical_graph.json").read_text(encoding="utf-8"))
+
+    report = service.validator.check_interface_integrity(graph)
+
+    assert report.status.value == "pass"
+    assert "i2c_pullup_missing" not in {failure.code for failure in report.failures}
+    nets = {net["name"]: set(net["connected_pins"]) for net in graph["nets"]}
+    components_by_ref = {component["ref"]: component for component in graph["components"]}
+    for net_name in ("I2C_SCL", "I2C_SDA"):
+        pullup_refs = {
+            endpoint.partition(".")[0]
+            for endpoint in nets[net_name]
+            if components_by_ref[endpoint.partition(".")[0]].get("category")
+            in {"pullup", "i2c_pullup", "resistor_4k7"}
+            and any(pin.get("net") == "V3V3" for pin in components_by_ref[endpoint.partition(".")[0]].get("pins", []))
+        }
+        assert pullup_refs
+
+
+def test_generic_i2c_pullup_on_wrong_rail_fails_interface_integrity(service):
+    project = "lora_sensor_node_i2c_wrong_rail_check"
+    service.create_project(project, template="lora_sensor_node")
+    service.generate_electronics_only(project)
+    path = service.workspace.require_project(project)
+    graph = json.loads((path / "electronics" / "generated" / "electrical_graph.json").read_text(encoding="utf-8"))
+    bad_graph = deepcopy(graph)
+    for component in bad_graph["components"]:
+        if component.get("category") != "resistor_4k7":
+            continue
+        if not any(pin.get("net") in {"I2C_SCL", "I2C_SDA"} for pin in component.get("pins", [])):
+            continue
+        supply_pin = next(pin for pin in component["pins"] if pin.get("net") == "V3V3")
+        supply_pin["net"] = "VBAT"
+
+    report = service.validator.check_interface_integrity(bad_graph)
+
+    assert report.status.value == "fail"
+    failures = [failure for failure in report.failures if failure.code == "i2c_pullup_voltage_mismatch"]
+    assert {failure.details["net_name"] for failure in failures} == {"I2C_SCL", "I2C_SDA"}
+    for failure in failures:
+        assert failure.details["pullup_rails"] == ["VBAT"]
+        assert failure.details["endpoint_supply_nets"] == ["V3V3"]
 
 
 def test_rp2040_firmware_profile_and_stack_modules_are_graph_grounded(service):
