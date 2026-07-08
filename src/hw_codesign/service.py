@@ -3908,6 +3908,56 @@ class HardwareService:
                     ["usb_esd_far_from_connector"],
                 )
 
+        oscillator_crystal = next(
+            (
+                component
+                for component in graph.get("components", [])
+                if "crystal" in str(component.get("category", ""))
+            ),
+            None,
+        )
+        if oscillator_crystal:
+            crystal_nets = {
+                pin.get("net")
+                for pin in oscillator_crystal.get("pins", [])
+                if pin.get("net") and pin.get("net") != "GND"
+            }
+            oscillator_mcu = next(
+                (
+                    component
+                    for component in graph.get("components", [])
+                    if component.get("category") == "mcu"
+                    and crystal_nets & {pin.get("net") for pin in component.get("pins", []) if pin.get("net")}
+                ),
+                None,
+            )
+            if oscillator_mcu:
+                graph_bad_oscillator_placement = deepcopy(graph)
+                bad_crystal = next(
+                    component
+                    for component in graph_bad_oscillator_placement.get("components", [])
+                    if component.get("ref") == oscillator_crystal.get("ref")
+                )
+                envelope = spec.get("mechanical", {}).get("envelope", {})
+                bad_crystal["pcb_position_mm"] = [
+                    max(0.0, float(envelope.get("board_width_mm", 0.0)) - 2.0),
+                    2.0,
+                ]
+                oscillator_proposal = propose_placement(spec, graph_bad_oscillator_placement)
+                oscillator_proposal.placements[oscillator_crystal["ref"]] = replace(
+                    oscillator_proposal.placements[oscillator_crystal["ref"]],
+                    x_mm=bad_crystal["pcb_position_mm"][0],
+                    y_mm=bad_crystal["pcb_position_mm"][1],
+                    source="benchmark_forced_bad_oscillator",
+                )
+                record(
+                    "oscillator_far_from_mcu",
+                    "layout_signal_integrity",
+                    f"Moved crystal {oscillator_crystal.get('ref')} away from MCU oscillator pins on {oscillator_mcu.get('ref')}",
+                    check_layout_signal_integrity(oscillator_proposal, graph_bad_oscillator_placement, spec),
+                    ["oscillator_crystal_far_from_mcu"],
+                )
+
         graph_hot_near_logic = deepcopy(graph)
         hot_component = next(
             (

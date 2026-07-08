@@ -61,8 +61,8 @@
   board file, so a 2-layer candidate cannot silently carry inner-layer zones, routes, or exports
 - `layout_thermal_integrity` and `layout_signal_integrity` are gated checks that block
   high-current designs on under-layered stackups, thermal-risk components placed next to
-  sensitive devices, excessive high-current ingress loop area, and misplaced RF antenna or USB
-  ESD components
+  sensitive devices, excessive high-current ingress loop area, and misplaced RF antenna, USB
+  ESD, or oscillator crystal/load-cap components
 - `power_tree_integrity` verifies reachable rails, regulator voltage ordering, grounded
   regulator input-voltage ranges, regulator dropout/headroom, regulator enable-pin bias, and
   powered-load supply ranges so coherent-looking rail graphs cannot feed a part outside its
@@ -147,7 +147,7 @@
 - `hw_explore_design_space` enumerates backend, component, mechanical variant, and supplier axes
   and scores each against the current gates; result written to `history/design_space/exploration.json`
 - `hw_run_grounding_benchmark` adversarially mutates generated artifacts (pinout, footprint,
-  pin electrical roles, power tree including regulator dropout/headroom and enable bias, interface wiring including USB-C CC Rd, oscillator load caps, and boot strap bias, layout, decoupling placement, RF, connector retention, sourcing,
+  pin electrical roles, power tree including regulator dropout/headroom and enable bias, interface wiring including USB-C CC Rd, oscillator load caps, and boot strap bias, layout, oscillator placement, decoupling placement, RF, connector retention, sourcing,
   high-current loop area, critical-role alternate integrity, connector cutout alignment, mounting keepout intrusion,
   firmware pin assignment, motor PWM channel coverage) and confirms every relevant gate catches
   the injected defect; a missed case fails the benchmark

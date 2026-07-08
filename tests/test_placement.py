@@ -55,6 +55,28 @@ def samd21_graph(samd21_spec: dict) -> dict:
     return build_graph(samd21_spec)
 
 
+@pytest.fixture
+def usb_hid_spec() -> dict:
+    template = Path(__file__).parents[1] / "src" / "hw_codesign" / "templates" / "usb_hid_controller.yaml"
+    return yaml.safe_load(template.read_text(encoding="utf-8"))
+
+
+@pytest.fixture
+def usb_hid_graph(usb_hid_spec: dict) -> dict:
+    return build_graph(usb_hid_spec)
+
+
+@pytest.fixture
+def avr_hid_spec() -> dict:
+    template = Path(__file__).parents[1] / "src" / "hw_codesign" / "templates" / "avr_32u4_hid.yaml"
+    return yaml.safe_load(template.read_text(encoding="utf-8"))
+
+
+@pytest.fixture
+def avr_hid_graph(avr_hid_spec: dict) -> dict:
+    return build_graph(avr_hid_spec)
+
+
 def _codes(report) -> set[str]:
     return {failure.code for failure in report.failures}
 
@@ -151,6 +173,45 @@ def test_constraint_graph_carries_rf_and_targeted_decoupling_cost_evidence(ble_s
         assert details["violation_cost"] >= 0.0
 
 
+def test_constraint_graph_carries_oscillator_cost_evidence(samd21_spec: dict, samd21_graph: dict):
+    proposal = propose_placement(samd21_spec, samd21_graph)
+
+    for kind, cost_key in {
+        "oscillator_crystal_mcu": "oscillator_crystal_mcu_distance",
+        "oscillator_load_cap": "oscillator_load_cap_distance",
+    }.items():
+        edge = _edges(proposal, kind)[0]
+        details = edge["details"]
+        assert details["cost_key"] == cost_key
+        assert isinstance(details["distance_mm"], (int, float))
+        assert isinstance(details["margin_mm"], (int, float))
+        assert isinstance(details["violation_cost"], (int, float))
+        assert details["violation_cost"] >= 0.0
+        assert details["margin_mm"] >= 0.0
+
+
+def test_usb_hid_controller_seed_keeps_crystal_near_mcu(usb_hid_spec: dict, usb_hid_graph: dict):
+    seed = component_positions(usb_hid_graph)
+    mcu = next(component for component in usb_hid_graph["components"] if component["category"] == "mcu")
+    crystal = next(component for component in usb_hid_graph["components"] if "crystal" in str(component.get("category", "")))
+
+    assert math.dist(seed[mcu["ref"]], seed[crystal["ref"]]) <= 20.0
+    report = check_layout_signal_integrity(propose_placement(usb_hid_spec, usb_hid_graph), usb_hid_graph, usb_hid_spec)
+    assert report.status == Status.PASS
+    assert report.metrics["oscillator_crystals"] == 1
+
+
+def test_avr_hid_seed_keeps_crystal_near_mcu(avr_hid_spec: dict, avr_hid_graph: dict):
+    seed = component_positions(avr_hid_graph)
+    mcu = next(component for component in avr_hid_graph["components"] if component["category"] == "mcu")
+    crystal = next(component for component in avr_hid_graph["components"] if "crystal" in str(component.get("category", "")))
+
+    assert math.dist(seed[mcu["ref"]], seed[crystal["ref"]]) <= 20.0
+    report = check_layout_signal_integrity(propose_placement(avr_hid_spec, avr_hid_graph), avr_hid_graph, avr_hid_spec)
+    assert report.status == Status.PASS
+    assert report.metrics["oscillator_crystals"] == 1
+
+
 def test_proposal_preserves_seed_coordinates_without_active_costs(spec: dict, graph: dict):
     quiet_spec = deepcopy(spec)
     quiet_spec["mechanical"]["connector_interfaces"] = []
@@ -211,6 +272,8 @@ def test_samd21_sensor_hub_uses_board_specific_physical_seed(samd21_spec: dict, 
     assert thermal_report.status == Status.PASS
     assert thermal_report.metrics["thermal_risk_components"] == 1
     assert signal_report.status == Status.PASS
+    assert signal_report.metrics["oscillator_crystals"] == 1
+    assert signal_report.metrics["oscillator_load_caps"] == 2
 
     max_edge = samd21_spec["mechanical"]["max_connector_edge_distance_mm"]
     width = samd21_spec["mechanical"]["envelope"]["board_width_mm"]
@@ -534,6 +597,52 @@ def test_layout_signal_integrity_rejects_usb_esd_far_from_connector_when_forced(
 
     assert report.status == Status.FAIL
     assert "usb_esd_far_from_connector" in _codes(report)
+
+
+def test_constraint_solver_repairs_oscillator_far_from_mcu(samd21_spec: dict, samd21_graph: dict):
+    bad_graph = deepcopy(samd21_graph)
+    crystal = next(component for component in bad_graph["components"] if "crystal" in str(component.get("category", "")))
+    crystal["pcb_position_mm"] = [
+        samd21_spec["mechanical"]["envelope"]["board_width_mm"] - 2.0,
+        2.0,
+    ]
+
+    proposal = propose_placement(samd21_spec, bad_graph)
+    report = check_layout_signal_integrity(proposal, bad_graph, samd21_spec)
+
+    assert proposal.placements[crystal["ref"]].source == "solver_oscillator_mcu_proximity"
+    cap_sources = {
+        placement.source
+        for ref, placement in proposal.placements.items()
+        if ref in {"C4", "C5"}
+    }
+    assert "solver_oscillator_load_cap_proximity" in cap_sources
+    assert report.status == Status.PASS
+
+
+def test_layout_signal_integrity_rejects_oscillator_far_from_mcu_when_forced(samd21_spec: dict, samd21_graph: dict):
+    proposal = propose_placement(samd21_spec, samd21_graph)
+    crystal = next(component for component in samd21_graph["components"] if "crystal" in str(component.get("category", "")))
+    proposal.placements[crystal["ref"]] = replace(
+        proposal.placements[crystal["ref"]],
+        x_mm=samd21_spec["mechanical"]["envelope"]["board_width_mm"] - 2.0,
+        y_mm=2.0,
+    )
+
+    report = check_layout_signal_integrity(proposal, samd21_graph, samd21_spec)
+
+    assert report.status == Status.FAIL
+    assert "oscillator_crystal_far_from_mcu" in _codes(report)
+
+
+def test_layout_signal_integrity_rejects_oscillator_load_cap_far_when_forced(samd21_spec: dict, samd21_graph: dict):
+    proposal = propose_placement(samd21_spec, samd21_graph)
+    proposal.placements["C4"] = replace(proposal.placements["C4"], x_mm=0.0, y_mm=0.0)
+
+    report = check_layout_signal_integrity(proposal, samd21_graph, samd21_spec)
+
+    assert report.status == Status.FAIL
+    assert "oscillator_load_cap_far_from_crystal" in _codes(report)
 
 
 def test_estimated_courtyard_overlap_warns(spec, graph):

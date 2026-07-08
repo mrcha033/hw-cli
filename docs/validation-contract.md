@@ -125,7 +125,7 @@ placement, and backend gates depend on this gate through
 artifacts. It mutates in-memory copies of the electrical graph, pin/footprint
 contracts, exact-part no-connect pin contracts, category-level pin electrical roles, support-role resolution and wiring including oscillator load-cap returns and boot-mode strap bias, component pin/net consistency,
 power budget, power-tree reachability, regulator voltage ordering, regulator input voltage range, regulator dropout/headroom, regulator enable bias, powered-load supply voltage range,
-rail decoupling/bulk-cap coverage, bus-interface support subgraphs including I2C pull-up rail consistency, CAN termination value, and USB-C CC Rd value, layout/thermal precheck risks including high-current loop area, targeted decoupling placement,
+rail decoupling/bulk-cap coverage, bus-interface support subgraphs including I2C pull-up rail consistency, CAN termination value, and USB-C CC Rd value, layout/thermal/signal precheck risks including oscillator proximity, high-current loop area, targeted decoupling placement,
 connector current assumptions, sourcing metadata, critical-role resilience, curated alternate
 integrity, high-vibration connector retention contracts, PCB-to-enclosure connector cutout
 alignment, mounting-hole keepout intrusion, USB ESD placement, RF

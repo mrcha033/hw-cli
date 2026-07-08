@@ -58,6 +58,8 @@ RF_EDGE_DISTANCE_MAX_MM = 8.0
 RF_NOISY_COMPONENT_KEEP_OUT_MM = 10.0
 USB_ESD_MAX_CONNECTOR_DISTANCE_MM = 15.0
 MAX_DECOUPLING_TARGET_DISTANCE_MM = 12.0
+OSCILLATOR_MAX_CRYSTAL_MCU_DISTANCE_MM = 20.0
+OSCILLATOR_MAX_LOAD_CAP_DISTANCE_MM = 7.0
 RF_NOISY_CATEGORIES = {"charger", "regulator", "efuse", "reverse_polarity", "safety_gate", "motor_io"}
 RF_CONSTRAINT_MARKERS = {
     "ble_mcu",
@@ -500,6 +502,18 @@ def _candidate_positions_for_ref(
             connector = placements[connector_ref]
             candidates.append((connector.x_mm, connector.y_mm + 4.0, "solver_usb_esd_connector_side", f"Cost solver placed {ref} near USB connector {connector_ref}."))
 
+    oscillator_groups = _oscillator_groups(graph)
+    for group in oscillator_groups:
+        if ref == group["crystal_ref"]:
+            target = placements.get(group["mcu_ref"])
+            if target is not None:
+                candidates.append(_away_candidate(current, target, 12.0, "solver_oscillator_mcu_proximity", f"Cost solver placed {ref} near MCU oscillator pins on {target.ref}."))
+        elif ref in group["cap_refs"]:
+            crystal = placements.get(group["crystal_ref"])
+            if crystal is not None:
+                for dx, dy in ((3.0, 0.0), (-3.0, 0.0), (0.0, 3.0), (0.0, -3.0), (2.5, 2.5), (-2.5, 2.5), (2.5, -2.5), (-2.5, -2.5)):
+                    candidates.append((crystal.x_mm + dx, crystal.y_mm + dy, "solver_oscillator_load_cap_proximity", f"Cost solver placed {ref} near crystal {crystal.ref}."))
+
     if _declared_peak_current_a(spec) >= HIGH_CURRENT_THRESHOLD_A and ref in _high_current_chain_refs(graph):
         chain = _high_current_chain_refs(graph)
         index = chain.index(ref)
@@ -608,6 +622,20 @@ def _placement_cost(
         connector_distances = [_placement_distance_mm(placements[esd_ref], placements[connector_ref]) for connector_ref in usb_connector_refs]
         if connector_distances:
             add("usb_esd_connector_distance", max(0.0, min(connector_distances) - USB_ESD_MAX_CONNECTOR_DISTANCE_MM) * 25.0)
+
+    for group in _oscillator_groups(graph):
+        crystal = placements.get(group["crystal_ref"])
+        mcu = placements.get(group["mcu_ref"])
+        if crystal is None or mcu is None:
+            continue
+        distance = _placement_distance_mm(crystal, mcu)
+        add("oscillator_crystal_mcu_distance", max(0.0, distance - OSCILLATOR_MAX_CRYSTAL_MCU_DISTANCE_MM) * 35.0)
+        for cap_ref in group["cap_refs"]:
+            cap = placements.get(cap_ref)
+            if cap is None:
+                continue
+            cap_distance = _placement_distance_mm(cap, crystal)
+            add("oscillator_load_cap_distance", max(0.0, cap_distance - OSCILLATOR_MAX_LOAD_CAP_DISTANCE_MM) * 45.0)
 
     if _declared_peak_current_a(spec) >= HIGH_CURRENT_THRESHOLD_A:
         chain = _high_current_chain_refs(graph)
@@ -859,6 +887,36 @@ def _build_constraint_graph(
                 "USB raw/protected net bridge metadata",
                 max_connector_distance_mm=USB_ESD_MAX_CONNECTOR_DISTANCE_MM,
                 **measured_max(distance, USB_ESD_MAX_CONNECTOR_DISTANCE_MM, "usb_esd_connector_distance", 25.0),
+            )
+
+    for group in _oscillator_groups(graph):
+        crystal = placements.get(group["crystal_ref"])
+        mcu = placements.get(group["mcu_ref"])
+        if crystal is None or mcu is None:
+            continue
+        distance = _placement_distance_mm(crystal, mcu)
+        add_edge(
+            "oscillator_crystal_mcu",
+            [group["crystal_ref"], group["mcu_ref"]],
+            True,
+            "crystal and MCU pins sharing oscillator nets",
+            oscillator_nets=group["nets"],
+            max_distance_mm=OSCILLATOR_MAX_CRYSTAL_MCU_DISTANCE_MM,
+            **measured_max(distance, OSCILLATOR_MAX_CRYSTAL_MCU_DISTANCE_MM, "oscillator_crystal_mcu_distance", 35.0),
+        )
+        for cap_ref in group["cap_refs"]:
+            cap = placements.get(cap_ref)
+            if cap is None:
+                continue
+            cap_distance = _placement_distance_mm(cap, crystal)
+            add_edge(
+                "oscillator_load_cap",
+                [cap_ref, group["crystal_ref"]],
+                True,
+                "crystal load capacitor sharing oscillator net",
+                oscillator_nets=group["nets"],
+                max_distance_mm=OSCILLATOR_MAX_LOAD_CAP_DISTANCE_MM,
+                **measured_max(cap_distance, OSCILLATOR_MAX_LOAD_CAP_DISTANCE_MM, "oscillator_load_cap_distance", 45.0),
             )
 
     edges_by_kind: dict[str, int] = {}
@@ -1390,6 +1448,7 @@ def check_layout_signal_integrity(
         and {"USB_DP", "USB_DM"} <= _component_nets(component)
         and component.get("category") not in {"usb_esd", "tvs"}
     ]
+    oscillator_groups = _oscillator_groups(graph)
 
     def fail(code: str, message: str, **details: Any) -> None:
         failures.append(Failure(FailureCategory.EDA_ERROR, code, message, path="placement", details=details))
@@ -1449,6 +1508,40 @@ def check_layout_signal_integrity(
                 nearest_device_distance_mm=round(min(device_distances), 3),
             )
 
+    oscillator_load_cap_count = 0
+    for group in oscillator_groups:
+        crystal = placements.get(group["crystal_ref"])
+        mcu = placements.get(group["mcu_ref"])
+        if crystal is None or mcu is None:
+            continue
+        distance = _placement_distance_mm(crystal, mcu)
+        if distance > OSCILLATOR_MAX_CRYSTAL_MCU_DISTANCE_MM:
+            fail(
+                "oscillator_crystal_far_from_mcu",
+                f"{group['crystal_ref']} is {distance:.3f} mm from MCU oscillator pins on {group['mcu_ref']}",
+                crystal_ref=group["crystal_ref"],
+                mcu_ref=group["mcu_ref"],
+                distance_mm=round(distance, 3),
+                maximum_distance_mm=OSCILLATOR_MAX_CRYSTAL_MCU_DISTANCE_MM,
+                oscillator_nets=group["nets"],
+            )
+        for cap_ref in group["cap_refs"]:
+            cap = placements.get(cap_ref)
+            if cap is None:
+                continue
+            oscillator_load_cap_count += 1
+            cap_distance = _placement_distance_mm(cap, crystal)
+            if cap_distance > OSCILLATOR_MAX_LOAD_CAP_DISTANCE_MM:
+                fail(
+                    "oscillator_load_cap_far_from_crystal",
+                    f"{cap_ref} is {cap_distance:.3f} mm from crystal {group['crystal_ref']}",
+                    cap_ref=cap_ref,
+                    crystal_ref=group["crystal_ref"],
+                    distance_mm=round(cap_distance, 3),
+                    maximum_distance_mm=OSCILLATOR_MAX_LOAD_CAP_DISTANCE_MM,
+                    oscillator_nets=group["nets"],
+                )
+
     return GateReport(
         "layout_signal_integrity",
         Status.FAIL if failures else Status.PASS,
@@ -1459,9 +1552,13 @@ def check_layout_signal_integrity(
             "usb_connectors": len(usb_connector_refs),
             "usb_esd_components": len(usb_esd_refs),
             "usb_devices": len(usb_device_refs),
+            "oscillator_crystals": len(oscillator_groups),
+            "oscillator_load_caps": oscillator_load_cap_count,
             "rf_edge_distance_max_mm": RF_EDGE_DISTANCE_MAX_MM,
             "rf_noisy_keepout_mm": RF_NOISY_COMPONENT_KEEP_OUT_MM,
             "usb_esd_max_connector_distance_mm": USB_ESD_MAX_CONNECTOR_DISTANCE_MM,
+            "oscillator_max_crystal_mcu_distance_mm": OSCILLATOR_MAX_CRYSTAL_MCU_DISTANCE_MM,
+            "oscillator_max_load_cap_distance_mm": OSCILLATOR_MAX_LOAD_CAP_DISTANCE_MM,
         },
         backend={"name": "layout-signal-precheck", "deterministic": True, "release_authoritative": False},
     )
@@ -1520,6 +1617,50 @@ def _high_current_loop_area_mm2(chain: list[str], placements: dict[str, Placemen
 
 def _component_nets(component: dict[str, Any]) -> set[str]:
     return {str(pin.get("net")) for pin in component.get("pins", []) if pin.get("net")}
+
+
+def _oscillator_groups(graph: dict[str, Any]) -> list[dict[str, Any]]:
+    components = [component for component in graph.get("components", []) if component.get("ref")]
+    groups: list[dict[str, Any]] = []
+    for crystal in components:
+        category = str(crystal.get("category", ""))
+        if "crystal" not in category:
+            continue
+        crystal_nets = sorted(
+            str(pin.get("net"))
+            for pin in crystal.get("pins", [])
+            if pin.get("net") and str(pin.get("net")) != "GND"
+        )
+        if not crystal_nets:
+            continue
+        crystal_net_set = set(crystal_nets)
+        mcu_candidates = [
+            component
+            for component in components
+            if component is not crystal
+            and component.get("category") == "mcu"
+            and crystal_net_set & _component_nets(component)
+        ]
+        if not mcu_candidates:
+            continue
+        mcu = max(
+            mcu_candidates,
+            key=lambda component: len(crystal_net_set & _component_nets(component)),
+        )
+        cap_refs = sorted(
+            str(component.get("ref"))
+            for component in components
+            if component is not crystal
+            and component.get("category") in {"xtal_cap", "rtc_xtal_cap"}
+            and crystal_net_set & _component_nets(component)
+        )
+        groups.append({
+            "crystal_ref": str(crystal["ref"]),
+            "mcu_ref": str(mcu["ref"]),
+            "cap_refs": cap_refs,
+            "nets": crystal_nets,
+        })
+    return groups
 
 
 def _high_current_chain_refs(graph: dict[str, Any]) -> list[str]:

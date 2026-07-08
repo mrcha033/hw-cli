@@ -396,6 +396,19 @@ def test_grounding_benchmark_catches_wrong_crystal_load_cap_value(service):
     assert "crystal_load_cap_value_out_of_range" in case["observed_codes"]
 
 
+def test_grounding_benchmark_catches_oscillator_far_from_mcu(service):
+    project = "rp2040_grounding_xtal_placement"
+    service.create_project(project, template="rp2040_usb_device")
+    service.generate_all(project)
+
+    benchmark = service.run_grounding_benchmark(project)
+
+    case = next(item for item in benchmark["cases"] if item["id"] == "oscillator_far_from_mcu")
+    assert case["detected"] is True
+    assert case["expected_codes"] == ["oscillator_crystal_far_from_mcu"]
+    assert "oscillator_crystal_far_from_mcu" in case["observed_codes"]
+
+
 def test_power_tree_integrity_passes_generated_robotics_graph(service, project):
     service.generate_all(project)
     project_path = service.workspace.require_project(project)

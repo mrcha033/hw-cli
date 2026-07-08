@@ -226,6 +226,11 @@ def _rp2040_usb_hid_seed_table() -> dict[str, tuple[tuple[float, float], str]]:
 
 def _usb_hid_controller_seed_table() -> dict[str, tuple[tuple[float, float], str]]:
     anchors = dict(_RP2040_USB_HID_ANCHORS)
+    # usb_hid_controller reuses the RP2040 topology but its refs differ:
+    # U1 is the RP2040 MCU and U2 is the LDO. Keep the physical roles aligned
+    # with the RP2040 seed so oscillator and USB placement stay grounded.
+    anchors["U1"] = _RP2040_USB_HID_ANCHORS["U2"]
+    anchors["U2"] = _RP2040_USB_HID_ANCHORS["U1"]
     anchors.pop("X1", None)
     anchors.pop("C5", None)
     anchors["Y1"] = (33.0, 10.0)
@@ -265,6 +270,31 @@ def _samd21_sensor_hub_seed_table() -> dict[str, tuple[tuple[float, float], str]
     }
 
 
+_AVR_32U4_HID_ANCHORS: dict[str, tuple[float, float]] = {
+    # Board: 55x30 mm. USB-C enters from the left edge, ATmega32U4 is central,
+    # and the 16 MHz crystal sits beside the XTAL1/XTAL2 pins for USB timing.
+    "J1": (5.0, 10.0),
+    "R2": (9.0, 13.0),
+    "R3": (13.0, 13.0),
+    "D1": (12.0, 10.0),
+    "U1": (28.0, 14.0),
+    "Y1": (36.0, 14.0),
+    "C3": (24.0, 9.0),
+    "C4": (28.0, 9.0),
+    "C5": (18.0, 6.0),
+    "C6": (23.0, 19.0),
+    "J2": (50.0, 18.0),
+    "R1": (34.0, 20.0),
+}
+
+
+def _avr_32u4_hid_seed_table() -> dict[str, tuple[tuple[float, float], str]]:
+    return {
+        ref: (xy, "avr_32u4_hid_anchor")
+        for ref, xy in _AVR_32U4_HID_ANCHORS.items()
+    }
+
+
 def _seed_table_for_graph(graph: dict[str, Any]) -> dict[str, tuple[tuple[float, float], str]]:
     architecture = graph.get("design_basis", {}).get("architecture")
     if architecture == "nrf52840_ble_sensor":
@@ -277,4 +307,6 @@ def _seed_table_for_graph(graph: dict[str, Any]) -> dict[str, tuple[tuple[float,
         return _usb_hid_controller_seed_table()
     if architecture == "rp2040_qspi_usb_device":
         return _rp2040_usb_hid_seed_table()
+    if architecture == "atmega32u4_native_usb_hid":
+        return _avr_32u4_hid_seed_table()
     return _seed_table()
