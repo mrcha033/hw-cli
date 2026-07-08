@@ -24,10 +24,19 @@ def source_hash(spec: dict[str, Any]) -> str:
     return hashlib.sha256(json.dumps(spec, sort_keys=True, separators=(",", ":")).encode()).hexdigest()
 
 
-def artifact_provenance(spec: dict[str, Any], parts_root: Path, backend: str, *, command: list[str] | None = None, compiler_version: str | None = None, release_eligible: bool = False) -> dict[str, Any]:
+def artifact_provenance(
+    spec: dict[str, Any],
+    parts_root: Path,
+    backend: str,
+    *,
+    command: list[str] | None = None,
+    compiler_version: str | None = None,
+    release_eligible: bool = False,
+    release_tier: str | None = None,
+) -> dict[str, Any]:
     role_name = spec.get("electronics", {}).get("role_set", "robotics_controller")
     role_set = parts_root / "role_sets" / (role_name if str(role_name).endswith(".yaml") else f"{role_name}.yaml")
-    return {
+    provenance = {
         "source_spec_hash": source_hash(spec),
         "component_db_hash": hash_tree(parts_root / "components"),
         "role_set_hash": hash_tree(role_set),
@@ -38,3 +47,6 @@ def artifact_provenance(spec: dict[str, Any], parts_root: Path, backend: str, *,
         "timestamp": datetime.fromtimestamp(int(os.environ.get("SOURCE_DATE_EPOCH", "0")), UTC).isoformat(),
         "release_eligible": release_eligible,
     }
+    if release_tier is not None:
+        provenance["release_tier"] = release_tier
+    return provenance

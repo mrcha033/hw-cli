@@ -38,11 +38,23 @@ class KiCadBackend(ElectronicsBackendAdapter):
         write_json(manifest, {
             "backend": self.name,
             "backend_release_capable": True,
+            "release_tier": "fabrication",
             "source_release_eligible": bool(files),
+            "netlist_release_eligible": False,
+            "hdl_source_release_eligible": False,
+            "fabrication_release_eligible": bool(files),
             "sources": self.source_entries(target, [Path(path) for path in files]),
             "contract_gates": list(self.gate_names),
             "release_blocking_gates": list(self.gate_names),
-            "provenance": artifact_provenance(spec, self.platform_root / "parts", self.name, compiler_version=tool_version("kicad-cli"), command=["kicad-cli", "sch", "export", "netlist"], release_eligible=bool(files)),
+            "provenance": artifact_provenance(
+                spec,
+                self.platform_root / "parts",
+                self.name,
+                compiler_version=tool_version("kicad-cli"),
+                command=["kicad-cli", "sch", "export", "netlist"],
+                release_eligible=bool(files),
+                release_tier="fabrication",
+            ),
         })
         return [*files, str(manifest)]
 

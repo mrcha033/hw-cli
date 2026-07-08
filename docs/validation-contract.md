@@ -57,6 +57,15 @@ Three release tiers are defined:
 - **Candidate-only** (`reference`): no release path exists. This backend cannot
   become release-eligible through a manual status override.
 
+Backend source manifests must expose the same tier split explicitly:
+`release_tier` is one of `fabrication`, `netlist`, `hdl_source`, or
+`candidate`, and the tier-specific booleans
+`fabrication_release_eligible`, `netlist_release_eligible`, and
+`hdl_source_release_eligible` identify which class of release the generated
+artifacts can support. `python_netlist` is `netlist_release_eligible=true` and
+`fabrication_release_eligible=false`; `atopile` is
+`hdl_source_release_eligible=true` and `fabrication_release_eligible=false`.
+
 ## Adapter contract
 
 Compiled electronics adapters generate source, then report these six gate

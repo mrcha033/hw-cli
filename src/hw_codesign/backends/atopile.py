@@ -120,6 +120,9 @@ class AtopileBackend(ElectronicsBackendAdapter):
             "backend_release_capable": True,
             "source_release_eligible": True,
             "release_tier": "hdl_source",
+            "netlist_release_eligible": False,
+            "hdl_source_release_eligible": True,
+            "fabrication_release_eligible": False,
             "sources": self.source_entries(target, [ato_file, ato_yaml]),
             "contract_gates": list(self.gate_names),
             "release_blocking_gates": [
@@ -127,7 +130,14 @@ class AtopileBackend(ElectronicsBackendAdapter):
                 f"{self.name}_netlist_extract",
                 f"{self.name}_graph_parity",
             ],
-            "provenance": artifact_provenance(spec, self.platform_root / "parts", self.name, command=[], release_eligible=True),
+            "provenance": artifact_provenance(
+                spec,
+                self.platform_root / "parts",
+                self.name,
+                command=[],
+                release_eligible=True,
+                release_tier="hdl_source",
+            ),
         })
         return [str(ato_file), str(ato_yaml), str(manifest)]
 

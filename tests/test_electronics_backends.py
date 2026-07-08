@@ -27,9 +27,18 @@ def test_backend_adapters_emit_manifest_with_same_contract(service, project, bac
     service.generate_electronics_only(project)
     source = service.workspace.require_project(project) / "electronics" / "source" / backend_name
     manifest = json.loads((source / "source_manifest.json").read_text(encoding="utf-8"))
+    release_tiers = {
+        "tscircuit": "fabrication",
+        "kicad": "fabrication",
+        "python_netlist": "netlist",
+        "atopile": "hdl_source",
+    }
     assert manifest["backend"] == backend_name
+    assert manifest["release_tier"] == release_tiers[backend_name]
+    assert manifest["provenance"]["release_tier"] == release_tiers[backend_name]
     assert manifest["contract_gates"] == [f"{backend_name}_{stage}" for stage in CONTRACT_STAGES]
     assert set(manifest["release_blocking_gates"]).issubset(set(manifest["contract_gates"]))
+    assert {"netlist_release_eligible", "hdl_source_release_eligible", "fabrication_release_eligible"} <= set(manifest)
     assert manifest["sources"]
     assert all(len(entry["sha256"]) == 64 for entry in manifest["sources"])
     assert all((source / entry["path"]).is_file() for entry in manifest["sources"])
@@ -178,6 +187,11 @@ def test_atopile_backend_is_release_eligible(service, project):
     manifest = json.loads((source / "source_manifest.json").read_text(encoding="utf-8"))
     assert manifest["backend_release_capable"] is True
     assert manifest["release_tier"] == "hdl_source"
+    assert manifest["provenance"]["release_tier"] == "hdl_source"
+    assert manifest["source_release_eligible"] is True
+    assert manifest["hdl_source_release_eligible"] is True
+    assert manifest["netlist_release_eligible"] is False
+    assert manifest["fabrication_release_eligible"] is False
     blocking = set(manifest["release_blocking_gates"])
     # footprint/layout/manufacturing are not release-blocking (environmental constraints)
     assert "atopile_footprint_parity" not in blocking
@@ -200,6 +214,10 @@ def test_python_netlist_backend_is_release_eligible(service, project):
     manifest = json.loads((source / "source_manifest.json").read_text(encoding="utf-8"))
     assert manifest["backend_release_capable"] is True
     assert manifest["release_tier"] == "netlist"
+    assert manifest["provenance"]["release_tier"] == "netlist"
+    assert manifest["source_release_eligible"] is False
+    assert manifest["netlist_release_eligible"] is True
+    assert manifest["hdl_source_release_eligible"] is False
     assert manifest["fabrication_release_eligible"] is False
     # layout/manufacturing gates are not release-blocking because this is a netlist tier.
     blocking = set(manifest["release_blocking_gates"])

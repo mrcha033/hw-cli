@@ -655,10 +655,15 @@ def test_source_manifest_marks_pcb_enabled_source_release_eligible(tmp_path):
     (project / "electronics" / "generated").mkdir(parents=True)
     backend.generate_source(project, spec, graph)
     manifest = json.loads((project / "electronics" / "source" / "tscircuit" / "source_manifest.json").read_text())
+    assert manifest["release_tier"] == "fabrication"
     assert manifest["source_release_eligible"] is True
+    assert manifest["fabrication_release_eligible"] is True
+    assert manifest["netlist_release_eligible"] is False
+    assert manifest["hdl_source_release_eligible"] is False
     assert manifest["pcb_disabled"] is False
     assert manifest["routing_disabled"] is False
     assert manifest["provenance"]["release_eligible"] is True
+    assert manifest["provenance"]["release_tier"] == "fabrication"
     assert "tscircuit_compile" in manifest["contract_gates"]
     assert "tscircuit_manufacturing_export" in manifest["contract_gates"]
     assert "tscircuit_footprint_parity" in manifest["release_blocking_gates"]

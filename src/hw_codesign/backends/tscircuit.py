@@ -84,14 +84,26 @@ class TSCircuitBackend(ElectronicsBackendAdapter):
             "backend": "tscircuit",
             "compiler_version": self.VERSION,
             "backend_release_capable": True,
+            "release_tier": "fabrication",
             "source_release_eligible": not unsupported_footprints,
+            "netlist_release_eligible": False,
+            "hdl_source_release_eligible": False,
+            "fabrication_release_eligible": not unsupported_footprints,
             "pcb_disabled": False,
             "routing_disabled": False,
             "unsupported_footprints": unsupported_footprints,
             "sources": self.source_entries(target, [entry, compiler_entry]),
             "contract_gates": list(self.gate_names),
             "release_blocking_gates": list(self.gate_names),
-            "provenance": artifact_provenance(spec, self.parts_root, "tscircuit", compiler_version=self.VERSION, command=self.command(entry), release_eligible=not unsupported_footprints),
+            "provenance": artifact_provenance(
+                spec,
+                self.parts_root,
+                "tscircuit",
+                compiler_version=self.VERSION,
+                command=self.command(entry),
+                release_eligible=not unsupported_footprints,
+                release_tier="fabrication",
+            ),
         })
         return [str(entry), str(compiler_entry), str(target / "source_manifest.json")]
 
