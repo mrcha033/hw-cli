@@ -100,6 +100,8 @@ The public tool registry exposes this as the shared top-level
   typed fields, required approvals, and affected gates.
   Retained critical assumptions such as motor-driver topology or cooling are
   release-blocking until explicitly resolved or waived.
+  Explicit low/moderate/high vibration environment text is lowered into
+  `mechanical.vibration_environment` for connector-retention and mounting gates.
   Physical qualification and protocol claims such as EMI/EMC, vibration/shock
   standards, USB-C PD, and numeric thermal limits are preserved as unresolved
   release blockers unless they are backed by explicit modeled fields or evidence.

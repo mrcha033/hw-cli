@@ -5,6 +5,8 @@
 - `hw_update_requirements` writes `requirements_ir_v1`: lowered typed fields, resolved and
   unresolved assumptions, unsupported constraints, required human approvals, affected gates,
   and source-token provenance are persisted under `spec/requirements.yaml`
+- Explicit low/moderate/high vibration environment text lowers to
+  `mechanical.vibration_environment`, so connector-retention and mounting gates can use it
 - Physical qualification and protocol claims that are not modeled as typed fields, including
   EMI/EMC, vibration/shock standards, USB-C PD, and numeric thermal limits, remain unresolved
   release blockers instead of being silently accepted

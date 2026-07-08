@@ -507,6 +507,31 @@ class HardwareService:
                     "reason": reason,
                 })
 
+        def _lower_explicit_field(
+            *,
+            spec_path: str,
+            value: str,
+            field_type: str,
+            source_span: str,
+            source_range: dict[str, int],
+            affected_gates: list[str] | None = None,
+        ) -> None:
+            keys = spec_path.split(".")
+            target = _ROOTS[keys[0]]
+            for key in keys[:-1]:
+                target = target[key]
+            target[keys[-1]] = value
+            changed.append(spec_path)
+            lowered_fields.append({
+                "spec_path": spec_path,
+                "value": value,
+                "field_type": field_type,
+                "source_span": source_span,
+                "source_range": source_range,
+                "affected_gates": affected_gates if affected_gates is not None else _AFFECTED_GATES_BY_ROOT.get(keys[0], []),
+                "status": "lowered",
+            })
+
         _explicit_assumption_rules: list[dict[str, Any]] = [
             {
                 "assumption_key": "motor_type",
@@ -570,6 +595,63 @@ class HardwareService:
                 reason=rule["reason"],
             )
 
+        _explicit_field_rules: list[dict[str, Any]] = [
+            {
+                "spec_path": "mechanical.vibration_environment",
+                "field_type": "enum",
+                "patterns": [
+                    (r"\b(?:high|severe)[-\s]+vibration\b|\bhigh[-\s]+shock\b|고진동", "high"),
+                    (r"\b(?:moderate|medium)[-\s]+vibration\b|중간\s*진동", "moderate"),
+                    (r"\b(?:low|benign)[-\s]+vibration\b|저진동", "low"),
+                ],
+                "affected_gates": [
+                    "mechanical_connector_retention",
+                    "mechanical_mounting_integrity",
+                    "mechanical_fit",
+                    "physical_qualification",
+                ],
+            },
+        ]
+        for rule in _explicit_field_rules:
+            parsed = [
+                {
+                    "value": value,
+                    "source_span": match.group(0),
+                    "source_range": _source_range(match),
+                }
+                for pattern, value in rule["patterns"]
+                for match in re.finditer(pattern, requirements_text, flags=re.IGNORECASE)
+            ]
+            if not parsed:
+                continue
+            spec_path = rule["spec_path"]
+            distinct_values = {item["value"] for item in parsed}
+            if len(distinct_values) > 1:
+                approval_id = "approve_or_lower_conflict_" + re.sub(r"[^a-z0-9]+", "_", spec_path.lower()).strip("_")
+                conflicting_items.append({
+                    "source": f"Conflicting values for {spec_path}: " + ", ".join(str(value) for value in sorted(distinct_values, key=str)),
+                    "source_span": "; ".join(item["source_span"] for item in parsed),
+                    "source_range": {"start": min(item["source_range"]["start"] for item in parsed), "end": max(item["source_range"]["end"] for item in parsed)},
+                    "category": "conflicting_requirement",
+                    "field_type": "conflicting_lowered_field",
+                    "status": "unresolved",
+                    "release_blocking": True,
+                    "reason": f"Multiple values were specified for typed field {spec_path}; refusing to choose one silently",
+                    "spec_path": spec_path,
+                    "conflicts": parsed,
+                    "required_human_approvals": [approval_id],
+                    "affected_gates": rule["affected_gates"],
+                })
+                continue
+            _lower_explicit_field(
+                spec_path=spec_path,
+                value=parsed[0]["value"],
+                field_type=rule["field_type"],
+                source_span=parsed[0]["source_span"],
+                source_range=parsed[0]["source_range"],
+                affected_gates=rule["affected_gates"],
+            )
+
         if "zephyr" in lowered_text:
             firmware_file["firmware"]["framework"] = "zephyr"
             changed.append("firmware.framework")
@@ -610,7 +692,7 @@ class HardwareService:
             (r"\bJLCPCB\b", "manufacturing_service", "JLCPCB assembly service — not lowered into spec"),
             (r"\bimpedance[\s-]controlled\b", "pcb_stackup", "impedance-controlled PCB stackup — not lowered into spec"),
             (r"\b(?:EMI|EMC|FCC|CE)\b", "emi_emc_compliance", "EMI/EMC compliance target — requires external qualification evidence"),
-            (r"\b(?:MIL-STD-810|IEC\s*60068|vibration|shock)\b", "vibration_environment", "Vibration/shock qualification target — requires external test evidence"),
+            (r"\b(?:MIL-STD-810|IEC\s*60068|shock(?:\s+qualification)?|vibration\s+(?:qualification|standard|certification|test|tested|compliance|profile))\b", "vibration_environment", "Vibration/shock qualification target — requires external test evidence"),
             (r"\b(?:USB[-\s]?C\s*PD|USB[-\s]?PD|power\s+delivery)\b", "usb_power_delivery", "USB-C Power Delivery negotiation — not lowered into power/interface spec"),
             (r"\b(?:thermal|temperature)\s+(?:limit|max(?:imum)?|below|under)\s+\d+(?:\.\d+)?\s*(?:deg\s*C|degrees?\s*C|C)\b", "thermal_limit", "Thermal/temperature limit — requires explicit thermal model or qualification evidence"),
         ]

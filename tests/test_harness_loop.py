@@ -72,6 +72,40 @@ def test_update_requirements_resolves_explicit_topology_and_cooling_from_brief(s
     assert all(item.get("kind") != "retained_assumption" for item in ir["tokens"])
 
 
+def test_update_requirements_lowers_explicit_vibration_environment(service, project):
+    result = service.update_requirements(project, "16 channel 24V battery external driver forced cooling high vibration")
+
+    assert result["status"] == "generated"
+    assert result["has_unresolved_constraints"] is False
+    spec = service.read_spec(project)
+    assert spec["mechanical"]["vibration_environment"] == "high"
+    by_path = {item["spec_path"]: item for item in spec["requirements"]["compiler_ir"]["lowered_fields"]}
+    vibration = by_path["mechanical.vibration_environment"]
+    assert vibration["value"] == "high"
+    assert vibration["source_span"] == "high vibration"
+    assert "mechanical_connector_retention" in vibration["affected_gates"]
+    assert "physical_qualification" in result["affected_gates"]
+    assert "vibration_environment" not in {
+        item["category"] for item in spec["requirements"]["active_unresolved"]
+    }
+
+
+def test_update_requirements_rejects_conflicting_vibration_environment(service, project):
+    original = service.read_spec(project)["mechanical"]["vibration_environment"]
+
+    result = service.update_requirements(project, "external driver forced cooling low vibration high vibration")
+
+    assert result["has_unresolved_constraints"] is True
+    spec = service.read_spec(project)
+    assert spec["mechanical"]["vibration_environment"] == original
+    conflict = next(
+        item for item in spec["requirements"]["compiler_ir"]["conflicting_fields"]
+        if item["spec_path"] == "mechanical.vibration_environment"
+    )
+    assert {item["value"] for item in conflict["conflicts"]} == {"low", "high"}
+    assert "mechanical_connector_retention" in conflict["affected_gates"]
+
+
 def test_update_requirements_marks_retained_assumptions_as_unresolved(service, project):
     result = service.update_requirements(project, "16 channel 24V battery")
 

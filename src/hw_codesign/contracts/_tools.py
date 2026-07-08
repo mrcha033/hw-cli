@@ -283,7 +283,7 @@ TOOL_REGISTRY: dict[str, ToolDef] = {
 
     "hw_update_requirements": ToolDef(
         name="hw_update_requirements",
-        description="Compile natural-language requirements text into typed spec fields plus resolved assumptions, unresolved assumptions, unsupported constraints, required approvals, and affected gates.",
+        description="Compile natural-language requirements text into typed spec fields, including explicit vibration environment, plus resolved assumptions, unresolved assumptions, unsupported qualification constraints, required approvals, and affected gates.",
         input_schema={
             "type": "object",
             "properties": {
