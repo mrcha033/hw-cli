@@ -495,6 +495,103 @@ def test_power_tree_integrity_rejects_regulator_dropout_headroom_violation(servi
     assert failure.details["observed_headroom_v"] < 0.4
 
 
+def test_power_tree_integrity_tracks_regulator_enable_bias(service):
+    project = "usb_hid_regulator_enable_bias"
+    service.create_project(project, template="usb_hid_controller")
+    service.generate_electronics_only(project)
+    project_path = service.workspace.require_project(project)
+    graph = json.loads((project_path / "electronics" / "generated" / "electrical_graph.json").read_text(encoding="utf-8"))
+
+    report = service.validator.check_power_tree(graph, service.read_spec(project))
+
+    assert report.status == "pass"
+    enable_biases = report.metrics["regulator_enable_biases"]["U2"]
+    assert enable_biases[0]["enabled"] is True
+    assert enable_biases[0]["bias_source"] == "direct_positive_rail"
+    assert enable_biases[0]["net_name"] == "USB_VBUS"
+
+
+def test_power_tree_integrity_rejects_unbiased_regulator_enable(service):
+    project = "usb_hid_regulator_enable_float"
+    service.create_project(project, template="usb_hid_controller")
+    service.generate_electronics_only(project)
+    project_path = service.workspace.require_project(project)
+    graph = json.loads((project_path / "electronics" / "generated" / "electrical_graph.json").read_text(encoding="utf-8"))
+    bad_graph = deepcopy(graph)
+    regulator = next(component for component in bad_graph["components"] if component["ref"] == "U2")
+    enable = next(pin for pin in regulator["pins"] if pin["name"] == "EN")
+    enable["net"] = None
+
+    report = service.validator.check_power_tree(bad_graph, service.read_spec(project))
+
+    assert report.status == "fail"
+    failure = next(item for item in report.failures if item.code == "regulator_enable_unbiased")
+    assert failure.details["ref"] == "U2"
+    assert failure.details["pin_name"] == "EN"
+    assert failure.details["expected_bias"] == "pullup_or_direct_positive_rail"
+
+
+def test_power_tree_integrity_accepts_regulator_enable_resistive_pullup(service):
+    project = "usb_hid_regulator_enable_pullup"
+    service.create_project(project, template="usb_hid_controller")
+    service.generate_electronics_only(project)
+    project_path = service.workspace.require_project(project)
+    graph = json.loads((project_path / "electronics" / "generated" / "electrical_graph.json").read_text(encoding="utf-8"))
+    pullup_graph = deepcopy(graph)
+    regulator = next(component for component in pullup_graph["components"] if component["ref"] == "U2")
+    enable = next(pin for pin in regulator["pins"] if pin["name"] == "EN")
+    enable["net"] = "REG_EN"
+    pullup_graph["components"].append({
+        "ref": "R_EN",
+        "category": "pullup",
+        "value": "100K",
+        "mpn": "RC0603FR-07100KL",
+        "footprint": "R0603",
+        "pins": [
+            {"number": "1", "name": "A", "net": "REG_EN", "role": "passive", "voltage_domain": None},
+            {"number": "2", "name": "B", "net": "USB_VBUS", "role": "passive", "voltage_domain": None},
+        ],
+    })
+
+    report = service.validator.check_power_tree(pullup_graph, service.read_spec(project))
+
+    assert report.status == "pass"
+    enable_bias = report.metrics["regulator_enable_biases"]["U2"][0]
+    assert enable_bias["enabled"] is True
+    assert enable_bias["bias_source"] == "resistive_pullup"
+    assert enable_bias["bias_component"] == "R_EN"
+
+
+def test_power_tree_integrity_rejects_regulator_enable_self_output_pullup(service):
+    project = "usb_hid_regulator_enable_self_output"
+    service.create_project(project, template="usb_hid_controller")
+    service.generate_electronics_only(project)
+    project_path = service.workspace.require_project(project)
+    graph = json.loads((project_path / "electronics" / "generated" / "electrical_graph.json").read_text(encoding="utf-8"))
+    pullup_graph = deepcopy(graph)
+    regulator = next(component for component in pullup_graph["components"] if component["ref"] == "U2")
+    enable = next(pin for pin in regulator["pins"] if pin["name"] == "EN")
+    enable["net"] = "REG_EN"
+    pullup_graph["components"].append({
+        "ref": "R_EN",
+        "category": "pullup",
+        "value": "100K",
+        "mpn": "RC0603FR-07100KL",
+        "footprint": "R0603",
+        "pins": [
+            {"number": "1", "name": "A", "net": "REG_EN", "role": "passive", "voltage_domain": None},
+            {"number": "2", "name": "B", "net": "V3V3", "role": "passive", "voltage_domain": None},
+        ],
+    })
+
+    report = service.validator.check_power_tree(pullup_graph, service.read_spec(project))
+
+    assert report.status == "fail"
+    failure = next(item for item in report.failures if item.code == "regulator_enable_unbiased")
+    assert failure.details["ref"] == "U2"
+    assert failure.details["candidate_bias_components"][0]["positive_rails"] == []
+
+
 def test_power_tree_integrity_rejects_load_supply_voltage_range_violation(service):
     project = "esp32_load_supply_contract"
     service.create_project(project, template="esp32_wifi_gateway")
@@ -530,6 +627,20 @@ def test_grounding_benchmark_catches_load_supply_voltage_range_violation(service
     assert case["detected"] is True
     assert case["expected_codes"] == ["component_supply_voltage_out_of_range"]
     assert "component_supply_voltage_out_of_range" in case["observed_codes"]
+
+
+def test_grounding_benchmark_catches_unbiased_regulator_enable(service):
+    project = "usb_hid_grounding_regulator_enable"
+    service.create_project(project, template="usb_hid_controller")
+    service.generate_electronics_only(project)
+    service.generate_firmware_only(project)
+
+    benchmark = service.run_grounding_benchmark(project)
+
+    case = next(item for item in benchmark["cases"] if item["id"] == "regulator_enable_unbiased")
+    assert case["detected"] is True
+    assert case["expected_codes"] == ["regulator_enable_unbiased"]
+    assert "regulator_enable_unbiased" in case["observed_codes"]
 
 
 def test_power_integrity_estimate_passes_generated_graph(service, project):

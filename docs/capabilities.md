@@ -62,9 +62,9 @@
   sensitive devices, excessive high-current ingress loop area, and misplaced RF antenna or USB
   ESD components
 - `power_tree_integrity` verifies reachable rails, regulator voltage ordering, grounded
-  regulator input-voltage ranges, regulator dropout/headroom, and powered-load supply ranges
-  so coherent-looking rail graphs cannot feed a part outside its VIN, VOUT headroom, or VCC
-  contract
+  regulator input-voltage ranges, regulator dropout/headroom, regulator enable-pin bias, and
+  powered-load supply ranges so coherent-looking rail graphs cannot feed a part outside its
+  VIN, VOUT headroom, enable, or VCC contract
 - `power_integrity_estimate` checks rail-level decoupling/bulk-cap coverage, verifies
   modeled rail capacitors have a ground return, rejects declared rail peak current that
   exceeds grounded regulator output-current evidence, and flags high-current connector
@@ -145,7 +145,7 @@
 - `hw_explore_design_space` enumerates backend, component, mechanical variant, and supplier axes
   and scores each against the current gates; result written to `history/design_space/exploration.json`
 - `hw_run_grounding_benchmark` adversarially mutates generated artifacts (pinout, footprint,
-  pin electrical roles, power tree including regulator dropout/headroom, interface wiring including USB-C CC Rd, oscillator load caps, and boot strap bias, layout, decoupling placement, RF, connector retention, sourcing,
+  pin electrical roles, power tree including regulator dropout/headroom and enable bias, interface wiring including USB-C CC Rd, oscillator load caps, and boot strap bias, layout, decoupling placement, RF, connector retention, sourcing,
   high-current loop area, critical-role alternate integrity, connector cutout alignment, mounting keepout intrusion,
   firmware pin assignment, motor PWM channel coverage) and confirms every relevant gate catches
   the injected defect; a missed case fails the benchmark

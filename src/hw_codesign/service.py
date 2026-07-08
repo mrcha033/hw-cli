@@ -3505,7 +3505,14 @@ class HardwareService:
         )
 
         graph_unreachable_power = deepcopy(graph)
-        regulator = next((item for item in graph_unreachable_power.get("components", []) if item.get("category") == "regulator"), None)
+        regulator = next(
+            (
+                item for item in graph_unreachable_power.get("components", [])
+                if str(item.get("category", "")) == "regulator"
+                or str(item.get("category", "")).startswith("regulator_")
+            ),
+            None,
+        )
         if regulator:
             input_pin = next((pin for pin in regulator.get("pins", []) if pin.get("role") == "power_in"), None)
             if input_pin:
@@ -3587,6 +3594,33 @@ class HardwareService:
                         self.validator.check_power_tree(graph, spec_bad_regulator_headroom),
                         ["regulator_dropout_headroom_insufficient"],
                     )
+
+            graph_bad_regulator_enable = deepcopy(graph)
+            regulator_enable = next(
+                (
+                    item for item in graph_bad_regulator_enable.get("components", [])
+                    if (
+                        str(item.get("category", "")) == "regulator"
+                        or str(item.get("category", "")).startswith("regulator_")
+                    )
+                    and any(str(pin.get("name") or "").upper() in {"EN", "ENABLE"} for pin in item.get("pins", []))
+                ),
+                None,
+            )
+            if regulator_enable:
+                enable_pin = next(
+                    pin for pin in regulator_enable.get("pins", [])
+                    if str(pin.get("name") or "").upper() in {"EN", "ENABLE"}
+                )
+                enable_pin["net"] = None
+                enable_pin["voltage_domain"] = None
+                record(
+                    "regulator_enable_unbiased",
+                    "power_tree_grounding",
+                    f"Disconnected {regulator_enable.get('ref')} regulator enable pin from its bias rail",
+                    self.validator.check_power_tree(graph_bad_regulator_enable, spec),
+                    ["regulator_enable_unbiased"],
+                )
 
         constrained_load = next(
             (

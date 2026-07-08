@@ -771,6 +771,7 @@ class Validator:
         reachable: set[str] = set()
         transfers: list[tuple[dict[str, Any], set[str], set[str]]] = []
         regulator_voltage_limits: dict[str, dict[str, Any]] = {}
+        regulator_enable_biases: dict[str, list[dict[str, Any]]] = {}
         component_voltage_limits: dict[str, list[dict[str, Any]]] = {}
 
         for component in graph.get("components", []):
@@ -803,6 +804,30 @@ class Validator:
                         power_inputs=sorted(power_inputs),
                         power_outputs=sorted(power_outputs),
                     ))
+                if _component_category_matches(component, {"regulator"}):
+                    for enable_pin in _regulator_enable_pins(component):
+                        details = _regulator_enable_bias_details(
+                            enable_pin,
+                            component,
+                            graph.get("components", []),
+                            rail_nominal,
+                            power_outputs,
+                        )
+                        regulator_enable_biases.setdefault(str(component.get("ref", "?")), []).append(details)
+                        if not details["enabled"]:
+                            failures.append(_failure(
+                                FailureCategory.ELECTRICAL_SEMANTIC_ERROR,
+                                "regulator_enable_unbiased",
+                                f"{component.get('ref', '?')}.{enable_pin.get('number')} {enable_pin.get('name')} is not biased to an enabled rail",
+                                "electronics.components",
+                                ref=component.get("ref"),
+                                mpn=component.get("mpn"),
+                                pin_number=enable_pin.get("number"),
+                                pin_name=enable_pin.get("name"),
+                                net_name=enable_pin.get("net"),
+                                expected_bias="pullup_or_direct_positive_rail",
+                                candidate_bias_components=details["candidate_bias_components"],
+                            ))
             for pin in component.get("pins", []):
                 role = pin.get("role")
                 if role not in {"power_in", "power_out", "ground"}:
@@ -960,6 +985,7 @@ class Validator:
             "source_nets": sorted(reachable),
             "transfer_components": len(transfers),
             "regulator_voltage_limits": regulator_voltage_limits,
+            "regulator_enable_biases": regulator_enable_biases,
             "component_voltage_limits": component_voltage_limits,
             "power_loads_checked": sum(
                 1
@@ -2046,6 +2072,82 @@ def _component_regulator_headroom_v(component: dict[str, Any]) -> float | None:
             return float(v_match.group("v").replace("p", "."))
     mpn = str(component.get("mpn") or "").upper()
     return CURATED_REGULATOR_MIN_HEADROOM_V.get(mpn)
+
+
+def _regulator_enable_pins(component: dict[str, Any]) -> list[dict[str, Any]]:
+    return [
+        pin for pin in component.get("pins", [])
+        if str(pin.get("name") or "").upper().replace("~", "").replace("#", "") in {"EN", "ENABLE"}
+    ]
+
+
+def _regulator_enable_bias_details(
+    enable_pin: dict[str, Any],
+    regulator: dict[str, Any],
+    components: list[dict[str, Any]],
+    rail_nominal: dict[str, float],
+    regulator_output_nets: set[str],
+) -> dict[str, Any]:
+    target_net = enable_pin.get("net")
+    candidates: list[dict[str, Any]] = []
+    if (
+        target_net
+        and target_net not in regulator_output_nets
+        and (voltage := _net_nominal_voltage(str(target_net), rail_nominal)) is not None
+        and voltage > 0.0
+    ):
+        return {
+            "pin_number": enable_pin.get("number"),
+            "pin_name": enable_pin.get("name"),
+            "net_name": target_net,
+            "enabled": True,
+            "bias_source": "direct_positive_rail",
+            "bias_voltage_v": voltage,
+            "candidate_bias_components": candidates,
+        }
+    if target_net:
+        for component in components:
+            if component is regulator:
+                continue
+            nets = {pin.get("net") for pin in component.get("pins", []) if pin.get("net")}
+            if target_net not in nets:
+                continue
+            resistance_ohms = _component_resistance_ohms(component)
+            positive_rails = sorted(
+                str(net) for net in nets
+                if net != target_net
+                and net not in regulator_output_nets
+                and (voltage := _net_nominal_voltage(str(net), rail_nominal)) is not None
+                and voltage > 0.0
+            )
+            candidate = {
+                "ref": component.get("ref"),
+                "category": component.get("category"),
+                "nets": sorted(str(net) for net in nets),
+                "positive_rails": positive_rails,
+                "resistance_ohms": resistance_ohms,
+            }
+            candidates.append(candidate)
+            if positive_rails and resistance_ohms is not None and 100.0 <= resistance_ohms <= 1_000_000.0:
+                return {
+                    "pin_number": enable_pin.get("number"),
+                    "pin_name": enable_pin.get("name"),
+                    "net_name": target_net,
+                    "enabled": True,
+                    "bias_source": "resistive_pullup",
+                    "bias_component": component.get("ref"),
+                    "bias_rails": positive_rails,
+                    "resistance_ohms": resistance_ohms,
+                    "candidate_bias_components": candidates,
+                }
+    return {
+        "pin_number": enable_pin.get("number"),
+        "pin_name": enable_pin.get("name"),
+        "net_name": target_net,
+        "enabled": False,
+        "bias_source": None,
+        "candidate_bias_components": candidates,
+    }
 
 
 def _component_supply_voltage_range_v(
