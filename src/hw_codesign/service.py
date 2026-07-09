@@ -1064,7 +1064,10 @@ class HardwareService:
         elif backend == "atopile":
             reports.extend(self.atopile.evaluate(path, graph))
         elif backend == "tscircuit":
-            reports.extend(self.tscircuit.evaluate(path, graph))
+            if include_external:
+                reports.extend(self.tscircuit.evaluate(path, graph))
+            else:
+                reports.extend(self.tscircuit.blocked_contract("external_gate_not_run", "tscircuit backend execution was not requested"))
         elif backend == "kicad":
             reports.extend(self.kicad.evaluate(path, graph))
         elif backend == "python_netlist":

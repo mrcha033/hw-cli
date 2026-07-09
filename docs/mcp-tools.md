@@ -147,7 +147,7 @@ The public tool registry exposes this as the shared top-level
 - `hw_generate_bringup_tests` — bring-up test scripts from the firmware source
 
 ### Validation
-- `hw_run_all_checks` — run all configured gates; `include_external=false` skips native toolchain gates.
+- `hw_run_all_checks` — run all configured gates; `include_external=false` skips native toolchain gates and the tscircuit Node compiler, returning blocked contract reports instead.
   The `candidate_critic` report performs a second-pass review over the whole candidate:
   false release-eligibility claims fail, while open physical/native evidence gaps are recorded as warnings.
 - `hw_check_release_gate` — authoritative gate; the only tool that sets `release_eligible=true`
