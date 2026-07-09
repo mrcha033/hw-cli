@@ -618,6 +618,80 @@ def test_natural_language_requirements_update_structured_spec(service, project):
     assert ir["required_human_approvals"] == []
 
 
+def test_requirements_lower_can_telemetry_into_firmware_module(service, project):
+    result = service.update_requirements(
+        project,
+        "16 channel 24V battery external driver forced cooling CAN telemetry id 0x321 dlc 8 every 10 ms",
+    )
+
+    assert result["status"] == "generated"
+    assert result["has_unresolved_constraints"] is False
+    spec = service.read_spec(project)
+    modules = {module["id"]: module for module in spec["firmware"]["modules"]}
+    module = modules["can_telemetry_periodic"]
+    assert module == {
+        "id": "can_telemetry_periodic",
+        "behavior": "periodic_transmit",
+        "transport": "can",
+        "interval_ms": 10,
+        "frame": {"id": "0x321", "dlc": 8, "content": "telemetry"},
+        "source": "requirements_ir_v1",
+    }
+    lowered = {item["spec_path"]: item for item in result["compiler_ir"]["lowered_fields"]}
+    field = lowered["firmware.modules.can_telemetry_periodic"]
+    assert field["field_type"] == "firmware_module"
+    assert field["value"]["behavior"] == "periodic_transmit"
+    assert "firmware_modules" in field["affected_gates"]
+
+    service.generate_all(project)
+    project_path = service.workspace.require_project(project)
+    graph = json.loads((project_path / "electronics" / "generated" / "electrical_graph.json").read_text(encoding="utf-8"))
+    pinmap = json.loads((project_path / "firmware" / "generated" / "pinmap.json").read_text(encoding="utf-8"))
+    report = service.validator.check_firmware_modules(
+        service.read_spec(project)["firmware"]["modules"],
+        pinmap,
+        spec=service.read_spec(project),
+        graph=graph,
+        module_dir=project_path / "firmware" / "modules",
+    )
+    assert report.status == "pass"
+
+
+def test_requirements_do_not_lower_can_fd_telemetry_as_classical_can(service, project):
+    result = service.update_requirements(
+        project,
+        "external driver forced cooling CAN-FD telemetry id 0x321 dlc 64 every 10 ms",
+    )
+
+    assert result["has_unresolved_constraints"] is True
+    spec = service.read_spec(project)
+    modules = {module["id"] for module in spec["firmware"].get("modules", [])}
+    assert "can_telemetry_periodic" not in modules
+    unresolved = spec["requirements"]["active_unresolved"]
+    bus_protocol = next(item for item in unresolved if item["category"] == "bus_protocol")
+    assert bus_protocol["field_type"] == "unsupported_constraint"
+    assert "firmware_interface_contract" in bus_protocol["affected_gates"]
+
+
+def test_requirements_relower_existing_firmware_module_into_active_ir(service, project):
+    service.update_requirements(
+        project,
+        "external driver forced cooling CAN telemetry id 0x100 dlc 8 every 100 ms",
+    )
+    result = service.update_requirements(
+        project,
+        "external driver forced cooling CAN telemetry id 0x200 dlc 4 every 25 ms",
+    )
+
+    spec = service.read_spec(project)
+    modules = [module for module in spec["firmware"]["modules"] if module["id"] == "can_telemetry_periodic"]
+    assert len(modules) == 1
+    assert modules[0]["interval_ms"] == 25
+    assert modules[0]["frame"] == {"id": "0x200", "dlc": 4, "content": "telemetry"}
+    lowered = {item["spec_path"]: item for item in result["compiler_ir"]["lowered_fields"]}
+    assert lowered["firmware.modules.can_telemetry_periodic"]["value"]["interval_ms"] == 25
+
+
 def test_requirements_ir_affected_gates_are_concrete_report_names(service, project):
     result = service.update_requirements(
         project,

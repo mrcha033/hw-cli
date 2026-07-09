@@ -102,8 +102,10 @@ The public tool registry exposes this as the shared top-level
   release-blocking until explicitly resolved or waived.
   Explicit low/moderate/high vibration environment text is lowered into
   `mechanical.vibration_environment` for connector-retention and mounting gates.
+  Explicit CAN/UART/I2C periodic telemetry text is lowered into
+  `firmware.modules.<id>` `periodic_transmit` contracts for firmware-interface gates.
   Physical qualification and protocol claims such as EMI/EMC, vibration/shock
-  standards, USB-C PD, and numeric thermal limits are preserved as unresolved
+  standards, CAN-FD, USB-C PD, and numeric thermal limits are preserved as unresolved
   release blockers unless they are backed by explicit modeled fields or evidence.
   Its public output schema is `requirements_update_result`, not an opaque blob.
 - `hw_list_assumptions` — list all declared design assumptions and their resolution state

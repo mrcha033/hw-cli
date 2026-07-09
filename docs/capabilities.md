@@ -7,9 +7,12 @@
   and source-token provenance are persisted under `spec/requirements.yaml`
 - Explicit low/moderate/high vibration environment text lowers to
   `mechanical.vibration_environment`, so connector-retention and mounting gates can use it
+- Explicit CAN/UART/I2C periodic telemetry requests lower to typed
+  `firmware.modules.<id>` `periodic_transmit` contracts, so firmware-interface gates can
+  verify the requested transport against the generated hardware graph
 - Physical qualification and protocol claims that are not modeled as typed fields, including
-  EMI/EMC, vibration/shock standards, USB-C PD, and numeric thermal limits, remain unresolved
-  release blockers instead of being silently accepted
+  EMI/EMC, vibration/shock standards, CAN-FD, USB-C PD, and numeric thermal limits, remain
+  unresolved release blockers instead of being silently accepted
 
 ## Electronics topology authoring
 

@@ -399,7 +399,7 @@ class HardwareService:
             "compute": ["pin_symbol_footprint", "firmware_pinmap", "native_zephyr_build"],
             "mechanical": ["mechanical_fit", "layout_thermal_integrity", "physical_qualification"],
             "manufacturing": ["ir_pcb_sanity", "layout_signal_integrity", "native_drc", "reference_fabrication"],
-            "firmware": ["firmware_interface_contract", "firmware_pinmap", "native_zephyr_build"],
+            "firmware": ["firmware_interface_contract", "firmware_pinmap", "firmware_modules", "native_zephyr_build"],
             "sensing": ["semantic_electrical", "firmware_pinmap", "firmware_interface_contract"],
         }
         conflicting_items: list[dict[str, Any]] = []
@@ -680,6 +680,74 @@ class HardwareService:
                     "affected_gates": _AFFECTED_GATES_BY_ROOT["sensing"],
                     "status": "lowered",
                 })
+
+        firmware_modules = firmware_file.setdefault("firmware", {}).setdefault("modules", [])
+        interface_patterns = [
+            re.compile(
+                r"\b(?P<transport>CAN(?![-\s]?FD)|UART|I2C)\s+"
+                r"(?P<content>telemetry|heartbeat|status)(?:\s+(?:frame|message))?"
+                r"(?:\s+id\s+(?P<frame_id>0x[0-9a-fA-F]+|\d+))?"
+                r"(?:\s+dlc\s+(?P<dlc>\d+))?"
+                r"(?:\s+every\s+(?P<interval>\d+)\s*ms)?\b",
+                flags=re.IGNORECASE,
+            ),
+            re.compile(
+                r"\b(?P<content>telemetry|heartbeat|status)\s+(?:over|via|on)\s+"
+                r"(?P<transport>CAN(?![-\s]?FD)|UART|I2C)"
+                r"(?:\s+id\s+(?P<frame_id>0x[0-9a-fA-F]+|\d+))?"
+                r"(?:\s+dlc\s+(?P<dlc>\d+))?"
+                r"(?:\s+every\s+(?P<interval>\d+)\s*ms)?\b",
+                flags=re.IGNORECASE,
+            ),
+        ]
+        module_index_by_id = {
+            str(module.get("id")): index
+            for index, module in enumerate(firmware_modules)
+            if module.get("id")
+        }
+        emitted_module_ids: set[str] = set()
+        emitted_ranges: list[tuple[int, int]] = []
+        for pattern in interface_patterns:
+            for match in pattern.finditer(requirements_text):
+                span = (match.start(), match.end())
+                if any(not (span[1] <= start or span[0] >= end) for start, end in emitted_ranges):
+                    continue
+                transport = str(match.group("transport")).lower()
+                content = str(match.group("content")).lower()
+                module_id = re.sub(r"[^a-z0-9_]+", "_", f"{transport}_{content}_periodic").strip("_")
+                if module_id in emitted_module_ids:
+                    continue
+                interval_ms = int(match.group("interval") or 100)
+                dlc = int(match.group("dlc") or (8 if transport == "can" else 4))
+                frame_id = match.group("frame_id") or ("0x100" if transport == "can" else "0x10")
+                module = {
+                    "id": module_id,
+                    "behavior": "periodic_transmit",
+                    "transport": transport,
+                    "interval_ms": interval_ms,
+                    "frame": {"id": frame_id, "dlc": dlc, "content": content},
+                    "source": "requirements_ir_v1",
+                }
+                if module_id in module_index_by_id:
+                    firmware_modules[module_index_by_id[module_id]] = module
+                else:
+                    module_index_by_id[module_id] = len(firmware_modules)
+                    firmware_modules.append(module)
+                emitted_module_ids.add(module_id)
+                emitted_ranges.append(span)
+                spec_path = f"firmware.modules.{module_id}"
+                changed.append(spec_path)
+                lowered_fields.append({
+                    "spec_path": spec_path,
+                    "value": deepcopy(module),
+                    "field_type": "firmware_module",
+                    "source_span": match.group(0),
+                    "source_range": _source_range(match),
+                    "affected_gates": _AFFECTED_GATES_BY_ROOT["firmware"],
+                    "required_human_approvals": [],
+                    "status": "lowered",
+                })
+
         system_file["assumptions"] = assumptions
         write_yaml(system_path, system_file)
         write_yaml(mechanical_path, mechanical_file)
