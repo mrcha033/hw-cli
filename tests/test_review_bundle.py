@@ -156,6 +156,47 @@ def test_export_review_html_is_written(service, project):
     assert result["bundle_hash"][:12] in html
 
 
+def test_review_html_embeds_asset_backed_3d_viewer_without_user_geometry():
+    bundle = {
+        "bundle_version": "1.0",
+        "bundle_hash": "abc123",
+        "generated_at": "2026-06-16T00:00:00+00:00",
+        "project": {"name": "preview", "revision": "r1", "target_use": "test", "backend": "reference"},
+        "gate_reports": [],
+        "summary": {"total": 0, "pass": 0, "fail": 0, "blocked": 0, "other": 0},
+        "placement": None,
+        "three_d_preview": {
+            "status": "available",
+            "source": "KiCad standard 3D-model library (existing STEP assets)",
+            "note": "Candidate-level assembly visualization only.",
+            "model_count": 1,
+            "available_model_count": 1,
+            "interactive": True,
+            "vrml_asset": "assets/three_d/assembly.wrl",
+            "fallback_image": "assets/three_d/assembly-isometric.png",
+            "viewer_asset": "assets/three_d/viewer.js",
+            "models": [{
+                "reference": "J1", "footprint": "Connector_USB:USB_C_GCT_USB4105",
+                "model": "Connector_USB.3dshapes/USB_C_Receptacle_GCT_USB4105-xx-A_16P_TopMnt_Horizontal.step",
+                "available": True,
+            }],
+        },
+        "requirements": None,
+        "assumptions": None,
+        "iterations": [],
+        "candidates": [],
+        "release": None,
+        "artifacts": [],
+        "comments": [],
+    }
+    html = render_html(bundle, vrml_payload="YWJj")
+    assert "3D Assembly Preview" in html
+    assert "assets/three_d/assembly-isometric.png" in html
+    assert "assets/three_d/viewer.js" in html
+    assert 'id="hw-review-vrml"' in html
+    assert "YWJj" in html
+
+
 def test_export_review_ignores_auxiliary_json_reports(service, project):
     service.generate_all(project)
     service.run_all_checks(project, include_external=False)
@@ -376,4 +417,3 @@ def test_upload_review_rejects_non_http_destination(service, project):
     result = service.upload_review(project, destination="file:///tmp/out.json")
     assert result["status"] == "blocked"
     assert result["code"] == "invalid_destination"
-

@@ -31,6 +31,33 @@ PARTS = {
     "usb": ("USBLC6-2SC6", "SOT-23-6"),
 }
 
+# These are references to KiCad's bundled standard-library STEP assets.  They
+# deliberately add no hw-codesign-authored geometry: a board that has a mapped
+# footprint can be rendered and exported using the corresponding upstream
+# model, while footprints without a verified model remain model-free.
+KICAD_STANDARD_3D_MODELS: dict[str, str] = {
+    "Resistor_SMD:R_0603_1608Metric": "Resistor_SMD.3dshapes/R_0603_1608Metric.step",
+    "Capacitor_SMD:C_0603_1608Metric": "Capacitor_SMD.3dshapes/C_0603_1608Metric.step",
+    "Capacitor_SMD:C_1206_3216Metric": "Capacitor_SMD.3dshapes/C_1206_3216Metric.step",
+    "Connector_USB:USB_C_GCT_USB4105": "Connector_USB.3dshapes/USB_C_Receptacle_GCT_USB4105-xx-A_16P_TopMnt_Horizontal.step",
+    "RF_Module:ESP32-S3-WROOM-1": "RF_Module.3dshapes/ESP32-S3-WROOM-1.step",
+    "Package_TO_SOT_SMD:SOT-23-6": "Package_TO_SOT_SMD.3dshapes/SOT-23-6.step",
+    "Package_LGA:LGA-14": "Package_LGA.3dshapes/LGA-14_3x2.5mm_P0.5mm_LayoutBorder3x4y.step",
+    "Package_DFN_QFN:VQFN-16": "Package_DFN_QFN.3dshapes/Texas_RSA_VQFN-16-1EP_4x4mm_P0.65mm_EP2.7x2.7mm.step",
+}
+
+
+def _kicad_model_clause(footprint: str) -> str:
+    """Return an upstream KiCad model reference for a footprint, if verified."""
+    model = KICAD_STANDARD_3D_MODELS.get(footprint)
+    if model is None:
+        return ""
+    return f'''    (model "${{KICAD10_3DMODEL_DIR}}/{model}"
+      (offset (xyz 0 0 0))
+      (scale (xyz 1 1 1))
+      (rotate (xyz 0 0 0)))
+'''
+
 
 def build_graph(spec: dict[str, Any]) -> dict[str, Any]:
     return build_graph_from_spec(spec)
@@ -130,7 +157,7 @@ def _kicad_board(spec: dict[str, Any], graph: dict[str, Any]) -> tuple[str, list
     (property "Lifecycle" "{item['lifecycle']}")
     (property "Substitute_MPN" "{item.get('substitute_mpn') or ''}")
     (fp_rect (start {body_start_x:.3f} -1) (end {body_end_x:.3f} {body_height:.3f}) (stroke (width 0.2) (type default)) (fill none) (layer "F.Fab"))
-{chr(10).join(pads)})''')
+{_kicad_model_clause(str(item['footprint']))}{chr(10).join(pads)})''')
     mounting_hole_list = spec.get("mechanical", {}).get("mounting_holes", [])
     npth = [(h["x_mm"], h["y_mm"], h["diameter_mm"]) for h in mounting_hole_list]
     segments, vias, routing_failures = route_board(routed_nets, pad_positions, width, height, route_signals=False, layers=copper_layers, plane_layer_by_net=plane_layers, npth_holes=npth)

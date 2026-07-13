@@ -1,6 +1,7 @@
 """Generate a self-contained HTML review report from a review bundle."""
 from __future__ import annotations
 
+import base64
 import json
 from html import escape
 from pathlib import Path
@@ -37,6 +38,15 @@ summary{{padding:.5rem .75rem;cursor:pointer;font-size:.85rem;}}
 pre{{margin:0;padding:.5rem .75rem;font-size:.75rem;white-space:pre-wrap;color:#94a3b8;}}
 .warn{{color:#fbbf24;}} .info{{color:#60a5fa;}} .ok{{color:#4ade80;}}
 .unresolved{{background:#7f1d1d;border-radius:.4rem;padding:.5rem .75rem;margin-bottom:.4rem;font-size:.85rem;}}
+.three-d-grid{{display:grid;grid-template-columns:minmax(0,1.65fr) minmax(16rem,.85fr);gap:1rem;align-items:stretch;}}
+.assembly-viewer{{min-height:27rem;position:relative;overflow:hidden;border:1px solid #334155;border-radius:.55rem;background:#111827;}}
+.assembly-viewer canvas,.assembly-viewer img{{display:block;width:100%;height:100%;min-height:27rem;object-fit:contain;}}
+.assembly-viewer canvas{{position:absolute;inset:0;}}
+.three-d-card{{background:#1e293b;border-radius:.55rem;padding:.85rem 1rem;font-size:.85rem;}}
+.three-d-card p{{margin:.2rem 0 .75rem;line-height:1.45;}}
+.three-d-card ul{{padding-left:1.15rem;margin:.45rem 0;}}
+.model-table{{margin-top:.8rem;font-size:.76rem;}}
+@media (max-width: 760px){{.three-d-grid{{grid-template-columns:1fr;}} .assembly-viewer,.assembly-viewer canvas,.assembly-viewer img{{min-height:20rem;}}}}
 </style>
 </head>
 <body>
@@ -51,6 +61,7 @@ pre{{margin:0;padding:.5rem .75rem;font-size:.75rem;white-space:pre-wrap;color:#
 {assumptions_html}
 {requirements_html}
 {placement_html}
+{three_d_html}
 <section>
 <h2>Gate Reports</h2>
 {gate_table}
@@ -112,6 +123,57 @@ def _placement_html(placement: dict[str, Any] | None) -> str:
 </tbody></table></section>"""
 
 
+def _three_d_html(preview: dict[str, Any] | None, vrml_payload: str | None = None) -> str:
+    if not preview:
+        return ""
+    status = str(preview.get("status", "unavailable"))
+    source = escape(str(preview.get("source", "existing 3D-model source not recorded")))
+    note = escape(str(preview.get("note", "")))
+    models = preview.get("models", []) if isinstance(preview.get("models"), list) else []
+    available = preview.get("available_model_count", sum(1 for model in models if model.get("available")))
+    count = preview.get("model_count", len(models))
+    fallback_image = preview.get("fallback_image")
+    viewer_asset = preview.get("viewer_asset")
+    interactive = bool(preview.get("interactive") and vrml_payload and viewer_asset)
+    model_rows = "".join(
+        f"<tr><td>{escape(str(model.get('reference', '')))}</td>"
+        f"<td>{escape(str(model.get('footprint', '')))}</td>"
+        f"<td>{escape(str(model.get('model', '')))}</td>"
+        f"<td>{'available' if model.get('available') else 'missing'}</td></tr>"
+        for model in models
+    )
+    coverage = f"{available} of {count} model references available"
+    if not fallback_image and not interactive:
+        reason = escape(str(preview.get("reason", "preview assets were not generated")))
+        return f"""<section><h2>3D Assembly Preview</h2>
+<div class=\"three-d-card\"><p class=\"warn\">Native 3D preview unavailable: {reason}</p>
+<p>Source: {source}. Coverage: {coverage}.</p></div></section>"""
+
+    image_html = (
+        f'<img src="{escape(str(fallback_image), quote=True)}" alt="Native KiCad isometric assembly preview">'
+        if fallback_image else ""
+    )
+    interactive_html = ""
+    if interactive:
+        interactive_html = (
+            f'<script id="hw-review-vrml" type="application/octet-stream">{escape(vrml_payload)}</script>'
+            f'<script src="{escape(str(viewer_asset), quote=True)}"></script>'
+            '<script>window.HWReview3D&&window.HWReview3D.mount("hw-review-3d","hw-review-vrml");</script>'
+        )
+    interaction_note = "Drag to orbit, scroll to zoom, double-click to reset." if interactive else "Native KiCad isometric rendering."
+    model_detail = (
+        f"<details class=\"model-table\"><summary>Source-model coverage ({coverage})</summary>"
+        f"<table><thead><tr><th>Ref</th><th>Footprint</th><th>Existing model</th><th>State</th></tr></thead>"
+        f"<tbody>{model_rows}</tbody></table></details>"
+        if models else ""
+    )
+    return f"""<section><h2>3D Assembly Preview</h2>
+<div class=\"three-d-grid\"><div id=\"hw-review-3d\" class=\"assembly-viewer\">{image_html}</div>
+<div class=\"three-d-card\">{_badge(status)}
+<p>{interaction_note}</p><p>Source: {source}.</p><p>{coverage}.</p>
+<p class=\"warn\">{note}</p>{model_detail}</div></div>{interactive_html}</section>"""
+
+
 def _gate_table(gate_reports: list[dict[str, Any]]) -> str:
     rows = "".join(
         f"<tr><td>{escape(r['gate'])}</td><td>{_badge(r['status'])}</td>"
@@ -142,7 +204,7 @@ def _failures_html(gate_reports: list[dict[str, Any]]) -> str:
     return f"<section><h2>Findings Detail</h2>{''.join(parts)}</section>"
 
 
-def render_html(bundle: dict[str, Any]) -> str:
+def render_html(bundle: dict[str, Any], vrml_payload: str | None = None) -> str:
     project = bundle.get("project", {})
     summary = bundle.get("summary", {})
     gate_reports = bundle.get("gate_reports", [])
@@ -160,6 +222,7 @@ def render_html(bundle: dict[str, Any]) -> str:
         assumptions_html=_assumptions_html(bundle.get("assumptions")),
         requirements_html=_requirements_html(bundle.get("requirements")),
         placement_html=_placement_html(bundle.get("placement")),
+        three_d_html=_three_d_html(bundle.get("three_d_preview"), vrml_payload),
         gate_table=_gate_table(gate_reports),
         failures_html=_failures_html(gate_reports),
     )
@@ -170,5 +233,23 @@ def generate_html_report(bundle_path: Path, output_path: Path | None = None) -> 
     bundle = json.loads(bundle_path.read_text(encoding="utf-8"))
     if output_path is None:
         output_path = bundle_path.parent / "report.html"
-    output_path.write_text(render_html(bundle), encoding="utf-8")
+    vrml_payload = _load_vrml_payload(bundle_path.parent, bundle)
+    output_path.write_text(render_html(bundle, vrml_payload), encoding="utf-8")
     return output_path
+
+
+def _load_vrml_payload(review_dir: Path, bundle: dict[str, Any]) -> str | None:
+    preview = bundle.get("three_d_preview")
+    if not isinstance(preview, dict) or not preview.get("interactive"):
+        return None
+    asset = preview.get("vrml_asset")
+    if not isinstance(asset, str) or Path(asset).is_absolute():
+        return None
+    candidate = (review_dir / asset).resolve()
+    try:
+        candidate.relative_to(review_dir.resolve())
+    except ValueError:
+        return None
+    if not candidate.is_file():
+        return None
+    return base64.b64encode(candidate.read_bytes()).decode("ascii")

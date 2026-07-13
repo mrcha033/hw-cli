@@ -6737,6 +6737,15 @@ class HardwareService:
                             continue
                         record = _review_artifact_record(str(latest / artifact["path"]), self.workspace.root, path, "release_manifest")
                         artifacts_by_key[(record["source"], record["path"])] = record
+        output_dir = path / "exports" / "working" / "review"
+        output_dir.mkdir(parents=True, exist_ok=True)
+        from .review_3d import build_review_3d_preview
+        raw_three_d_preview = build_review_3d_preview(path, output_dir)
+        # Native thumbnail bytes can vary across graphics renderers.  Keep their
+        # portable paths in the preview manifest, but do not treat them as hashed
+        # gate evidence or let renderer variation perturb bundle identity.
+        raw_three_d_preview.pop("artifacts", None)
+        three_d_preview = _portable_review_value(raw_three_d_preview, self.workspace.root)
         artifacts = [artifacts_by_key[key] for key in sorted(artifacts_by_key)]
 
         # Canonical content (generated_at excluded from hash for determinism).
@@ -6751,6 +6760,7 @@ class HardwareService:
             "gate_reports": gate_reports,
             "summary": summary,
             "placement": placement_summary,
+            "three_d_preview": three_d_preview,
             "component_resolution": component_resolution_summary,
             "requirements": requirements_summary,
             "assumptions": assumptions_summary,
@@ -6769,8 +6779,6 @@ class HardwareService:
             "generated_at": datetime.now(UTC).isoformat(),
         }
 
-        output_dir = path / "exports" / "working" / "review"
-        output_dir.mkdir(parents=True, exist_ok=True)
         bundle_path = output_dir / "bundle.json"
         write_json(bundle_path, bundle)
 

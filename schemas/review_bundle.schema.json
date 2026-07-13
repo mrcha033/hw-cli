@@ -93,6 +93,36 @@
         }
       }
     },
+    "three_d_preview": {
+      "type": ["object", "null"],
+      "description": "Optional native KiCad assembly preview sourced from existing standard-library 3D models.",
+      "additionalProperties": false,
+      "properties": {
+        "status": { "type": "string" },
+        "reason": { "type": "string" },
+        "source": { "type": "string" },
+        "note": { "type": "string" },
+        "model_count": { "type": "integer" },
+        "available_model_count": { "type": "integer" },
+        "interactive": { "type": "boolean" },
+        "vrml_asset": { "type": ["string", "null"] },
+        "fallback_image": { "type": ["string", "null"] },
+        "viewer_asset": { "type": ["string", "null"] },
+        "models": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "reference": { "type": "string" },
+              "footprint": { "type": "string" },
+              "model": { "type": "string" },
+              "available": { "type": "boolean" }
+            }
+          }
+        }
+      }
+    },
     "component_resolution": {
       "type": ["object", "null"],
       "description": "Component resolution summary; null when graph is absent.",
