@@ -55,6 +55,7 @@ class TSCircuitBackend(ElectronicsBackendAdapter):
         envelope = spec["mechanical"]["envelope"]
         board_width = envelope["board_width_mm"]
         board_height = envelope["board_height_mm"]
+        board_name = re.sub(r"[^A-Za-z0-9_-]", "_", project.name) or "HardwareBoard"
         for index, item in enumerate(graph.get("components", [])):
             footprint_id = item.get("footprint_metadata", {}).get("library_id") or item.get("footprint") or ""
             tscircuit_footprint = item.get("footprint_metadata", {}).get("backend_footprints", {}).get("tscircuit") or self._footprint(footprint_id)
@@ -86,7 +87,7 @@ class TSCircuitBackend(ElectronicsBackendAdapter):
             "import React from \"react\"\n"
             "import { sel } from \"tscircuit\"\n\n"
             "export default () => (\n"
-            f'  <board name="RobotController" width="{board_width}mm" height="{board_height}mm">\n'
+            f'  <board name="{board_name}" width="{board_width}mm" height="{board_height}mm">\n'
             + "\n".join(components)
             + "\n  </board>\n)\n"
         )
@@ -98,7 +99,7 @@ class TSCircuitBackend(ElectronicsBackendAdapter):
             "import { sel } from \"tscircuit\"\n\n"
             "export default () => React.createElement(\n"
             "  \"board\",\n"
-            f"  {{ name: \"RobotController\", width: \"{board_width}mm\", height: \"{board_height}mm\" }},\n"
+            f"  {{ name: \"{board_name}\", width: \"{board_width}mm\", height: \"{board_height}mm\" }},\n"
             + ",\n".join(esm_components)
             + "\n)\n"
         )
