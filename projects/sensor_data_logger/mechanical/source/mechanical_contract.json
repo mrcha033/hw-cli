@@ -9,6 +9,34 @@
         "y_mm": 4.0
       },
       {
+        "category": "usb_cc_pulldown",
+        "height_mm": 3.0,
+        "ref": "R5",
+        "x_mm": 22.0,
+        "y_mm": 7.0
+      },
+      {
+        "category": "usb_cc_pulldown",
+        "height_mm": 3.0,
+        "ref": "R6",
+        "x_mm": 26.0,
+        "y_mm": 7.0
+      },
+      {
+        "category": "fuse",
+        "height_mm": 3.0,
+        "ref": "F1",
+        "x_mm": 26.0,
+        "y_mm": 10.0
+      },
+      {
+        "category": "reverse_polarity",
+        "height_mm": 3.0,
+        "ref": "Q1",
+        "x_mm": 34.0,
+        "y_mm": 4.0
+      },
+      {
         "category": "tvs",
         "height_mm": 3.0,
         "ref": "D1",
@@ -27,7 +55,7 @@
         "height_mm": 2.5,
         "ref": "U1",
         "x_mm": 44.0,
-        "y_mm": 44.0
+        "y_mm": 43.0
       },
       {
         "category": "imu",
@@ -40,8 +68,8 @@
         "category": "debug",
         "height_mm": 3.0,
         "ref": "J2",
-        "x_mm": 58.0,
-        "y_mm": 44.0
+        "x_mm": 54.0,
+        "y_mm": 39.0
       },
       {
         "category": "pullup",
@@ -128,6 +156,7 @@
       "side": "front"
     }
   ],
+  "connector_retention": {},
   "contract_version": 1,
   "enclosure": {
     "internal_mm": [
@@ -168,9 +197,9 @@
     }
   ],
   "provenance": {
-    "component_db_hash": "5a97ac71f96574a18a58a6ad3b1b878b9858cb069286457b0c411a425bf7fbd1",
-    "role_set_hash": "6732646d45fed1daa55e60b9480cf225afee98cfc6595fbfd6f108a12b88e338",
-    "source_spec_hash": "256b56fe3c0ae23be1efe33d1ab3daf334d478ec482dd50e22d3f4cbbee8a591"
+    "component_db_hash": "506bfd3a28aa5e84cbc970dd584a4debcb845586e55282376d39984d0ae7a569",
+    "role_set_hash": "930ffa932706d56900a19acb42c56fbb1d0acb64f1b154615431ba6c86dadfb9",
+    "source_spec_hash": "ce73661df203a9f4aafd99fc19265e6d6a85bf12d7f3a60ac9e2617b72ed336d"
   },
   "selected_variant": "desktop",
   "variants": [

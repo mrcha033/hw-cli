@@ -8,6 +8,19 @@
       "manufacturer": "Murata",
       "mpn": "GRM188R71C104KA01D",
       "package": "0603",
+      "pin_contracts": {
+        "1": {
+          "electrical_type": "passive",
+          "name": "VCC",
+          "number": "1"
+        },
+        "2": {
+          "electrical_type": "ground",
+          "name": "GND",
+          "number": "2",
+          "voltage_domain": "GND"
+        }
+      },
       "pins": [
         {
           "mcu_pin": null,
@@ -36,6 +49,19 @@
       "manufacturer": "Murata",
       "mpn": "GRM188R71C104KA01D",
       "package": "0603",
+      "pin_contracts": {
+        "1": {
+          "electrical_type": "passive",
+          "name": "VCC",
+          "number": "1"
+        },
+        "2": {
+          "electrical_type": "ground",
+          "name": "GND",
+          "number": "2",
+          "voltage_domain": "GND"
+        }
+      },
       "pins": [
         {
           "mcu_pin": null,
@@ -64,6 +90,19 @@
       "manufacturer": "Murata",
       "mpn": "GRM31CR61E226ME15L",
       "package": "1206",
+      "pin_contracts": {
+        "1": {
+          "electrical_type": "passive",
+          "name": "VCC",
+          "number": "1"
+        },
+        "2": {
+          "electrical_type": "ground",
+          "name": "GND",
+          "number": "2",
+          "voltage_domain": "GND"
+        }
+      },
       "pins": [
         {
           "mcu_pin": null,
@@ -92,6 +131,34 @@
       "manufacturer": "STMicroelectronics",
       "mpn": "USBLC6-2SC6",
       "package": "SOT-23-6",
+      "pin_contracts": {
+        "1": {
+          "electrical_type": "bidirectional",
+          "name": "DP_IN",
+          "number": "1"
+        },
+        "2": {
+          "electrical_type": "bidirectional",
+          "name": "DP_OUT",
+          "number": "2"
+        },
+        "3": {
+          "electrical_type": "bidirectional",
+          "name": "DM_IN",
+          "number": "3"
+        },
+        "4": {
+          "electrical_type": "bidirectional",
+          "name": "DM_OUT",
+          "number": "4"
+        },
+        "5": {
+          "electrical_type": "ground",
+          "name": "GND",
+          "number": "5",
+          "voltage_domain": "GND"
+        }
+      },
       "pins": [
         {
           "mcu_pin": null,
@@ -132,6 +199,14 @@
           "number": "5",
           "role": "ground",
           "voltage_domain": "GND"
+        },
+        {
+          "mcu_pin": null,
+          "name": "NC",
+          "net": null,
+          "number": "6",
+          "role": "no_connect",
+          "voltage_domain": null
         }
       ],
       "ref": "D1",
@@ -139,11 +214,85 @@
       "value": "USB ESD"
     },
     {
+      "component_id": "littelfuse_0498080",
+      "footprint": "HW_Curated:MIDI_Fuse",
+      "manufacturer": "Littelfuse",
+      "mpn": "Littelfuse-0498080.M",
+      "package": "MIDI",
+      "pin_contracts": {
+        "1": {
+          "electrical_type": "passive",
+          "name": "IN",
+          "number": "1"
+        },
+        "2": {
+          "electrical_type": "passive",
+          "name": "OUT",
+          "number": "2"
+        }
+      },
+      "pins": [
+        {
+          "mcu_pin": null,
+          "name": "IN",
+          "net": "USB_VBUS",
+          "number": "1",
+          "role": "passive",
+          "voltage_domain": null
+        },
+        {
+          "mcu_pin": null,
+          "name": "OUT",
+          "net": "USB_FUSED",
+          "number": "2",
+          "role": "passive",
+          "voltage_domain": null
+        }
+      ],
+      "ref": "F1",
+      "role": "fuse",
+      "value": "500mA Fuse"
+    },
+    {
       "component_id": "usb4105_gf_a",
       "footprint": "Connector_USB:USB_C_GCT_USB4105",
       "manufacturer": "GCT",
       "mpn": "USB4105-GF-A",
       "package": "USB-C-16",
+      "pin_contracts": {
+        "1": {
+          "electrical_type": "power_in",
+          "name": "VBUS",
+          "number": "1",
+          "voltage_domain": "USB_5V"
+        },
+        "2": {
+          "electrical_type": "ground",
+          "name": "GND",
+          "number": "2",
+          "voltage_domain": "GND"
+        },
+        "3": {
+          "electrical_type": "bidirectional",
+          "name": "D+",
+          "number": "3"
+        },
+        "4": {
+          "electrical_type": "bidirectional",
+          "name": "D-",
+          "number": "4"
+        },
+        "5": {
+          "electrical_type": "passive",
+          "name": "CC1",
+          "number": "5"
+        },
+        "6": {
+          "electrical_type": "passive",
+          "name": "CC2",
+          "number": "6"
+        }
+      },
       "pins": [
         {
           "mcu_pin": null,
@@ -176,6 +325,22 @@
           "number": "4",
           "role": "bidirectional",
           "voltage_domain": null
+        },
+        {
+          "mcu_pin": null,
+          "name": "CC1",
+          "net": "USB_CC1",
+          "number": "5",
+          "role": "passive",
+          "voltage_domain": null
+        },
+        {
+          "mcu_pin": null,
+          "name": "CC2",
+          "net": "USB_CC2",
+          "number": "6",
+          "role": "passive",
+          "voltage_domain": null
         }
       ],
       "ref": "J1",
@@ -183,11 +348,40 @@
       "value": "USB-C POWER"
     },
     {
-      "component_id": "samtec_ftsh_105",
+      "component_id": "samtec_ftsh_105_uart",
       "footprint": "Connector_Samtec:FTSH-105",
       "manufacturer": "Samtec",
       "mpn": "Samtec-FTSH-105-01-L-DV-K",
       "package": "FTSH-10",
+      "pin_contracts": {
+        "1": {
+          "electrical_type": "power_out",
+          "name": "VREF",
+          "number": "1",
+          "voltage_domain": "V3V3"
+        },
+        "2": {
+          "electrical_type": "output",
+          "name": "TXD",
+          "number": "2"
+        },
+        "3": {
+          "electrical_type": "input",
+          "name": "RXD",
+          "number": "3"
+        },
+        "4": {
+          "electrical_type": "input",
+          "name": "BOOT",
+          "number": "4"
+        },
+        "5": {
+          "electrical_type": "ground",
+          "name": "GND",
+          "number": "5",
+          "voltage_domain": "GND"
+        }
+      },
       "pins": [
         {
           "mcu_pin": null,
@@ -228,6 +422,46 @@
           "number": "5",
           "role": "ground",
           "voltage_domain": "GND"
+        },
+        {
+          "mcu_pin": null,
+          "name": "NC",
+          "net": null,
+          "number": "6",
+          "role": "no_connect",
+          "voltage_domain": null
+        },
+        {
+          "mcu_pin": null,
+          "name": "NC",
+          "net": null,
+          "number": "7",
+          "role": "no_connect",
+          "voltage_domain": null
+        },
+        {
+          "mcu_pin": null,
+          "name": "NC",
+          "net": null,
+          "number": "8",
+          "role": "no_connect",
+          "voltage_domain": null
+        },
+        {
+          "mcu_pin": null,
+          "name": "NC",
+          "net": null,
+          "number": "9",
+          "role": "no_connect",
+          "voltage_domain": null
+        },
+        {
+          "mcu_pin": null,
+          "name": "NC",
+          "net": null,
+          "number": "10",
+          "role": "no_connect",
+          "voltage_domain": null
         }
       ],
       "ref": "J2",
@@ -235,11 +469,101 @@
       "value": "UART DEBUG"
     },
     {
+      "component_id": "lm74700qdbvrq1",
+      "footprint": "Package_TO_SOT_SMD:SOT-23-6",
+      "manufacturer": "Texas Instruments",
+      "mpn": "LM74700QDBVRQ1",
+      "package": "SOT-23-6",
+      "pin_contracts": {
+        "1": {
+          "electrical_type": "power_in",
+          "name": "ANODE",
+          "number": "1"
+        },
+        "2": {
+          "electrical_type": "power_out",
+          "name": "CATHODE",
+          "number": "2"
+        },
+        "3": {
+          "electrical_type": "ground",
+          "name": "GND",
+          "number": "3",
+          "voltage_domain": "GND"
+        }
+      },
+      "pins": [
+        {
+          "mcu_pin": null,
+          "name": "ANODE",
+          "net": "USB_FUSED",
+          "number": "1",
+          "role": "power_in",
+          "voltage_domain": "V3V3"
+        },
+        {
+          "mcu_pin": null,
+          "name": "CATHODE",
+          "net": "USB_PROT",
+          "number": "2",
+          "role": "power_out",
+          "voltage_domain": "V3V3"
+        },
+        {
+          "mcu_pin": null,
+          "name": "GND",
+          "net": "GND",
+          "number": "3",
+          "role": "ground",
+          "voltage_domain": "GND"
+        },
+        {
+          "mcu_pin": null,
+          "name": "NC",
+          "net": null,
+          "number": "4",
+          "role": "no_connect",
+          "voltage_domain": null
+        },
+        {
+          "mcu_pin": null,
+          "name": "NC",
+          "net": null,
+          "number": "5",
+          "role": "no_connect",
+          "voltage_domain": null
+        },
+        {
+          "mcu_pin": null,
+          "name": "NC",
+          "net": null,
+          "number": "6",
+          "role": "no_connect",
+          "voltage_domain": null
+        }
+      ],
+      "ref": "Q1",
+      "role": "reverse_polarity",
+      "value": "Ideal Diode"
+    },
+    {
       "component_id": "rc0603_4k7",
       "footprint": "Resistor_SMD:R_0603_1608Metric",
       "manufacturer": "Yageo",
       "mpn": "RC0603FR-074K7L",
       "package": "0603",
+      "pin_contracts": {
+        "1": {
+          "electrical_type": "passive",
+          "name": "VCC",
+          "number": "1"
+        },
+        "2": {
+          "electrical_type": "passive",
+          "name": "SIGNAL",
+          "number": "2"
+        }
+      },
       "pins": [
         {
           "mcu_pin": null,
@@ -268,6 +592,18 @@
       "manufacturer": "Yageo",
       "mpn": "RC0603FR-074K7L",
       "package": "0603",
+      "pin_contracts": {
+        "1": {
+          "electrical_type": "passive",
+          "name": "VCC",
+          "number": "1"
+        },
+        "2": {
+          "electrical_type": "passive",
+          "name": "SIGNAL",
+          "number": "2"
+        }
+      },
       "pins": [
         {
           "mcu_pin": null,
@@ -296,6 +632,18 @@
       "manufacturer": "Yageo",
       "mpn": "RC0603FR-074K7L",
       "package": "0603",
+      "pin_contracts": {
+        "1": {
+          "electrical_type": "passive",
+          "name": "VCC",
+          "number": "1"
+        },
+        "2": {
+          "electrical_type": "passive",
+          "name": "SIGNAL",
+          "number": "2"
+        }
+      },
       "pins": [
         {
           "mcu_pin": null,
@@ -319,11 +667,162 @@
       "value": "4K7"
     },
     {
+      "component_id": "rc0603_5k1",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "manufacturer": "Yageo",
+      "mpn": "RC0603FR-075K1L",
+      "package": "0603",
+      "pin_contracts": {
+        "1": {
+          "electrical_type": "passive",
+          "name": "A",
+          "number": "1"
+        },
+        "2": {
+          "electrical_type": "passive",
+          "name": "B",
+          "number": "2"
+        }
+      },
+      "pins": [
+        {
+          "mcu_pin": null,
+          "name": "A",
+          "net": "USB_CC1",
+          "number": "1",
+          "role": "passive",
+          "voltage_domain": null
+        },
+        {
+          "mcu_pin": null,
+          "name": "B",
+          "net": "GND",
+          "number": "2",
+          "role": "ground",
+          "voltage_domain": "GND"
+        }
+      ],
+      "ref": "R5",
+      "role": "usb_cc_pulldown",
+      "value": "5K1 USB-C Rd"
+    },
+    {
+      "component_id": "rc0603_5k1",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "manufacturer": "Yageo",
+      "mpn": "RC0603FR-075K1L",
+      "package": "0603",
+      "pin_contracts": {
+        "1": {
+          "electrical_type": "passive",
+          "name": "A",
+          "number": "1"
+        },
+        "2": {
+          "electrical_type": "passive",
+          "name": "B",
+          "number": "2"
+        }
+      },
+      "pins": [
+        {
+          "mcu_pin": null,
+          "name": "A",
+          "net": "USB_CC2",
+          "number": "1",
+          "role": "passive",
+          "voltage_domain": null
+        },
+        {
+          "mcu_pin": null,
+          "name": "B",
+          "net": "GND",
+          "number": "2",
+          "role": "ground",
+          "voltage_domain": "GND"
+        }
+      ],
+      "ref": "R6",
+      "role": "usb_cc_pulldown",
+      "value": "5K1 USB-C Rd"
+    },
+    {
       "component_id": "esp32s3_wroom_1",
       "footprint": "RF_Module:ESP32-S3-WROOM-1",
       "manufacturer": "Espressif Systems",
       "mpn": "ESP32-S3-WROOM-1-N8",
       "package": "LCC-41",
+      "pin_contracts": {
+        "1": {
+          "electrical_type": "ground",
+          "name": "GND",
+          "number": "1",
+          "voltage_domain": "GND"
+        },
+        "12": {
+          "electrical_type": "bidirectional",
+          "name": "IO8",
+          "number": "12"
+        },
+        "13": {
+          "electrical_type": "bidirectional",
+          "name": "USB_D-",
+          "number": "13"
+        },
+        "14": {
+          "electrical_type": "bidirectional",
+          "name": "USB_D+",
+          "number": "14"
+        },
+        "15": {
+          "electrical_type": "bidirectional",
+          "name": "IO3",
+          "number": "15"
+        },
+        "2": {
+          "electrical_type": "power_in",
+          "name": "3V3",
+          "number": "2",
+          "voltage_domain": "V3V3"
+        },
+        "27": {
+          "electrical_type": "bidirectional",
+          "name": "IO0",
+          "number": "27"
+        },
+        "3": {
+          "electrical_type": "input",
+          "name": "EN",
+          "number": "3"
+        },
+        "36": {
+          "electrical_type": "bidirectional",
+          "name": "RXD0",
+          "number": "36"
+        },
+        "37": {
+          "electrical_type": "bidirectional",
+          "name": "TXD0",
+          "number": "37"
+        },
+        "39": {
+          "electrical_type": "bidirectional",
+          "name": "IO1",
+          "number": "39"
+        },
+        "40": {
+          "electrical_type": "ground",
+          "name": "GND",
+          "number": "40",
+          "voltage_domain": "GND"
+        },
+        "41": {
+          "electrical_type": "ground",
+          "name": "GND",
+          "number": "41",
+          "voltage_domain": "GND"
+        }
+      },
       "pins": [
         {
           "mcu_pin": null,
@@ -428,6 +927,230 @@
           "number": "41",
           "role": "ground",
           "voltage_domain": "GND"
+        },
+        {
+          "mcu_pin": null,
+          "name": "NC",
+          "net": null,
+          "number": "4",
+          "role": "no_connect",
+          "voltage_domain": null
+        },
+        {
+          "mcu_pin": null,
+          "name": "NC",
+          "net": null,
+          "number": "5",
+          "role": "no_connect",
+          "voltage_domain": null
+        },
+        {
+          "mcu_pin": null,
+          "name": "NC",
+          "net": null,
+          "number": "6",
+          "role": "no_connect",
+          "voltage_domain": null
+        },
+        {
+          "mcu_pin": null,
+          "name": "NC",
+          "net": null,
+          "number": "7",
+          "role": "no_connect",
+          "voltage_domain": null
+        },
+        {
+          "mcu_pin": null,
+          "name": "NC",
+          "net": null,
+          "number": "8",
+          "role": "no_connect",
+          "voltage_domain": null
+        },
+        {
+          "mcu_pin": null,
+          "name": "NC",
+          "net": null,
+          "number": "9",
+          "role": "no_connect",
+          "voltage_domain": null
+        },
+        {
+          "mcu_pin": null,
+          "name": "NC",
+          "net": null,
+          "number": "10",
+          "role": "no_connect",
+          "voltage_domain": null
+        },
+        {
+          "mcu_pin": null,
+          "name": "NC",
+          "net": null,
+          "number": "11",
+          "role": "no_connect",
+          "voltage_domain": null
+        },
+        {
+          "mcu_pin": null,
+          "name": "NC",
+          "net": null,
+          "number": "16",
+          "role": "no_connect",
+          "voltage_domain": null
+        },
+        {
+          "mcu_pin": null,
+          "name": "NC",
+          "net": null,
+          "number": "17",
+          "role": "no_connect",
+          "voltage_domain": null
+        },
+        {
+          "mcu_pin": null,
+          "name": "NC",
+          "net": null,
+          "number": "18",
+          "role": "no_connect",
+          "voltage_domain": null
+        },
+        {
+          "mcu_pin": null,
+          "name": "NC",
+          "net": null,
+          "number": "19",
+          "role": "no_connect",
+          "voltage_domain": null
+        },
+        {
+          "mcu_pin": null,
+          "name": "NC",
+          "net": null,
+          "number": "20",
+          "role": "no_connect",
+          "voltage_domain": null
+        },
+        {
+          "mcu_pin": null,
+          "name": "NC",
+          "net": null,
+          "number": "21",
+          "role": "no_connect",
+          "voltage_domain": null
+        },
+        {
+          "mcu_pin": null,
+          "name": "NC",
+          "net": null,
+          "number": "22",
+          "role": "no_connect",
+          "voltage_domain": null
+        },
+        {
+          "mcu_pin": null,
+          "name": "NC",
+          "net": null,
+          "number": "23",
+          "role": "no_connect",
+          "voltage_domain": null
+        },
+        {
+          "mcu_pin": null,
+          "name": "NC",
+          "net": null,
+          "number": "24",
+          "role": "no_connect",
+          "voltage_domain": null
+        },
+        {
+          "mcu_pin": null,
+          "name": "NC",
+          "net": null,
+          "number": "25",
+          "role": "no_connect",
+          "voltage_domain": null
+        },
+        {
+          "mcu_pin": null,
+          "name": "NC",
+          "net": null,
+          "number": "26",
+          "role": "no_connect",
+          "voltage_domain": null
+        },
+        {
+          "mcu_pin": null,
+          "name": "NC",
+          "net": null,
+          "number": "28",
+          "role": "no_connect",
+          "voltage_domain": null
+        },
+        {
+          "mcu_pin": null,
+          "name": "NC",
+          "net": null,
+          "number": "29",
+          "role": "no_connect",
+          "voltage_domain": null
+        },
+        {
+          "mcu_pin": null,
+          "name": "NC",
+          "net": null,
+          "number": "30",
+          "role": "no_connect",
+          "voltage_domain": null
+        },
+        {
+          "mcu_pin": null,
+          "name": "NC",
+          "net": null,
+          "number": "31",
+          "role": "no_connect",
+          "voltage_domain": null
+        },
+        {
+          "mcu_pin": null,
+          "name": "NC",
+          "net": null,
+          "number": "32",
+          "role": "no_connect",
+          "voltage_domain": null
+        },
+        {
+          "mcu_pin": null,
+          "name": "NC",
+          "net": null,
+          "number": "33",
+          "role": "no_connect",
+          "voltage_domain": null
+        },
+        {
+          "mcu_pin": null,
+          "name": "NC",
+          "net": null,
+          "number": "34",
+          "role": "no_connect",
+          "voltage_domain": null
+        },
+        {
+          "mcu_pin": null,
+          "name": "NC",
+          "net": null,
+          "number": "35",
+          "role": "no_connect",
+          "voltage_domain": null
+        },
+        {
+          "mcu_pin": null,
+          "name": "NC",
+          "net": null,
+          "number": "38",
+          "role": "no_connect",
+          "voltage_domain": null
         }
       ],
       "ref": "U1",
@@ -440,6 +1163,35 @@
       "manufacturer": "TDK InvenSense",
       "mpn": "ICM-42688-P",
       "package": "LGA-14",
+      "pin_contracts": {
+        "1": {
+          "electrical_type": "power_in",
+          "name": "VDD",
+          "number": "1",
+          "voltage_domain": "V3V3"
+        },
+        "2": {
+          "electrical_type": "ground",
+          "name": "GND",
+          "number": "2",
+          "voltage_domain": "GND"
+        },
+        "3": {
+          "electrical_type": "open_drain",
+          "name": "SCL",
+          "number": "3"
+        },
+        "4": {
+          "electrical_type": "open_drain",
+          "name": "SDA",
+          "number": "4"
+        },
+        "5": {
+          "electrical_type": "output",
+          "name": "INT1",
+          "number": "5"
+        }
+      },
       "pins": [
         {
           "mcu_pin": null,
@@ -492,14 +1244,32 @@
       "manufacturer": "Texas Instruments",
       "mpn": "TPS62133RGTR",
       "package": "VQFN-16",
+      "pin_contracts": {
+        "1": {
+          "electrical_type": "power_in",
+          "name": "VIN",
+          "number": "1"
+        },
+        "2": {
+          "electrical_type": "power_out",
+          "name": "VOUT",
+          "number": "2"
+        },
+        "3": {
+          "electrical_type": "ground",
+          "name": "GND",
+          "number": "3",
+          "voltage_domain": "GND"
+        }
+      },
       "pins": [
         {
           "mcu_pin": null,
           "name": "VIN",
-          "net": "USB_VBUS",
+          "net": "USB_PROT",
           "number": "1",
           "role": "power_in",
-          "voltage_domain": "USB_5V"
+          "voltage_domain": "V3V3"
         },
         {
           "mcu_pin": null,
@@ -624,6 +1394,30 @@
           "pin_role": "ground"
         },
         {
+          "component_ref": "Q1",
+          "component_role": "reverse_polarity",
+          "mcu_pin": null,
+          "pin_name": "GND",
+          "pin_number": "3",
+          "pin_role": "ground"
+        },
+        {
+          "component_ref": "R5",
+          "component_role": "usb_cc_pulldown",
+          "mcu_pin": null,
+          "pin_name": "B",
+          "pin_number": "2",
+          "pin_role": "ground"
+        },
+        {
+          "component_ref": "R6",
+          "component_role": "usb_cc_pulldown",
+          "mcu_pin": null,
+          "pin_name": "B",
+          "pin_number": "2",
+          "pin_role": "ground"
+        },
+        {
           "component_ref": "U1",
           "component_role": "mcu",
           "mcu_pin": null,
@@ -664,7 +1458,7 @@
           "pin_role": "ground"
         }
       ],
-      "required_track_width_mm": 0.15,
+      "required_track_width_mm": 0.2,
       "signal_class": "ground",
       "voltage_domain": "GND"
     },
@@ -805,6 +1599,54 @@
       "voltage_domain": "V3V3"
     },
     {
+      "name": "USB_CC1",
+      "pin_name_connections": [
+        {
+          "component_ref": "J1",
+          "component_role": "power_input",
+          "mcu_pin": null,
+          "pin_name": "CC1",
+          "pin_number": "5",
+          "pin_role": "passive"
+        },
+        {
+          "component_ref": "R5",
+          "component_role": "usb_cc_pulldown",
+          "mcu_pin": null,
+          "pin_name": "A",
+          "pin_number": "1",
+          "pin_role": "passive"
+        }
+      ],
+      "required_track_width_mm": 0.15,
+      "signal_class": "usb",
+      "voltage_domain": "V3V3"
+    },
+    {
+      "name": "USB_CC2",
+      "pin_name_connections": [
+        {
+          "component_ref": "J1",
+          "component_role": "power_input",
+          "mcu_pin": null,
+          "pin_name": "CC2",
+          "pin_number": "6",
+          "pin_role": "passive"
+        },
+        {
+          "component_ref": "R6",
+          "component_role": "usb_cc_pulldown",
+          "mcu_pin": null,
+          "pin_name": "A",
+          "pin_number": "1",
+          "pin_role": "passive"
+        }
+      ],
+      "required_track_width_mm": 0.15,
+      "signal_class": "usb",
+      "voltage_domain": "V3V3"
+    },
+    {
       "name": "USB_DM",
       "pin_name_connections": [
         {
@@ -901,21 +1743,69 @@
       "voltage_domain": "V3V3"
     },
     {
-      "name": "USB_VBUS",
+      "name": "USB_FUSED",
       "pin_name_connections": [
         {
-          "component_ref": "J1",
-          "component_role": "power_input",
+          "component_ref": "F1",
+          "component_role": "fuse",
           "mcu_pin": null,
-          "pin_name": "VBUS",
+          "pin_name": "OUT",
+          "pin_number": "2",
+          "pin_role": "passive"
+        },
+        {
+          "component_ref": "Q1",
+          "component_role": "reverse_polarity",
+          "mcu_pin": null,
+          "pin_name": "ANODE",
           "pin_number": "1",
           "pin_role": "power_in"
+        }
+      ],
+      "required_track_width_mm": 0.5,
+      "signal_class": "power",
+      "voltage_domain": "V3V3"
+    },
+    {
+      "name": "USB_PROT",
+      "pin_name_connections": [
+        {
+          "component_ref": "Q1",
+          "component_role": "reverse_polarity",
+          "mcu_pin": null,
+          "pin_name": "CATHODE",
+          "pin_number": "2",
+          "pin_role": "power_out"
         },
         {
           "component_ref": "U3",
           "component_role": "regulator",
           "mcu_pin": null,
           "pin_name": "VIN",
+          "pin_number": "1",
+          "pin_role": "power_in"
+        }
+      ],
+      "required_track_width_mm": 0.5,
+      "signal_class": "power",
+      "voltage_domain": "V3V3"
+    },
+    {
+      "name": "USB_VBUS",
+      "pin_name_connections": [
+        {
+          "component_ref": "F1",
+          "component_role": "fuse",
+          "mcu_pin": null,
+          "pin_name": "IN",
+          "pin_number": "1",
+          "pin_role": "passive"
+        },
+        {
+          "component_ref": "J1",
+          "component_role": "power_input",
+          "mcu_pin": null,
+          "pin_name": "VBUS",
           "pin_number": "1",
           "pin_role": "power_in"
         }
@@ -1091,30 +1981,46 @@
         "target_ref": "J1"
       },
       {
-        "derived_from": "graph decoupling component pins",
-        "enforced": false,
+        "derived_from": "graph decoupling component pins + decoupling target inference",
+        "enforced": true,
         "kind": "decoupling_proximity",
         "params": {
+          "max_distance_mm": 12.0,
           "power_nets": [
             "GND",
             "V3V3"
-          ]
+          ],
+          "target_ref": "U1",
+          "target_source": "explicit_decoupling_target_ref"
         },
-        "rationale": "Cap-to-IC association is not modelled in the netlist; proximity enforcement is deferred.",
+        "rationale": "",
         "target_ref": "C1"
       },
       {
-        "derived_from": "graph decoupling component pins",
-        "enforced": false,
+        "derived_from": "graph decoupling component pins + decoupling target inference",
+        "enforced": true,
         "kind": "decoupling_proximity",
         "params": {
+          "max_distance_mm": 12.0,
           "power_nets": [
             "GND",
             "V3V3"
-          ]
+          ],
+          "target_ref": "U1",
+          "target_source": "explicit_decoupling_target_ref"
         },
-        "rationale": "Cap-to-IC association is not modelled in the netlist; proximity enforcement is deferred.",
+        "rationale": "",
         "target_ref": "C2"
+      },
+      {
+        "derived_from": "graph power-category component",
+        "enforced": false,
+        "kind": "thermal_spacing",
+        "params": {
+          "min_spacing_mm": 8.0
+        },
+        "rationale": "Advisory spacing only; thermal qualification requires load testing.",
+        "target_ref": "Q1"
       },
       {
         "derived_from": "graph power-category component",
@@ -1162,8 +2068,8 @@
         "y_mm": 14.0
       },
       "D1": {
-        "courtyard_h_mm": 6.708,
-        "courtyard_w_mm": 6.708,
+        "courtyard_h_mm": 7.348,
+        "courtyard_w_mm": 7.348,
         "rationale": "",
         "ref": "D1",
         "rotation_deg": 0.0,
@@ -1172,9 +2078,20 @@
         "x_mm": 30.0,
         "y_mm": 10.0
       },
+      "F1": {
+        "courtyard_h_mm": 4.243,
+        "courtyard_w_mm": 4.243,
+        "rationale": "",
+        "ref": "F1",
+        "rotation_deg": 0.0,
+        "side": "top",
+        "source": "sensor_data_logger_anchor",
+        "x_mm": 26.0,
+        "y_mm": 10.0
+      },
       "J1": {
-        "courtyard_h_mm": 6.0,
-        "courtyard_w_mm": 6.0,
+        "courtyard_h_mm": 7.348,
+        "courtyard_w_mm": 7.348,
         "rationale": "",
         "ref": "J1",
         "rotation_deg": 0.0,
@@ -1184,15 +2101,26 @@
         "y_mm": 4.0
       },
       "J2": {
-        "courtyard_h_mm": 6.708,
-        "courtyard_w_mm": 6.708,
+        "courtyard_h_mm": 9.487,
+        "courtyard_w_mm": 9.487,
         "rationale": "",
         "ref": "J2",
         "rotation_deg": 0.0,
         "side": "top",
         "source": "sensor_data_logger_anchor",
-        "x_mm": 58.0,
-        "y_mm": 44.0
+        "x_mm": 54.0,
+        "y_mm": 39.0
+      },
+      "Q1": {
+        "courtyard_h_mm": 7.348,
+        "courtyard_w_mm": 7.348,
+        "rationale": "",
+        "ref": "Q1",
+        "rotation_deg": 0.0,
+        "side": "top",
+        "source": "sensor_data_logger_anchor",
+        "x_mm": 34.0,
+        "y_mm": 4.0
       },
       "R1": {
         "courtyard_h_mm": 4.243,
@@ -1227,16 +2155,38 @@
         "x_mm": 50.0,
         "y_mm": 25.0
       },
+      "R5": {
+        "courtyard_h_mm": 4.243,
+        "courtyard_w_mm": 4.243,
+        "rationale": "USB-C Rd resistor position derived from the connector CC pins.",
+        "ref": "R5",
+        "rotation_deg": 0.0,
+        "side": "top",
+        "source": "usb_c_rd_connector_seed",
+        "x_mm": 22.0,
+        "y_mm": 7.0
+      },
+      "R6": {
+        "courtyard_h_mm": 4.243,
+        "courtyard_w_mm": 4.243,
+        "rationale": "USB-C Rd resistor position derived from the connector CC pins.",
+        "ref": "R6",
+        "rotation_deg": 0.0,
+        "side": "top",
+        "source": "usb_c_rd_connector_seed",
+        "x_mm": 26.0,
+        "y_mm": 7.0
+      },
       "U1": {
-        "courtyard_h_mm": 10.817,
-        "courtyard_w_mm": 10.817,
+        "courtyard_h_mm": 19.209,
+        "courtyard_w_mm": 19.209,
         "rationale": "",
         "ref": "U1",
         "rotation_deg": 0.0,
         "side": "top",
         "source": "sensor_data_logger_anchor",
         "x_mm": 44.0,
-        "y_mm": 44.0
+        "y_mm": 43.0
       },
       "U2": {
         "courtyard_h_mm": 6.708,

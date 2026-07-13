@@ -1,18 +1,28 @@
 {
-  "artifacts": [],
-  "backend": {},
-  "failures": [
-    {
-      "category": "TOOL_ERROR",
-      "code": "external_gate_not_run",
-      "details": {},
-      "message": "KiCad DRC was not requested",
-      "path": null,
-      "requires_user_decision": false,
-      "severity": "error"
-    }
+  "artifacts": [
+    "/Users/mrcha033/Documents/hw-cli/projects/sensor_data_logger/validation/reports/kicad_drc.json"
   ],
+  "backend": {
+    "available": true,
+    "command": [
+      "kicad-cli",
+      "pcb",
+      "drc",
+      "--format",
+      "json",
+      "--severity-error",
+      "--output",
+      "/Users/mrcha033/Documents/hw-cli/projects/sensor_data_logger/validation/reports/kicad_drc.json",
+      "/Users/mrcha033/Documents/hw-cli/projects/sensor_data_logger/electronics/generated/kicad/sensor_data_logger.kicad_pcb"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "stdout": "Found 0 violations\nFound 0 unconnected items\nSaved DRC Report to /Users/mrcha033/Documents/hw-cli/projects/sensor_data_logger/validation/reports/kicad_drc.json\n"
+  },
+  "failures": [],
   "gate": "native_drc",
-  "metrics": {},
-  "status": "blocked"
+  "metrics": {
+    "violations": 0
+  },
+  "status": "pass"
 }

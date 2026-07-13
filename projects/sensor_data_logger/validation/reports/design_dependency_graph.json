@@ -4,23 +4,33 @@
     "deterministic": true,
     "name": "structural_dependency_graph"
   },
-  "failures": [],
+  "failures": [
+    {
+      "category": "RELEASE_ERROR",
+      "code": "dependency_prerequisite_not_passed",
+      "details": {
+        "gate": "sourcing_resilience",
+        "prerequisite": "sourcing",
+        "prerequisite_status": "fail"
+      },
+      "message": "sourcing_resilience passed before prerequisite sourcing passed",
+      "path": "gates.sourcing_resilience",
+      "requires_user_decision": false,
+      "severity": "error"
+    }
+  ],
   "gate": "design_dependency_graph",
   "metrics": {
     "blocked_or_unpassed_nodes": [
-      "autoroute",
-      "kicad_library_crosscheck",
-      "native_drc",
-      "native_erc",
       "native_mechanical_validation",
       "native_zephyr_build",
       "physical_qualification",
-      "supplier_availability",
-      "support_circuit_completeness"
+      "sourcing",
+      "supplier_availability"
     ],
-    "declared_edges": 76,
-    "evaluated_edges": 50,
-    "nodes": 40
+    "declared_edges": 88,
+    "evaluated_edges": 65,
+    "nodes": 46
   },
-  "status": "pass"
+  "status": "fail"
 }

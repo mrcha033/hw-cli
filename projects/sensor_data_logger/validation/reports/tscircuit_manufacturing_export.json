@@ -1,20 +1,33 @@
 {
-  "artifacts": [],
-  "backend": {
-    "name": "tscircuit"
-  },
-  "failures": [
-    {
-      "category": "EDA_ERROR",
-      "code": "gate_not_run",
-      "details": {},
-      "message": "Backend contract gate was not run: tscircuit_manufacturing_export",
-      "path": null,
-      "requires_user_decision": false,
-      "severity": "error"
-    }
+  "artifacts": [
+    "/Users/mrcha033/Documents/hw-cli/projects/sensor_data_logger/exports/candidates/backend-validation/tscircuit/fabrication/gerbers.zip",
+    "/Users/mrcha033/Documents/hw-cli/projects/sensor_data_logger/exports/candidates/backend-validation/tscircuit/fabrication/drill.zip",
+    "/Users/mrcha033/Documents/hw-cli/projects/sensor_data_logger/exports/candidates/backend-validation/tscircuit/fabrication/pick_and_place.csv",
+    "/Users/mrcha033/Documents/hw-cli/projects/sensor_data_logger/exports/candidates/backend-validation/tscircuit/fabrication/bom.csv",
+    "/Users/mrcha033/Documents/hw-cli/projects/sensor_data_logger/exports/candidates/backend-validation/tscircuit/mechanical/board.step"
   ],
+  "backend": {
+    "deterministic_archive": true,
+    "electronics_backend": "tscircuit",
+    "export_bridge": "compiled_graph_to_kicad",
+    "name": "kicad-cli"
+  },
+  "failures": [],
   "gate": "tscircuit_manufacturing_export",
-  "metrics": {},
-  "status": "blocked"
+  "metrics": {
+    "bom": true,
+    "drill_files": 2,
+    "export_layers": [
+      "F.Cu",
+      "B.Cu",
+      "F.Mask",
+      "B.Mask",
+      "F.Silkscreen",
+      "B.Silkscreen",
+      "Edge.Cuts"
+    ],
+    "gerber_files": 8,
+    "position_file": true
+  },
+  "status": "pass"
 }

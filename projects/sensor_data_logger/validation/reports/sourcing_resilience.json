@@ -11,9 +11,10 @@
   "metrics": {
     "alternate_roles": 0,
     "checked_alternates": 0,
-    "critical_roles": 5,
+    "critical_roles": 7,
     "role_set": "sensor_data_logger",
-    "single_source_justified_roles": 5
+    "single_source_justified_roles": 7,
+    "supplier_provider": "curated"
   },
   "status": "pass"
 }

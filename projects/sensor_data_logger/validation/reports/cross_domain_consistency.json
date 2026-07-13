@@ -2,13 +2,13 @@
   "artifacts": [],
   "backend": {
     "deterministic": true,
-    "name": "reference-ir-erc"
+    "name": "cross-domain-consistency"
   },
   "failures": [],
-  "gate": "ir_erc",
+  "gate": "cross_domain_consistency",
   "metrics": {
-    "components": 16,
-    "nets": 18
+    "bom_refs": 16,
+    "constraints_checked": 0
   },
   "status": "pass"
 }

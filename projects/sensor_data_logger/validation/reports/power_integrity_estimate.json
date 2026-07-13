@@ -1,0 +1,41 @@
+{
+  "artifacts": [],
+  "backend": {
+    "authority": "heuristic",
+    "name": "power-integrity-estimator"
+  },
+  "failures": [],
+  "gate": "power_integrity_estimate",
+  "metrics": {
+    "coverage": {
+      "V3V3": {
+        "bulk": [
+          "C9"
+        ],
+        "declared_peak_current_a": 0.5,
+        "decoupling": [
+          "C1",
+          "C2"
+        ],
+        "high_current_connector_loads": [],
+        "loads": [
+          "U1",
+          "U2"
+        ]
+      }
+    },
+    "errors": 0,
+    "oracle_boundary": "Heuristic decoupling and bulk-cap coverage only; transient, impedance, and stability still require simulation or bench evidence.",
+    "rails_checked": 1,
+    "regulator_current_limits": {
+      "U3": {
+        "declared_peak_current_a": 0.5,
+        "mpn": "TPS62133RGTR",
+        "output_current_limit_a": 3.0,
+        "rail": "V3V3"
+      }
+    },
+    "warnings": 0
+  },
+  "status": "pass"
+}

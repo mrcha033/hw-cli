@@ -1,0 +1,44 @@
+{
+  "artifacts": [],
+  "backend": {
+    "name": "ngspice-dc-op",
+    "tier": "advisory"
+  },
+  "failures": [],
+  "gate": "power_integrity_dc_operating_point",
+  "metrics": {
+    "intermediate_node_voltages": {
+      "BOOT": 0.0,
+      "ESP_EN": 3.3,
+      "I2C_IMU_SCL": 3.3,
+      "I2C_IMU_SDA": 3.3,
+      "IMU_INT": 0.0,
+      "UART_RX": 0.0,
+      "UART_TX": 0.0,
+      "USB_CC1": 0.0,
+      "USB_CC2": 0.0,
+      "USB_DM": 0.0,
+      "USB_DM_RAW": 0.0,
+      "USB_DP": 0.0,
+      "USB_DP_RAW": 0.0,
+      "USB_FUSED": 4.999998,
+      "USB_PROT": 0.0
+    },
+    "ngspice_available": true,
+    "rails": {
+      "USB_VBUS": {
+        "nominal_v": 5.0,
+        "solved_v": 5.0,
+        "within_tolerance": true
+      },
+      "V3V3": {
+        "nominal_v": 3.3,
+        "solved_v": 3.3,
+        "within_tolerance": true
+      }
+    },
+    "resistor_count": 6,
+    "tier": "advisory"
+  },
+  "status": "pass"
+}

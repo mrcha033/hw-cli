@@ -9,10 +9,16 @@
   "gate": "layout_thermal_integrity",
   "metrics": {
     "board_area_mm2": 3500.0,
+    "high_current_chain_max_step_mm": 35.0,
+    "high_current_chain_refs": [],
+    "high_current_chain_steps": [],
+    "high_current_loop_area_a_mm2": null,
+    "high_current_loop_area_limit_mm2": null,
+    "high_current_loop_area_mm2": null,
     "layers": 2,
     "peak_current_a": 0.9,
     "sensitive_components": 2,
-    "thermal_risk_components": 1
+    "thermal_risk_components": 2
   },
   "status": "pass"
 }

@@ -4,9 +4,9 @@
   "failures": [
     {
       "category": "TOOL_ERROR",
-      "code": "external_gate_not_run",
+      "code": "tool_unavailable",
       "details": {},
-      "message": "Native CAD validation was not requested",
+      "message": "cadquery-ocp is not installed",
       "path": null,
       "requires_user_decision": false,
       "severity": "error"

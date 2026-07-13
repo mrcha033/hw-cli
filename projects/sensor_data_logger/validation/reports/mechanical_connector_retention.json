@@ -1,0 +1,20 @@
+{
+  "artifacts": [],
+  "backend": {},
+  "failures": [],
+  "gate": "mechanical_connector_retention",
+  "metrics": {
+    "connectors_exposed": true,
+    "errors": 0,
+    "high_vibration": false,
+    "missing_connector_refs": [],
+    "required": false,
+    "required_connector_refs": [
+      "J1"
+    ],
+    "retained_connector_refs": [],
+    "retention_method": "",
+    "warnings": 0
+  },
+  "status": "pass"
+}

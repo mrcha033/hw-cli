@@ -1,5 +1,9 @@
 reference,category,mpn,quantity,risk
 J1,power_input,USB4105-GF-A,1,normal
+R5,usb_cc_pulldown,RC0603FR-075K1L,1,normal
+R6,usb_cc_pulldown,RC0603FR-075K1L,1,normal
+F1,fuse,Littelfuse-0498080.M,1,normal
+Q1,reverse_polarity,LM74700QDBVRQ1,1,normal
 D1,tvs,USBLC6-2SC6,1,normal
 U3,regulator,TPS62133RGTR,1,normal
 U1,mcu,ESP32-S3-WROOM-1-N8,1,normal

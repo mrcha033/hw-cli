@@ -9,10 +9,22 @@
   "failures": [],
   "gate": "ir_pcb_sanity",
   "metrics": {
-    "footprints": 12,
+    "declared_copper_layers": [
+      "B.Cu",
+      "F.Cu"
+    ],
+    "expected_copper_layers": [
+      "B.Cu",
+      "F.Cu"
+    ],
+    "footprints": 16,
     "layers": 2,
-    "pads": 47,
-    "segments": 33
+    "pads": 95,
+    "segments": 44,
+    "used_copper_layers": [
+      "B.Cu",
+      "F.Cu"
+    ]
   },
   "status": "pass"
 }

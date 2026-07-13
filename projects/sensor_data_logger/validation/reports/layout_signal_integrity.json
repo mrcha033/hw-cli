@@ -8,7 +8,11 @@
   "failures": [],
   "gate": "layout_signal_integrity",
   "metrics": {
-    "noisy_power_components": 1,
+    "noisy_power_components": 2,
+    "oscillator_crystals": 0,
+    "oscillator_load_caps": 0,
+    "oscillator_max_crystal_mcu_distance_mm": 20.0,
+    "oscillator_max_load_cap_distance_mm": 7.0,
     "rf_components": 1,
     "rf_edge_distance_max_mm": 8.0,
     "rf_noisy_keepout_mm": 10.0,

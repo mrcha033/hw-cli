@@ -1,18 +1,43 @@
 {
-  "artifacts": [],
-  "backend": {},
-  "failures": [
-    {
-      "category": "TOOL_ERROR",
-      "code": "external_gate_not_run",
-      "details": {},
-      "message": "Freerouting was not requested",
-      "path": null,
-      "requires_user_decision": false,
-      "severity": "error"
-    }
+  "artifacts": [
+    "/Users/mrcha033/Documents/hw-cli/projects/sensor_data_logger/electronics/generated/kicad/sensor_data_logger.kicad_pcb",
+    "/Users/mrcha033/Documents/hw-cli/projects/sensor_data_logger/electronics/generated/kicad/sensor_data_logger.dsn",
+    "/Users/mrcha033/Documents/hw-cli/projects/sensor_data_logger/electronics/generated/kicad/sensor_data_logger.ses",
+    "/Users/mrcha033/Documents/hw-cli/projects/sensor_data_logger/electronics/generated/kicad/routing.json"
   ],
+  "backend": {
+    "command": [
+      "/Users/mrcha033/Documents/hw-cli/.toolchains/java25/Contents/Home/bin/java",
+      "-Djava.awt.headless=true",
+      "-jar",
+      "/Users/mrcha033/Documents/hw-cli/.toolchains/freerouting/freerouting-2.2.4.jar",
+      "-de",
+      "/Users/mrcha033/Documents/hw-cli/projects/sensor_data_logger/electronics/generated/kicad/sensor_data_logger.dsn",
+      "-do",
+      "/Users/mrcha033/Documents/hw-cli/projects/sensor_data_logger/electronics/generated/kicad/sensor_data_logger.ses",
+      "-mp",
+      "20",
+      "-mt",
+      "4",
+      "-l",
+      "en"
+    ],
+    "log_tail": "2026-07-13 14:41:29.287 INFO   Freerouting v2.2.4 (build-date: 2026-05-13)\n2026-07-13 14:41:29.319 WARN   Couldn't get screen resolution. If you are running in a headless environment, disable the GUI by setting gui.enabled to false.\n2026-07-13 14:41:30.479 INFO   [C4D852\\8C31C1] Job 'C4D852\\8C31C1' started at 2026-07-13T05:41:30.479035Z.\n2026-07-13 14:41:30.740 INFO   New version available: v2.2.4\n2026-07-13 14:41:31.326 INFO   [C4D852\\8C31C1] Auto-router pass #1 on board '3748fe1dbdb172217d28f03b603672b5' was completed in 0.78 seconds with the score of 919.11 (6 unrouted).\n2026-07-13 14:41:31.582 INFO   [C4D852\\8C31C1] Auto-router pass #2 on board 'ba50c56bc89332cb24a87a8b506d1006' was completed in 0.25 seconds with the score of 983.70 (1 unrouted), using 0.93 CPU seconds and the job allocated 0.62 GB of memory so far.\n2026-07-13 14:41:31.645 INFO   [C4D852\\8C31C1] Auto-router pass #3 on board '7aa1729f7c2980183b970600ff9da70c' was completed in 0.06 seconds with the score of 994.89, using 0.93 CPU seconds and the job allocated 0.62 GB of memory so far.\n2026-07-13 14:41:31.654 INFO   [C4D852\\8C31C1] Auto-router pass #4 on board '7b1413a8aa6feabb06fe404e548bbc94' was completed in 0.00 seconds with the score of 994.89, using 0.93 CPU seconds and the job allocated 0.62 GB of memory so far.\n2026-07-13 14:41:31.670 INFO   [C4D852\\8C31C1] Auto-router session completed: started with 27 unrouted nets, completed in 1.16 seconds, final score: 994.89, using 0.93 total CPU seconds, 0.62 GB total allocated, and 173.21 MB peak heap usage.\n\n",
+    "name": "freerouting",
+    "returncode": 0,
+    "timeout_seconds": 600,
+    "tools": {
+      "jar": "/Users/mrcha033/Documents/hw-cli/.toolchains/freerouting/freerouting-2.2.4.jar",
+      "java": "/Users/mrcha033/Documents/hw-cli/.toolchains/java25/Contents/Home/bin/java",
+      "kicad_python": "/Applications/KiCad/KiCad.app/Contents/Frameworks/Python.framework/Versions/3.9/bin/python3.9"
+    },
+    "version": "2.2.4"
+  },
+  "failures": [],
   "gate": "autoroute",
-  "metrics": {},
-  "status": "blocked"
+  "metrics": {
+    "max_passes": 20,
+    "unrouted": 0
+  },
+  "status": "pass"
 }

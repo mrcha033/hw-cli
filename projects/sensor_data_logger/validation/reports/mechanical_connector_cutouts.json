@@ -1,0 +1,24 @@
+{
+  "artifacts": [],
+  "backend": {},
+  "failures": [],
+  "gate": "mechanical_connector_cutouts",
+  "metrics": {
+    "alignment_failure_refs": [],
+    "connector_refs": [
+      "J1"
+    ],
+    "errors": 0,
+    "interface_refs": [
+      "J1"
+    ],
+    "invalid_opening_refs": [],
+    "max_connector_edge_distance_mm": 5.0,
+    "missing_component_refs": [],
+    "missing_cutout_refs": [],
+    "out_of_bounds_refs": [],
+    "required": true,
+    "warnings": 0
+  },
+  "status": "pass"
+}

@@ -1,4 +1,171 @@
 requirements:
-  raw_inputs: []
-  active_lowered: []
+  raw_inputs:
+  - id: req_input_0001
+    text: 'Create a candidate for the existing sensor_data_logger template as a 70
+      x 50 mm, 2-layer USB-powered ESP32-S3 environmental sensor gateway. Preserve
+      the current system intent: 5 V USB input with protected 3.3 V rail, required
+      IMU and temperature sensing, Zephyr firmware outputs for devicetree/pinmap/driver
+      stubs/bring-up tests, desktop enclosure geometry, exposed front USB connector,
+      passive cooling, and the existing required protections (reverse polarity, fuse
+      or e-fuse, TVS, watchdog). Do not resolve the existing critical RF antenna-clearance
+      assumption without user approval.'
+    created_by: user
+  - id: req_input_0002
+    text: 'Generate a cross-domain candidate from the current sensor_data_logger specification:
+      ESP32-S3 USB environmental sensor gateway with required IMU and temperature
+      sensing, protected 5 V to 3.3 V power, Zephyr firmware outputs, 70 x 50 mm 2-layer
+      PCB, desktop enclosure, passive cooling, exposed front connector, and current
+      safety protections. Preserve unresolved assumptions and report evidence-backed
+      gates.'
+    created_by: user
+  active_lowered:
+  - id: req_0001
+    source: firmware.framework
+    spec_path: firmware.framework
+    value: zephyr
+    field_type: string
+    source_span: zephyr
+    source_range: &id001
+      start: 200
+      end: 206
+    affected_gates: &id002
+    - firmware_interface_contract
+    - firmware_pinmap
+    - firmware_modules
+    - native_zephyr_build
+    status: lowered
+  - id: req_0002
+    source: manufacturing.pcb.layers
+    spec_path: manufacturing.pcb.layers
+    value: 2
+    field_type: integer
+    source_span: 2-layer
+    source_range: &id003
+      start: 236
+      end: 243
+    affected_gates: &id004
+    - ir_pcb_sanity
+    - layout_signal_integrity
+    - native_drc
+    - reference_fabrication
+    status: lowered
+  - id: req_0003
+    source: mechanical.cooling
+    spec_path: mechanical.cooling
+    value: passive
+    field_type: enum
+    source_span: passive cooling
+    source_range: &id005
+      start: 268
+      end: 283
+    affected_gates: &id006
+    - mechanical_fit
+    - layout_thermal_integrity
+    - physical_qualification
+    status: lowered
+  - id: req_0004
+    source: sensing.imu
+    spec_path: sensing.imu
+    value: required
+    field_type: enum
+    source_span: imu
+    source_range: &id007
+      start: 141
+      end: 144
+    affected_gates: &id008
+    - semantic_electrical
+    - firmware_pinmap
+    - firmware_interface_contract
+    status: lowered
   active_unresolved: []
+  compiler_ir:
+    version: requirements_ir_v1
+    input_id: req_input_0002
+    lowered_fields:
+    - spec_path: firmware.framework
+      value: zephyr
+      field_type: string
+      source_span: zephyr
+      source_range: *id001
+      affected_gates: *id002
+      status: lowered
+    - spec_path: manufacturing.pcb.layers
+      value: 2
+      field_type: integer
+      source_span: 2-layer
+      source_range: *id003
+      affected_gates: *id004
+      status: lowered
+    - spec_path: mechanical.cooling
+      value: passive
+      field_type: enum
+      source_span: passive cooling
+      source_range: *id005
+      affected_gates: *id006
+      status: lowered
+    - spec_path: sensing.imu
+      value: required
+      field_type: enum
+      source_span: imu
+      source_range: *id007
+      affected_gates: *id008
+      status: lowered
+    resolved_assumptions: []
+    unresolved_assumptions: []
+    unsupported_constraints: []
+    conflicting_fields: []
+    tokens:
+    - id: req_token_lowered_0001
+      kind: lowered_field
+      status: lowered
+      spec_path: firmware.framework
+      field_type: string
+      value: zephyr
+      source_span: zephyr
+      source_range: *id001
+      affected_gates: *id002
+      required_human_approvals: []
+    - id: req_token_lowered_0002
+      kind: lowered_field
+      status: lowered
+      spec_path: manufacturing.pcb.layers
+      field_type: integer
+      value: 2
+      source_span: 2-layer
+      source_range: *id003
+      affected_gates: *id004
+      required_human_approvals: []
+    - id: req_token_lowered_0003
+      kind: lowered_field
+      status: lowered
+      spec_path: mechanical.cooling
+      field_type: enum
+      value: passive
+      source_span: passive cooling
+      source_range: *id005
+      affected_gates: *id006
+      required_human_approvals: []
+    - id: req_token_lowered_0004
+      kind: lowered_field
+      status: lowered
+      spec_path: sensing.imu
+      field_type: enum
+      value: required
+      source_span: imu
+      source_range: *id007
+      affected_gates: *id008
+      required_human_approvals: []
+    required_human_approvals: []
+    affected_gates:
+    - firmware_interface_contract
+    - firmware_modules
+    - firmware_pinmap
+    - ir_pcb_sanity
+    - layout_signal_integrity
+    - layout_thermal_integrity
+    - mechanical_fit
+    - native_drc
+    - native_zephyr_build
+    - physical_qualification
+    - reference_fabrication
+    - semantic_electrical

@@ -7,7 +7,13 @@
     "can_pair_present": false,
     "errors": 0,
     "i2c_nets_checked": 2,
+    "i2c_pullup_expected_max_ohms": 10000.0,
+    "i2c_pullup_expected_min_ohms": 1000.0,
+    "i2c_pullup_values_checked": 2,
+    "usb_bridge_pin_contracts_checked": 1,
     "usb_bridge_present": true,
+    "usb_c_cc_nets_checked": 2,
+    "usb_c_connectors_checked": 1,
     "usb_nets_checked": 4,
     "warnings": 0
   },

@@ -1,11 +1,204 @@
 {
   "artifacts": [],
   "backend": {},
-  "failures": [],
+  "failures": [
+    {
+      "category": "BOM_ERROR",
+      "code": "supplier_availability_unknown",
+      "details": {
+        "availability": "unknown",
+        "provider": "curated"
+      },
+      "message": "J1 lacks current supplier availability evidence",
+      "path": "electronics.components",
+      "requires_user_decision": false,
+      "severity": "error"
+    },
+    {
+      "category": "BOM_ERROR",
+      "code": "supplier_availability_unknown",
+      "details": {
+        "availability": "unknown",
+        "provider": "curated"
+      },
+      "message": "R5 lacks current supplier availability evidence",
+      "path": "electronics.components",
+      "requires_user_decision": false,
+      "severity": "error"
+    },
+    {
+      "category": "BOM_ERROR",
+      "code": "supplier_availability_unknown",
+      "details": {
+        "availability": "unknown",
+        "provider": "curated"
+      },
+      "message": "R6 lacks current supplier availability evidence",
+      "path": "electronics.components",
+      "requires_user_decision": false,
+      "severity": "error"
+    },
+    {
+      "category": "BOM_ERROR",
+      "code": "supplier_availability_unknown",
+      "details": {
+        "availability": "unknown",
+        "provider": "curated"
+      },
+      "message": "F1 lacks current supplier availability evidence",
+      "path": "electronics.components",
+      "requires_user_decision": false,
+      "severity": "error"
+    },
+    {
+      "category": "BOM_ERROR",
+      "code": "supplier_availability_unknown",
+      "details": {
+        "availability": "unknown",
+        "provider": "curated"
+      },
+      "message": "Q1 lacks current supplier availability evidence",
+      "path": "electronics.components",
+      "requires_user_decision": false,
+      "severity": "error"
+    },
+    {
+      "category": "BOM_ERROR",
+      "code": "supplier_availability_unknown",
+      "details": {
+        "availability": "unknown",
+        "provider": "curated"
+      },
+      "message": "D1 lacks current supplier availability evidence",
+      "path": "electronics.components",
+      "requires_user_decision": false,
+      "severity": "error"
+    },
+    {
+      "category": "BOM_ERROR",
+      "code": "supplier_availability_unknown",
+      "details": {
+        "availability": "unknown",
+        "provider": "curated"
+      },
+      "message": "U3 lacks current supplier availability evidence",
+      "path": "electronics.components",
+      "requires_user_decision": false,
+      "severity": "error"
+    },
+    {
+      "category": "BOM_ERROR",
+      "code": "supplier_availability_unknown",
+      "details": {
+        "availability": "unknown",
+        "provider": "curated"
+      },
+      "message": "U1 lacks current supplier availability evidence",
+      "path": "electronics.components",
+      "requires_user_decision": false,
+      "severity": "error"
+    },
+    {
+      "category": "BOM_ERROR",
+      "code": "supplier_availability_unknown",
+      "details": {
+        "availability": "unknown",
+        "provider": "curated"
+      },
+      "message": "U2 lacks current supplier availability evidence",
+      "path": "electronics.components",
+      "requires_user_decision": false,
+      "severity": "error"
+    },
+    {
+      "category": "BOM_ERROR",
+      "code": "supplier_availability_unknown",
+      "details": {
+        "availability": "unknown",
+        "provider": "curated"
+      },
+      "message": "J2 lacks current supplier availability evidence",
+      "path": "electronics.components",
+      "requires_user_decision": false,
+      "severity": "error"
+    },
+    {
+      "category": "BOM_ERROR",
+      "code": "supplier_availability_unknown",
+      "details": {
+        "availability": "unknown",
+        "provider": "curated"
+      },
+      "message": "R1 lacks current supplier availability evidence",
+      "path": "electronics.components",
+      "requires_user_decision": false,
+      "severity": "error"
+    },
+    {
+      "category": "BOM_ERROR",
+      "code": "supplier_availability_unknown",
+      "details": {
+        "availability": "unknown",
+        "provider": "curated"
+      },
+      "message": "R2 lacks current supplier availability evidence",
+      "path": "electronics.components",
+      "requires_user_decision": false,
+      "severity": "error"
+    },
+    {
+      "category": "BOM_ERROR",
+      "code": "supplier_availability_unknown",
+      "details": {
+        "availability": "unknown",
+        "provider": "curated"
+      },
+      "message": "R3 lacks current supplier availability evidence",
+      "path": "electronics.components",
+      "requires_user_decision": false,
+      "severity": "error"
+    },
+    {
+      "category": "BOM_ERROR",
+      "code": "supplier_availability_unknown",
+      "details": {
+        "availability": "unknown",
+        "provider": "curated"
+      },
+      "message": "C1 lacks current supplier availability evidence",
+      "path": "electronics.components",
+      "requires_user_decision": false,
+      "severity": "error"
+    },
+    {
+      "category": "BOM_ERROR",
+      "code": "supplier_availability_unknown",
+      "details": {
+        "availability": "unknown",
+        "provider": "curated"
+      },
+      "message": "C2 lacks current supplier availability evidence",
+      "path": "electronics.components",
+      "requires_user_decision": false,
+      "severity": "error"
+    },
+    {
+      "category": "BOM_ERROR",
+      "code": "supplier_availability_unknown",
+      "details": {
+        "availability": "unknown",
+        "provider": "curated"
+      },
+      "message": "C9 lacks current supplier availability evidence",
+      "path": "electronics.components",
+      "requires_user_decision": false,
+      "severity": "error"
+    }
+  ],
   "gate": "sourcing",
   "metrics": {
-    "errors": 0,
+    "errors": 16,
     "warnings": 0
   },
-  "status": "pass"
+  "status": "fail"
 }

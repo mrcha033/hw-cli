@@ -2,17 +2,17 @@
   "component_provenance": {
     "C1": {
       "database_file": "/Users/mrcha033/Documents/hw-cli/parts/components/robotics_controller.yaml",
-      "database_file_sha256": "ec3e3c7e396330ad5d9900b674eb87966e5fa7f4742d67181a36248f6b2a365b",
+      "database_file_sha256": "91d6e190296f79fac18edee2bfda346ce42f195a9e2a4c3805131dfbf61ca1bb",
       "datasheet_catalog": "/Users/mrcha033/Documents/hw-cli/parts/evidence/datasheets.yaml",
-      "datasheet_catalog_sha256": "672d91caee2212c0eb4c711843b9470a48be62688bc9412608e83eae262db930",
+      "datasheet_catalog_sha256": "ffc81ba5e48f17ebb26d1d2caeaba45846bb93d0672fc1766b1438ec7ae9d3af",
       "datasheet_evidence_ids": [
         "datasheet_grm188_100n"
       ],
       "resolver": "in_repo_curated_v2",
       "role_set": "/Users/mrcha033/Documents/hw-cli/parts/role_sets/sensor_data_logger.yaml",
-      "role_set_sha256": "6732646d45fed1daa55e60b9480cf225afee98cfc6595fbfd6f108a12b88e338",
+      "role_set_sha256": "930ffa932706d56900a19acb42c56fbb1d0acb64f1b154615431ba6c86dadfb9",
       "supplier_catalog": "/Users/mrcha033/Documents/hw-cli/parts/suppliers/curated.yaml",
-      "supplier_catalog_sha256": "449138f5a528af6faa2cd8a5ed3ab63f6a46fd8b4a97fb11c1644bbe4c6451fc",
+      "supplier_catalog_sha256": "de3a0852fbe383b6abda8bd095ddf866048e35da75a377f938a07b3a47fa87b3",
       "supplier_provider": "curated",
       "supplier_record": {
         "availability": "unknown",
@@ -36,17 +36,17 @@
     },
     "C2": {
       "database_file": "/Users/mrcha033/Documents/hw-cli/parts/components/robotics_controller.yaml",
-      "database_file_sha256": "ec3e3c7e396330ad5d9900b674eb87966e5fa7f4742d67181a36248f6b2a365b",
+      "database_file_sha256": "91d6e190296f79fac18edee2bfda346ce42f195a9e2a4c3805131dfbf61ca1bb",
       "datasheet_catalog": "/Users/mrcha033/Documents/hw-cli/parts/evidence/datasheets.yaml",
-      "datasheet_catalog_sha256": "672d91caee2212c0eb4c711843b9470a48be62688bc9412608e83eae262db930",
+      "datasheet_catalog_sha256": "ffc81ba5e48f17ebb26d1d2caeaba45846bb93d0672fc1766b1438ec7ae9d3af",
       "datasheet_evidence_ids": [
         "datasheet_grm188_100n"
       ],
       "resolver": "in_repo_curated_v2",
       "role_set": "/Users/mrcha033/Documents/hw-cli/parts/role_sets/sensor_data_logger.yaml",
-      "role_set_sha256": "6732646d45fed1daa55e60b9480cf225afee98cfc6595fbfd6f108a12b88e338",
+      "role_set_sha256": "930ffa932706d56900a19acb42c56fbb1d0acb64f1b154615431ba6c86dadfb9",
       "supplier_catalog": "/Users/mrcha033/Documents/hw-cli/parts/suppliers/curated.yaml",
-      "supplier_catalog_sha256": "449138f5a528af6faa2cd8a5ed3ab63f6a46fd8b4a97fb11c1644bbe4c6451fc",
+      "supplier_catalog_sha256": "de3a0852fbe383b6abda8bd095ddf866048e35da75a377f938a07b3a47fa87b3",
       "supplier_provider": "curated",
       "supplier_record": {
         "availability": "unknown",
@@ -70,17 +70,17 @@
     },
     "C9": {
       "database_file": "/Users/mrcha033/Documents/hw-cli/parts/components/robotics_controller.yaml",
-      "database_file_sha256": "ec3e3c7e396330ad5d9900b674eb87966e5fa7f4742d67181a36248f6b2a365b",
+      "database_file_sha256": "91d6e190296f79fac18edee2bfda346ce42f195a9e2a4c3805131dfbf61ca1bb",
       "datasheet_catalog": "/Users/mrcha033/Documents/hw-cli/parts/evidence/datasheets.yaml",
-      "datasheet_catalog_sha256": "672d91caee2212c0eb4c711843b9470a48be62688bc9412608e83eae262db930",
+      "datasheet_catalog_sha256": "ffc81ba5e48f17ebb26d1d2caeaba45846bb93d0672fc1766b1438ec7ae9d3af",
       "datasheet_evidence_ids": [
         "datasheet_grm31_22u"
       ],
       "resolver": "in_repo_curated_v2",
       "role_set": "/Users/mrcha033/Documents/hw-cli/parts/role_sets/sensor_data_logger.yaml",
-      "role_set_sha256": "6732646d45fed1daa55e60b9480cf225afee98cfc6595fbfd6f108a12b88e338",
+      "role_set_sha256": "930ffa932706d56900a19acb42c56fbb1d0acb64f1b154615431ba6c86dadfb9",
       "supplier_catalog": "/Users/mrcha033/Documents/hw-cli/parts/suppliers/curated.yaml",
-      "supplier_catalog_sha256": "449138f5a528af6faa2cd8a5ed3ab63f6a46fd8b4a97fb11c1644bbe4c6451fc",
+      "supplier_catalog_sha256": "de3a0852fbe383b6abda8bd095ddf866048e35da75a377f938a07b3a47fa87b3",
       "supplier_provider": "curated",
       "supplier_record": {
         "availability": "unknown",
@@ -104,17 +104,17 @@
     },
     "D1": {
       "database_file": "/Users/mrcha033/Documents/hw-cli/parts/components/robotics_controller.yaml",
-      "database_file_sha256": "ec3e3c7e396330ad5d9900b674eb87966e5fa7f4742d67181a36248f6b2a365b",
+      "database_file_sha256": "91d6e190296f79fac18edee2bfda346ce42f195a9e2a4c3805131dfbf61ca1bb",
       "datasheet_catalog": "/Users/mrcha033/Documents/hw-cli/parts/evidence/datasheets.yaml",
-      "datasheet_catalog_sha256": "672d91caee2212c0eb4c711843b9470a48be62688bc9412608e83eae262db930",
+      "datasheet_catalog_sha256": "ffc81ba5e48f17ebb26d1d2caeaba45846bb93d0672fc1766b1438ec7ae9d3af",
       "datasheet_evidence_ids": [
         "datasheet_usblc6_2sc6"
       ],
       "resolver": "in_repo_curated_v2",
       "role_set": "/Users/mrcha033/Documents/hw-cli/parts/role_sets/sensor_data_logger.yaml",
-      "role_set_sha256": "6732646d45fed1daa55e60b9480cf225afee98cfc6595fbfd6f108a12b88e338",
+      "role_set_sha256": "930ffa932706d56900a19acb42c56fbb1d0acb64f1b154615431ba6c86dadfb9",
       "supplier_catalog": "/Users/mrcha033/Documents/hw-cli/parts/suppliers/curated.yaml",
-      "supplier_catalog_sha256": "449138f5a528af6faa2cd8a5ed3ab63f6a46fd8b4a97fb11c1644bbe4c6451fc",
+      "supplier_catalog_sha256": "de3a0852fbe383b6abda8bd095ddf866048e35da75a377f938a07b3a47fa87b3",
       "supplier_provider": "curated",
       "supplier_record": {
         "availability": "unknown",
@@ -136,19 +136,53 @@
         "stock": null
       }
     },
+    "F1": {
+      "database_file": "/Users/mrcha033/Documents/hw-cli/parts/components/robotics_controller.yaml",
+      "database_file_sha256": "91d6e190296f79fac18edee2bfda346ce42f195a9e2a4c3805131dfbf61ca1bb",
+      "datasheet_catalog": "/Users/mrcha033/Documents/hw-cli/parts/evidence/datasheets.yaml",
+      "datasheet_catalog_sha256": "ffc81ba5e48f17ebb26d1d2caeaba45846bb93d0672fc1766b1438ec7ae9d3af",
+      "datasheet_evidence_ids": [
+        "datasheet_littelfuse_0498080"
+      ],
+      "resolver": "in_repo_curated_v2",
+      "role_set": "/Users/mrcha033/Documents/hw-cli/parts/role_sets/sensor_data_logger.yaml",
+      "role_set_sha256": "930ffa932706d56900a19acb42c56fbb1d0acb64f1b154615431ba6c86dadfb9",
+      "supplier_catalog": "/Users/mrcha033/Documents/hw-cli/parts/suppliers/curated.yaml",
+      "supplier_catalog_sha256": "de3a0852fbe383b6abda8bd095ddf866048e35da75a377f938a07b3a47fa87b3",
+      "supplier_provider": "curated",
+      "supplier_record": {
+        "availability": "unknown",
+        "component_id": "littelfuse_0498080",
+        "observed_at": null,
+        "provider": "curated",
+        "sku": "0498080.M",
+        "source_record": {
+          "availability": "unknown",
+          "component_id": "littelfuse_0498080",
+          "observed_at": null,
+          "provenance": {
+            "reviewed_at": "2026-06-15",
+            "source": "curated_component_db"
+          },
+          "stock": null,
+          "supplier_sku": "0498080.M"
+        },
+        "stock": null
+      }
+    },
     "J1": {
       "database_file": "/Users/mrcha033/Documents/hw-cli/parts/components/robotics_controller.yaml",
-      "database_file_sha256": "ec3e3c7e396330ad5d9900b674eb87966e5fa7f4742d67181a36248f6b2a365b",
+      "database_file_sha256": "91d6e190296f79fac18edee2bfda346ce42f195a9e2a4c3805131dfbf61ca1bb",
       "datasheet_catalog": "/Users/mrcha033/Documents/hw-cli/parts/evidence/datasheets.yaml",
-      "datasheet_catalog_sha256": "672d91caee2212c0eb4c711843b9470a48be62688bc9412608e83eae262db930",
+      "datasheet_catalog_sha256": "ffc81ba5e48f17ebb26d1d2caeaba45846bb93d0672fc1766b1438ec7ae9d3af",
       "datasheet_evidence_ids": [
         "datasheet_usb4105_gf_a"
       ],
       "resolver": "in_repo_curated_v2",
       "role_set": "/Users/mrcha033/Documents/hw-cli/parts/role_sets/sensor_data_logger.yaml",
-      "role_set_sha256": "6732646d45fed1daa55e60b9480cf225afee98cfc6595fbfd6f108a12b88e338",
+      "role_set_sha256": "930ffa932706d56900a19acb42c56fbb1d0acb64f1b154615431ba6c86dadfb9",
       "supplier_catalog": "/Users/mrcha033/Documents/hw-cli/parts/suppliers/curated.yaml",
-      "supplier_catalog_sha256": "449138f5a528af6faa2cd8a5ed3ab63f6a46fd8b4a97fb11c1644bbe4c6451fc",
+      "supplier_catalog_sha256": "de3a0852fbe383b6abda8bd095ddf866048e35da75a377f938a07b3a47fa87b3",
       "supplier_provider": "curated",
       "supplier_record": {
         "availability": "unknown",
@@ -171,28 +205,28 @@
       }
     },
     "J2": {
-      "database_file": "/Users/mrcha033/Documents/hw-cli/parts/components/robotics_controller.yaml",
-      "database_file_sha256": "ec3e3c7e396330ad5d9900b674eb87966e5fa7f4742d67181a36248f6b2a365b",
+      "database_file": "/Users/mrcha033/Documents/hw-cli/parts/components/sensor_data_logger.yaml",
+      "database_file_sha256": "ca788d7cf6bc44ac9158d70d9c6d431945178174c4fa5c2e7672d7420b434906",
       "datasheet_catalog": "/Users/mrcha033/Documents/hw-cli/parts/evidence/datasheets.yaml",
-      "datasheet_catalog_sha256": "672d91caee2212c0eb4c711843b9470a48be62688bc9412608e83eae262db930",
+      "datasheet_catalog_sha256": "ffc81ba5e48f17ebb26d1d2caeaba45846bb93d0672fc1766b1438ec7ae9d3af",
       "datasheet_evidence_ids": [
-        "datasheet_samtec_ftsh_105"
+        "datasheet_samtec_ftsh_105_uart"
       ],
       "resolver": "in_repo_curated_v2",
       "role_set": "/Users/mrcha033/Documents/hw-cli/parts/role_sets/sensor_data_logger.yaml",
-      "role_set_sha256": "6732646d45fed1daa55e60b9480cf225afee98cfc6595fbfd6f108a12b88e338",
+      "role_set_sha256": "930ffa932706d56900a19acb42c56fbb1d0acb64f1b154615431ba6c86dadfb9",
       "supplier_catalog": "/Users/mrcha033/Documents/hw-cli/parts/suppliers/curated.yaml",
-      "supplier_catalog_sha256": "449138f5a528af6faa2cd8a5ed3ab63f6a46fd8b4a97fb11c1644bbe4c6451fc",
+      "supplier_catalog_sha256": "de3a0852fbe383b6abda8bd095ddf866048e35da75a377f938a07b3a47fa87b3",
       "supplier_provider": "curated",
       "supplier_record": {
         "availability": "unknown",
-        "component_id": "samtec_ftsh_105",
+        "component_id": "samtec_ftsh_105_uart",
         "observed_at": null,
         "provider": "curated",
         "sku": "FTSH-105-01-L-DV-K",
         "source_record": {
           "availability": "unknown",
-          "component_id": "samtec_ftsh_105",
+          "component_id": "samtec_ftsh_105_uart",
           "observed_at": null,
           "provenance": {
             "reviewed_at": "2026-06-15",
@@ -204,19 +238,53 @@
         "stock": null
       }
     },
+    "Q1": {
+      "database_file": "/Users/mrcha033/Documents/hw-cli/parts/components/robotics_controller.yaml",
+      "database_file_sha256": "91d6e190296f79fac18edee2bfda346ce42f195a9e2a4c3805131dfbf61ca1bb",
+      "datasheet_catalog": "/Users/mrcha033/Documents/hw-cli/parts/evidence/datasheets.yaml",
+      "datasheet_catalog_sha256": "ffc81ba5e48f17ebb26d1d2caeaba45846bb93d0672fc1766b1438ec7ae9d3af",
+      "datasheet_evidence_ids": [
+        "datasheet_lm74700qdbvrq1"
+      ],
+      "resolver": "in_repo_curated_v2",
+      "role_set": "/Users/mrcha033/Documents/hw-cli/parts/role_sets/sensor_data_logger.yaml",
+      "role_set_sha256": "930ffa932706d56900a19acb42c56fbb1d0acb64f1b154615431ba6c86dadfb9",
+      "supplier_catalog": "/Users/mrcha033/Documents/hw-cli/parts/suppliers/curated.yaml",
+      "supplier_catalog_sha256": "de3a0852fbe383b6abda8bd095ddf866048e35da75a377f938a07b3a47fa87b3",
+      "supplier_provider": "curated",
+      "supplier_record": {
+        "availability": "unknown",
+        "component_id": "lm74700qdbvrq1",
+        "observed_at": null,
+        "provider": "curated",
+        "sku": "LM74700QDBVRQ1",
+        "source_record": {
+          "availability": "unknown",
+          "component_id": "lm74700qdbvrq1",
+          "observed_at": null,
+          "provenance": {
+            "reviewed_at": "2026-06-15",
+            "source": "curated_component_db"
+          },
+          "stock": null,
+          "supplier_sku": "LM74700QDBVRQ1"
+        },
+        "stock": null
+      }
+    },
     "R1": {
       "database_file": "/Users/mrcha033/Documents/hw-cli/parts/components/robotics_controller.yaml",
-      "database_file_sha256": "ec3e3c7e396330ad5d9900b674eb87966e5fa7f4742d67181a36248f6b2a365b",
+      "database_file_sha256": "91d6e190296f79fac18edee2bfda346ce42f195a9e2a4c3805131dfbf61ca1bb",
       "datasheet_catalog": "/Users/mrcha033/Documents/hw-cli/parts/evidence/datasheets.yaml",
-      "datasheet_catalog_sha256": "672d91caee2212c0eb4c711843b9470a48be62688bc9412608e83eae262db930",
+      "datasheet_catalog_sha256": "ffc81ba5e48f17ebb26d1d2caeaba45846bb93d0672fc1766b1438ec7ae9d3af",
       "datasheet_evidence_ids": [
         "datasheet_rc0603_4k7"
       ],
       "resolver": "in_repo_curated_v2",
       "role_set": "/Users/mrcha033/Documents/hw-cli/parts/role_sets/sensor_data_logger.yaml",
-      "role_set_sha256": "6732646d45fed1daa55e60b9480cf225afee98cfc6595fbfd6f108a12b88e338",
+      "role_set_sha256": "930ffa932706d56900a19acb42c56fbb1d0acb64f1b154615431ba6c86dadfb9",
       "supplier_catalog": "/Users/mrcha033/Documents/hw-cli/parts/suppliers/curated.yaml",
-      "supplier_catalog_sha256": "449138f5a528af6faa2cd8a5ed3ab63f6a46fd8b4a97fb11c1644bbe4c6451fc",
+      "supplier_catalog_sha256": "de3a0852fbe383b6abda8bd095ddf866048e35da75a377f938a07b3a47fa87b3",
       "supplier_provider": "curated",
       "supplier_record": {
         "availability": "unknown",
@@ -240,17 +308,17 @@
     },
     "R2": {
       "database_file": "/Users/mrcha033/Documents/hw-cli/parts/components/robotics_controller.yaml",
-      "database_file_sha256": "ec3e3c7e396330ad5d9900b674eb87966e5fa7f4742d67181a36248f6b2a365b",
+      "database_file_sha256": "91d6e190296f79fac18edee2bfda346ce42f195a9e2a4c3805131dfbf61ca1bb",
       "datasheet_catalog": "/Users/mrcha033/Documents/hw-cli/parts/evidence/datasheets.yaml",
-      "datasheet_catalog_sha256": "672d91caee2212c0eb4c711843b9470a48be62688bc9412608e83eae262db930",
+      "datasheet_catalog_sha256": "ffc81ba5e48f17ebb26d1d2caeaba45846bb93d0672fc1766b1438ec7ae9d3af",
       "datasheet_evidence_ids": [
         "datasheet_rc0603_4k7"
       ],
       "resolver": "in_repo_curated_v2",
       "role_set": "/Users/mrcha033/Documents/hw-cli/parts/role_sets/sensor_data_logger.yaml",
-      "role_set_sha256": "6732646d45fed1daa55e60b9480cf225afee98cfc6595fbfd6f108a12b88e338",
+      "role_set_sha256": "930ffa932706d56900a19acb42c56fbb1d0acb64f1b154615431ba6c86dadfb9",
       "supplier_catalog": "/Users/mrcha033/Documents/hw-cli/parts/suppliers/curated.yaml",
-      "supplier_catalog_sha256": "449138f5a528af6faa2cd8a5ed3ab63f6a46fd8b4a97fb11c1644bbe4c6451fc",
+      "supplier_catalog_sha256": "de3a0852fbe383b6abda8bd095ddf866048e35da75a377f938a07b3a47fa87b3",
       "supplier_provider": "curated",
       "supplier_record": {
         "availability": "unknown",
@@ -274,17 +342,17 @@
     },
     "R3": {
       "database_file": "/Users/mrcha033/Documents/hw-cli/parts/components/robotics_controller.yaml",
-      "database_file_sha256": "ec3e3c7e396330ad5d9900b674eb87966e5fa7f4742d67181a36248f6b2a365b",
+      "database_file_sha256": "91d6e190296f79fac18edee2bfda346ce42f195a9e2a4c3805131dfbf61ca1bb",
       "datasheet_catalog": "/Users/mrcha033/Documents/hw-cli/parts/evidence/datasheets.yaml",
-      "datasheet_catalog_sha256": "672d91caee2212c0eb4c711843b9470a48be62688bc9412608e83eae262db930",
+      "datasheet_catalog_sha256": "ffc81ba5e48f17ebb26d1d2caeaba45846bb93d0672fc1766b1438ec7ae9d3af",
       "datasheet_evidence_ids": [
         "datasheet_rc0603_4k7"
       ],
       "resolver": "in_repo_curated_v2",
       "role_set": "/Users/mrcha033/Documents/hw-cli/parts/role_sets/sensor_data_logger.yaml",
-      "role_set_sha256": "6732646d45fed1daa55e60b9480cf225afee98cfc6595fbfd6f108a12b88e338",
+      "role_set_sha256": "930ffa932706d56900a19acb42c56fbb1d0acb64f1b154615431ba6c86dadfb9",
       "supplier_catalog": "/Users/mrcha033/Documents/hw-cli/parts/suppliers/curated.yaml",
-      "supplier_catalog_sha256": "449138f5a528af6faa2cd8a5ed3ab63f6a46fd8b4a97fb11c1644bbe4c6451fc",
+      "supplier_catalog_sha256": "de3a0852fbe383b6abda8bd095ddf866048e35da75a377f938a07b3a47fa87b3",
       "supplier_provider": "curated",
       "supplier_record": {
         "availability": "unknown",
@@ -306,19 +374,87 @@
         "stock": null
       }
     },
+    "R5": {
+      "database_file": "/Users/mrcha033/Documents/hw-cli/parts/components/common_passives.yaml",
+      "database_file_sha256": "debf50b9535b9bfbbf1e3660d62f73f2c2f5a8fea1611f34dd7e6e23133188c9",
+      "datasheet_catalog": "/Users/mrcha033/Documents/hw-cli/parts/evidence/datasheets.yaml",
+      "datasheet_catalog_sha256": "ffc81ba5e48f17ebb26d1d2caeaba45846bb93d0672fc1766b1438ec7ae9d3af",
+      "datasheet_evidence_ids": [
+        "datasheet_rc0603_5k1"
+      ],
+      "resolver": "in_repo_curated_v2",
+      "role_set": "/Users/mrcha033/Documents/hw-cli/parts/role_sets/sensor_data_logger.yaml",
+      "role_set_sha256": "930ffa932706d56900a19acb42c56fbb1d0acb64f1b154615431ba6c86dadfb9",
+      "supplier_catalog": "/Users/mrcha033/Documents/hw-cli/parts/suppliers/curated.yaml",
+      "supplier_catalog_sha256": "de3a0852fbe383b6abda8bd095ddf866048e35da75a377f938a07b3a47fa87b3",
+      "supplier_provider": "curated",
+      "supplier_record": {
+        "availability": "unknown",
+        "component_id": "rc0603_5k1",
+        "observed_at": null,
+        "provider": "curated",
+        "sku": "RC0603FR-075K1L",
+        "source_record": {
+          "availability": "unknown",
+          "component_id": "rc0603_5k1",
+          "observed_at": null,
+          "provenance": {
+            "reviewed_at": "2026-06-21",
+            "source": "curated_component_db"
+          },
+          "stock": null,
+          "supplier_sku": "RC0603FR-075K1L"
+        },
+        "stock": null
+      }
+    },
+    "R6": {
+      "database_file": "/Users/mrcha033/Documents/hw-cli/parts/components/common_passives.yaml",
+      "database_file_sha256": "debf50b9535b9bfbbf1e3660d62f73f2c2f5a8fea1611f34dd7e6e23133188c9",
+      "datasheet_catalog": "/Users/mrcha033/Documents/hw-cli/parts/evidence/datasheets.yaml",
+      "datasheet_catalog_sha256": "ffc81ba5e48f17ebb26d1d2caeaba45846bb93d0672fc1766b1438ec7ae9d3af",
+      "datasheet_evidence_ids": [
+        "datasheet_rc0603_5k1"
+      ],
+      "resolver": "in_repo_curated_v2",
+      "role_set": "/Users/mrcha033/Documents/hw-cli/parts/role_sets/sensor_data_logger.yaml",
+      "role_set_sha256": "930ffa932706d56900a19acb42c56fbb1d0acb64f1b154615431ba6c86dadfb9",
+      "supplier_catalog": "/Users/mrcha033/Documents/hw-cli/parts/suppliers/curated.yaml",
+      "supplier_catalog_sha256": "de3a0852fbe383b6abda8bd095ddf866048e35da75a377f938a07b3a47fa87b3",
+      "supplier_provider": "curated",
+      "supplier_record": {
+        "availability": "unknown",
+        "component_id": "rc0603_5k1",
+        "observed_at": null,
+        "provider": "curated",
+        "sku": "RC0603FR-075K1L",
+        "source_record": {
+          "availability": "unknown",
+          "component_id": "rc0603_5k1",
+          "observed_at": null,
+          "provenance": {
+            "reviewed_at": "2026-06-21",
+            "source": "curated_component_db"
+          },
+          "stock": null,
+          "supplier_sku": "RC0603FR-075K1L"
+        },
+        "stock": null
+      }
+    },
     "U1": {
       "database_file": "/Users/mrcha033/Documents/hw-cli/parts/components/sensor_data_logger.yaml",
-      "database_file_sha256": "7be25670bac09779b0e0ae5bae43905c3e8a0244425ee8dd41123958487467c2",
+      "database_file_sha256": "ca788d7cf6bc44ac9158d70d9c6d431945178174c4fa5c2e7672d7420b434906",
       "datasheet_catalog": "/Users/mrcha033/Documents/hw-cli/parts/evidence/datasheets.yaml",
-      "datasheet_catalog_sha256": "672d91caee2212c0eb4c711843b9470a48be62688bc9412608e83eae262db930",
+      "datasheet_catalog_sha256": "ffc81ba5e48f17ebb26d1d2caeaba45846bb93d0672fc1766b1438ec7ae9d3af",
       "datasheet_evidence_ids": [
         "datasheet_esp32s3_wroom_1"
       ],
       "resolver": "in_repo_curated_v2",
       "role_set": "/Users/mrcha033/Documents/hw-cli/parts/role_sets/sensor_data_logger.yaml",
-      "role_set_sha256": "6732646d45fed1daa55e60b9480cf225afee98cfc6595fbfd6f108a12b88e338",
+      "role_set_sha256": "930ffa932706d56900a19acb42c56fbb1d0acb64f1b154615431ba6c86dadfb9",
       "supplier_catalog": "/Users/mrcha033/Documents/hw-cli/parts/suppliers/curated.yaml",
-      "supplier_catalog_sha256": "449138f5a528af6faa2cd8a5ed3ab63f6a46fd8b4a97fb11c1644bbe4c6451fc",
+      "supplier_catalog_sha256": "de3a0852fbe383b6abda8bd095ddf866048e35da75a377f938a07b3a47fa87b3",
       "supplier_provider": "curated",
       "supplier_record": {
         "availability": "unknown",
@@ -342,17 +478,17 @@
     },
     "U2": {
       "database_file": "/Users/mrcha033/Documents/hw-cli/parts/components/robotics_controller.yaml",
-      "database_file_sha256": "ec3e3c7e396330ad5d9900b674eb87966e5fa7f4742d67181a36248f6b2a365b",
+      "database_file_sha256": "91d6e190296f79fac18edee2bfda346ce42f195a9e2a4c3805131dfbf61ca1bb",
       "datasheet_catalog": "/Users/mrcha033/Documents/hw-cli/parts/evidence/datasheets.yaml",
-      "datasheet_catalog_sha256": "672d91caee2212c0eb4c711843b9470a48be62688bc9412608e83eae262db930",
+      "datasheet_catalog_sha256": "ffc81ba5e48f17ebb26d1d2caeaba45846bb93d0672fc1766b1438ec7ae9d3af",
       "datasheet_evidence_ids": [
         "datasheet_icm_42688_p"
       ],
       "resolver": "in_repo_curated_v2",
       "role_set": "/Users/mrcha033/Documents/hw-cli/parts/role_sets/sensor_data_logger.yaml",
-      "role_set_sha256": "6732646d45fed1daa55e60b9480cf225afee98cfc6595fbfd6f108a12b88e338",
+      "role_set_sha256": "930ffa932706d56900a19acb42c56fbb1d0acb64f1b154615431ba6c86dadfb9",
       "supplier_catalog": "/Users/mrcha033/Documents/hw-cli/parts/suppliers/curated.yaml",
-      "supplier_catalog_sha256": "449138f5a528af6faa2cd8a5ed3ab63f6a46fd8b4a97fb11c1644bbe4c6451fc",
+      "supplier_catalog_sha256": "de3a0852fbe383b6abda8bd095ddf866048e35da75a377f938a07b3a47fa87b3",
       "supplier_provider": "curated",
       "supplier_record": {
         "availability": "unknown",
@@ -376,17 +512,17 @@
     },
     "U3": {
       "database_file": "/Users/mrcha033/Documents/hw-cli/parts/components/robotics_controller.yaml",
-      "database_file_sha256": "ec3e3c7e396330ad5d9900b674eb87966e5fa7f4742d67181a36248f6b2a365b",
+      "database_file_sha256": "91d6e190296f79fac18edee2bfda346ce42f195a9e2a4c3805131dfbf61ca1bb",
       "datasheet_catalog": "/Users/mrcha033/Documents/hw-cli/parts/evidence/datasheets.yaml",
-      "datasheet_catalog_sha256": "672d91caee2212c0eb4c711843b9470a48be62688bc9412608e83eae262db930",
+      "datasheet_catalog_sha256": "ffc81ba5e48f17ebb26d1d2caeaba45846bb93d0672fc1766b1438ec7ae9d3af",
       "datasheet_evidence_ids": [
         "datasheet_tps62133rgtr"
       ],
       "resolver": "in_repo_curated_v2",
       "role_set": "/Users/mrcha033/Documents/hw-cli/parts/role_sets/sensor_data_logger.yaml",
-      "role_set_sha256": "6732646d45fed1daa55e60b9480cf225afee98cfc6595fbfd6f108a12b88e338",
+      "role_set_sha256": "930ffa932706d56900a19acb42c56fbb1d0acb64f1b154615431ba6c86dadfb9",
       "supplier_catalog": "/Users/mrcha033/Documents/hw-cli/parts/suppliers/curated.yaml",
-      "supplier_catalog_sha256": "449138f5a528af6faa2cd8a5ed3ab63f6a46fd8b4a97fb11c1644bbe4c6451fc",
+      "supplier_catalog_sha256": "de3a0852fbe383b6abda8bd095ddf866048e35da75a377f938a07b3a47fa87b3",
       "supplier_provider": "curated",
       "supplier_record": {
         "availability": "unknown",
@@ -414,7 +550,8 @@
       "component_id": "usb4105_gf_a",
       "data": {
         "constraints": [
-          "usb2"
+          "usb2",
+          "usb_c_sink_cc"
         ],
         "datasheet_evidence": [
           {
@@ -441,7 +578,9 @@
             "1",
             "2",
             "3",
-            "4"
+            "4",
+            "5",
+            "6"
           ],
           "library_id": "Connector_USB:USB_C_GCT_USB4105",
           "verified": true
@@ -473,6 +612,16 @@
             "electrical_type": "bidirectional",
             "name": "D-",
             "number": "4"
+          },
+          {
+            "electrical_type": "passive",
+            "name": "CC1",
+            "number": "5"
+          },
+          {
+            "electrical_type": "passive",
+            "name": "CC2",
+            "number": "6"
           }
         ],
         "resolution_provenance": {
@@ -510,7 +659,9 @@
             "1",
             "2",
             "3",
-            "4"
+            "4",
+            "5",
+            "6"
           ],
           "library_id": "Connector:USB_C_Receptacle_USB2.0_16P",
           "verified": true
@@ -518,17 +669,17 @@
       },
       "provenance": {
         "database_file": "/Users/mrcha033/Documents/hw-cli/parts/components/robotics_controller.yaml",
-        "database_file_sha256": "ec3e3c7e396330ad5d9900b674eb87966e5fa7f4742d67181a36248f6b2a365b",
+        "database_file_sha256": "91d6e190296f79fac18edee2bfda346ce42f195a9e2a4c3805131dfbf61ca1bb",
         "datasheet_catalog": "/Users/mrcha033/Documents/hw-cli/parts/evidence/datasheets.yaml",
-        "datasheet_catalog_sha256": "672d91caee2212c0eb4c711843b9470a48be62688bc9412608e83eae262db930",
+        "datasheet_catalog_sha256": "ffc81ba5e48f17ebb26d1d2caeaba45846bb93d0672fc1766b1438ec7ae9d3af",
         "datasheet_evidence_ids": [
           "datasheet_usb4105_gf_a"
         ],
         "resolver": "in_repo_curated_v2",
         "role_set": "/Users/mrcha033/Documents/hw-cli/parts/role_sets/sensor_data_logger.yaml",
-        "role_set_sha256": "6732646d45fed1daa55e60b9480cf225afee98cfc6595fbfd6f108a12b88e338",
+        "role_set_sha256": "930ffa932706d56900a19acb42c56fbb1d0acb64f1b154615431ba6c86dadfb9",
         "supplier_catalog": "/Users/mrcha033/Documents/hw-cli/parts/suppliers/curated.yaml",
-        "supplier_catalog_sha256": "449138f5a528af6faa2cd8a5ed3ab63f6a46fd8b4a97fb11c1644bbe4c6451fc",
+        "supplier_catalog_sha256": "de3a0852fbe383b6abda8bd095ddf866048e35da75a377f938a07b3a47fa87b3",
         "supplier_provider": "curated",
         "supplier_record": {
           "availability": "unknown",
@@ -553,6 +704,531 @@
       "ref": "J1",
       "resolution": "curated",
       "role": "power_input"
+    },
+    {
+      "component_id": "rc0603_5k1",
+      "data": {
+        "constraints": [
+          "usb_c_rd",
+          "pulldown"
+        ],
+        "datasheet_evidence": [
+          {
+            "component_id": "rc0603_5k1",
+            "content_sha256": null,
+            "id": "datasheet_rc0603_5k1",
+            "kind": "datasheet",
+            "locator": "RC0603FR-075K1L",
+            "review_status": "approved",
+            "reviewed_at": "2026-06-21",
+            "source": "manufacturer",
+            "supports": [
+              "identity",
+              "pins",
+              "symbol",
+              "package",
+              "footprint"
+            ],
+            "uri": null
+          }
+        ],
+        "footprint": {
+          "expected_pads": [
+            "1",
+            "2"
+          ],
+          "library_id": "Resistor_SMD:R_0603_1608Metric",
+          "verified": true
+        },
+        "id": "rc0603_5k1",
+        "lifecycle": "active",
+        "manufacturer": "Yageo",
+        "mpn": "RC0603FR-075K1L",
+        "package": "0603",
+        "pins": [
+          {
+            "electrical_type": "passive",
+            "name": "A",
+            "number": "1"
+          },
+          {
+            "electrical_type": "passive",
+            "name": "B",
+            "number": "2"
+          }
+        ],
+        "resolution_provenance": {
+          "reviewed_at": "2026-06-21",
+          "source": "manufacturer_datasheet"
+        },
+        "review_status": "approved",
+        "sourcing": {
+          "status": "resolved",
+          "supplier_skus": [
+            "RC0603FR-075K1L"
+          ]
+        },
+        "supplier_offer": {
+          "availability": "unknown",
+          "component_id": "rc0603_5k1",
+          "observed_at": null,
+          "provider": "curated",
+          "sku": "RC0603FR-075K1L",
+          "source_record": {
+            "availability": "unknown",
+            "component_id": "rc0603_5k1",
+            "observed_at": null,
+            "provenance": {
+              "reviewed_at": "2026-06-21",
+              "source": "curated_component_db"
+            },
+            "stock": null,
+            "supplier_sku": "RC0603FR-075K1L"
+          },
+          "stock": null
+        },
+        "symbol": {
+          "expected_pins": [
+            "1",
+            "2"
+          ],
+          "library_id": "Device:R",
+          "verified": true
+        }
+      },
+      "provenance": {
+        "database_file": "/Users/mrcha033/Documents/hw-cli/parts/components/common_passives.yaml",
+        "database_file_sha256": "debf50b9535b9bfbbf1e3660d62f73f2c2f5a8fea1611f34dd7e6e23133188c9",
+        "datasheet_catalog": "/Users/mrcha033/Documents/hw-cli/parts/evidence/datasheets.yaml",
+        "datasheet_catalog_sha256": "ffc81ba5e48f17ebb26d1d2caeaba45846bb93d0672fc1766b1438ec7ae9d3af",
+        "datasheet_evidence_ids": [
+          "datasheet_rc0603_5k1"
+        ],
+        "resolver": "in_repo_curated_v2",
+        "role_set": "/Users/mrcha033/Documents/hw-cli/parts/role_sets/sensor_data_logger.yaml",
+        "role_set_sha256": "930ffa932706d56900a19acb42c56fbb1d0acb64f1b154615431ba6c86dadfb9",
+        "supplier_catalog": "/Users/mrcha033/Documents/hw-cli/parts/suppliers/curated.yaml",
+        "supplier_catalog_sha256": "de3a0852fbe383b6abda8bd095ddf866048e35da75a377f938a07b3a47fa87b3",
+        "supplier_provider": "curated",
+        "supplier_record": {
+          "availability": "unknown",
+          "component_id": "rc0603_5k1",
+          "observed_at": null,
+          "provider": "curated",
+          "sku": "RC0603FR-075K1L",
+          "source_record": {
+            "availability": "unknown",
+            "component_id": "rc0603_5k1",
+            "observed_at": null,
+            "provenance": {
+              "reviewed_at": "2026-06-21",
+              "source": "curated_component_db"
+            },
+            "stock": null,
+            "supplier_sku": "RC0603FR-075K1L"
+          },
+          "stock": null
+        }
+      },
+      "ref": "R5",
+      "resolution": "curated",
+      "role": "resistor_5k1"
+    },
+    {
+      "component_id": "rc0603_5k1",
+      "data": {
+        "constraints": [
+          "usb_c_rd",
+          "pulldown"
+        ],
+        "datasheet_evidence": [
+          {
+            "component_id": "rc0603_5k1",
+            "content_sha256": null,
+            "id": "datasheet_rc0603_5k1",
+            "kind": "datasheet",
+            "locator": "RC0603FR-075K1L",
+            "review_status": "approved",
+            "reviewed_at": "2026-06-21",
+            "source": "manufacturer",
+            "supports": [
+              "identity",
+              "pins",
+              "symbol",
+              "package",
+              "footprint"
+            ],
+            "uri": null
+          }
+        ],
+        "footprint": {
+          "expected_pads": [
+            "1",
+            "2"
+          ],
+          "library_id": "Resistor_SMD:R_0603_1608Metric",
+          "verified": true
+        },
+        "id": "rc0603_5k1",
+        "lifecycle": "active",
+        "manufacturer": "Yageo",
+        "mpn": "RC0603FR-075K1L",
+        "package": "0603",
+        "pins": [
+          {
+            "electrical_type": "passive",
+            "name": "A",
+            "number": "1"
+          },
+          {
+            "electrical_type": "passive",
+            "name": "B",
+            "number": "2"
+          }
+        ],
+        "resolution_provenance": {
+          "reviewed_at": "2026-06-21",
+          "source": "manufacturer_datasheet"
+        },
+        "review_status": "approved",
+        "sourcing": {
+          "status": "resolved",
+          "supplier_skus": [
+            "RC0603FR-075K1L"
+          ]
+        },
+        "supplier_offer": {
+          "availability": "unknown",
+          "component_id": "rc0603_5k1",
+          "observed_at": null,
+          "provider": "curated",
+          "sku": "RC0603FR-075K1L",
+          "source_record": {
+            "availability": "unknown",
+            "component_id": "rc0603_5k1",
+            "observed_at": null,
+            "provenance": {
+              "reviewed_at": "2026-06-21",
+              "source": "curated_component_db"
+            },
+            "stock": null,
+            "supplier_sku": "RC0603FR-075K1L"
+          },
+          "stock": null
+        },
+        "symbol": {
+          "expected_pins": [
+            "1",
+            "2"
+          ],
+          "library_id": "Device:R",
+          "verified": true
+        }
+      },
+      "provenance": {
+        "database_file": "/Users/mrcha033/Documents/hw-cli/parts/components/common_passives.yaml",
+        "database_file_sha256": "debf50b9535b9bfbbf1e3660d62f73f2c2f5a8fea1611f34dd7e6e23133188c9",
+        "datasheet_catalog": "/Users/mrcha033/Documents/hw-cli/parts/evidence/datasheets.yaml",
+        "datasheet_catalog_sha256": "ffc81ba5e48f17ebb26d1d2caeaba45846bb93d0672fc1766b1438ec7ae9d3af",
+        "datasheet_evidence_ids": [
+          "datasheet_rc0603_5k1"
+        ],
+        "resolver": "in_repo_curated_v2",
+        "role_set": "/Users/mrcha033/Documents/hw-cli/parts/role_sets/sensor_data_logger.yaml",
+        "role_set_sha256": "930ffa932706d56900a19acb42c56fbb1d0acb64f1b154615431ba6c86dadfb9",
+        "supplier_catalog": "/Users/mrcha033/Documents/hw-cli/parts/suppliers/curated.yaml",
+        "supplier_catalog_sha256": "de3a0852fbe383b6abda8bd095ddf866048e35da75a377f938a07b3a47fa87b3",
+        "supplier_provider": "curated",
+        "supplier_record": {
+          "availability": "unknown",
+          "component_id": "rc0603_5k1",
+          "observed_at": null,
+          "provider": "curated",
+          "sku": "RC0603FR-075K1L",
+          "source_record": {
+            "availability": "unknown",
+            "component_id": "rc0603_5k1",
+            "observed_at": null,
+            "provenance": {
+              "reviewed_at": "2026-06-21",
+              "source": "curated_component_db"
+            },
+            "stock": null,
+            "supplier_sku": "RC0603FR-075K1L"
+          },
+          "stock": null
+        }
+      },
+      "ref": "R6",
+      "resolution": "curated",
+      "role": "resistor_5k1"
+    },
+    {
+      "component_id": "littelfuse_0498080",
+      "data": {
+        "constraints": [
+          "service_fuse"
+        ],
+        "datasheet_evidence": [
+          {
+            "component_id": "littelfuse_0498080",
+            "content_sha256": null,
+            "id": "datasheet_littelfuse_0498080",
+            "kind": "datasheet",
+            "locator": "Littelfuse-0498080.M",
+            "review_status": "approved",
+            "reviewed_at": "2026-06-15",
+            "source": "manufacturer",
+            "supports": [
+              "identity",
+              "pins",
+              "symbol",
+              "package",
+              "footprint"
+            ],
+            "uri": null
+          }
+        ],
+        "footprint": {
+          "expected_pads": [
+            "1",
+            "2"
+          ],
+          "library_id": "HW_Curated:MIDI_Fuse",
+          "verified": true
+        },
+        "id": "littelfuse_0498080",
+        "lifecycle": "active",
+        "manufacturer": "Littelfuse",
+        "mpn": "Littelfuse-0498080.M",
+        "package": "MIDI",
+        "pins": [
+          {
+            "electrical_type": "passive",
+            "name": "IN",
+            "number": "1"
+          },
+          {
+            "electrical_type": "passive",
+            "name": "OUT",
+            "number": "2"
+          }
+        ],
+        "resolution_provenance": {
+          "reviewed_at": "2026-06-15",
+          "source": "manufacturer_datasheet"
+        },
+        "review_status": "approved",
+        "sourcing": {
+          "status": "resolved",
+          "supplier_skus": [
+            "0498080.M"
+          ]
+        },
+        "supplier_offer": {
+          "availability": "unknown",
+          "component_id": "littelfuse_0498080",
+          "observed_at": null,
+          "provider": "curated",
+          "sku": "0498080.M",
+          "source_record": {
+            "availability": "unknown",
+            "component_id": "littelfuse_0498080",
+            "observed_at": null,
+            "provenance": {
+              "reviewed_at": "2026-06-15",
+              "source": "curated_component_db"
+            },
+            "stock": null,
+            "supplier_sku": "0498080.M"
+          },
+          "stock": null
+        },
+        "symbol": {
+          "expected_pins": [
+            "1",
+            "2"
+          ],
+          "library_id": "HW_Curated:Fuse_2",
+          "verified": true
+        }
+      },
+      "provenance": {
+        "database_file": "/Users/mrcha033/Documents/hw-cli/parts/components/robotics_controller.yaml",
+        "database_file_sha256": "91d6e190296f79fac18edee2bfda346ce42f195a9e2a4c3805131dfbf61ca1bb",
+        "datasheet_catalog": "/Users/mrcha033/Documents/hw-cli/parts/evidence/datasheets.yaml",
+        "datasheet_catalog_sha256": "ffc81ba5e48f17ebb26d1d2caeaba45846bb93d0672fc1766b1438ec7ae9d3af",
+        "datasheet_evidence_ids": [
+          "datasheet_littelfuse_0498080"
+        ],
+        "resolver": "in_repo_curated_v2",
+        "role_set": "/Users/mrcha033/Documents/hw-cli/parts/role_sets/sensor_data_logger.yaml",
+        "role_set_sha256": "930ffa932706d56900a19acb42c56fbb1d0acb64f1b154615431ba6c86dadfb9",
+        "supplier_catalog": "/Users/mrcha033/Documents/hw-cli/parts/suppliers/curated.yaml",
+        "supplier_catalog_sha256": "de3a0852fbe383b6abda8bd095ddf866048e35da75a377f938a07b3a47fa87b3",
+        "supplier_provider": "curated",
+        "supplier_record": {
+          "availability": "unknown",
+          "component_id": "littelfuse_0498080",
+          "observed_at": null,
+          "provider": "curated",
+          "sku": "0498080.M",
+          "source_record": {
+            "availability": "unknown",
+            "component_id": "littelfuse_0498080",
+            "observed_at": null,
+            "provenance": {
+              "reviewed_at": "2026-06-15",
+              "source": "curated_component_db"
+            },
+            "stock": null,
+            "supplier_sku": "0498080.M"
+          },
+          "stock": null
+        }
+      },
+      "ref": "F1",
+      "resolution": "curated",
+      "role": "fuse"
+    },
+    {
+      "component_id": "lm74700qdbvrq1",
+      "data": {
+        "constraints": [
+          "reverse_polarity_controller"
+        ],
+        "datasheet_evidence": [
+          {
+            "component_id": "lm74700qdbvrq1",
+            "content_sha256": null,
+            "id": "datasheet_lm74700qdbvrq1",
+            "kind": "datasheet",
+            "locator": "LM74700QDBVRQ1",
+            "review_status": "approved",
+            "reviewed_at": "2026-06-15",
+            "source": "manufacturer",
+            "supports": [
+              "identity",
+              "pins",
+              "symbol",
+              "package",
+              "footprint"
+            ],
+            "uri": null
+          }
+        ],
+        "footprint": {
+          "expected_pads": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6"
+          ],
+          "library_id": "Package_TO_SOT_SMD:SOT-23-6",
+          "verified": true
+        },
+        "id": "lm74700qdbvrq1",
+        "lifecycle": "active",
+        "manufacturer": "Texas Instruments",
+        "mpn": "LM74700QDBVRQ1",
+        "package": "SOT-23-6",
+        "pins": [
+          {
+            "electrical_type": "power_in",
+            "name": "ANODE",
+            "number": "1"
+          },
+          {
+            "electrical_type": "power_out",
+            "name": "CATHODE",
+            "number": "2"
+          },
+          {
+            "electrical_type": "ground",
+            "name": "GND",
+            "number": "3",
+            "voltage_domain": "GND"
+          }
+        ],
+        "resolution_provenance": {
+          "reviewed_at": "2026-06-15",
+          "source": "manufacturer_datasheet"
+        },
+        "review_status": "approved",
+        "sourcing": {
+          "status": "resolved",
+          "supplier_skus": [
+            "LM74700QDBVRQ1"
+          ]
+        },
+        "supplier_offer": {
+          "availability": "unknown",
+          "component_id": "lm74700qdbvrq1",
+          "observed_at": null,
+          "provider": "curated",
+          "sku": "LM74700QDBVRQ1",
+          "source_record": {
+            "availability": "unknown",
+            "component_id": "lm74700qdbvrq1",
+            "observed_at": null,
+            "provenance": {
+              "reviewed_at": "2026-06-15",
+              "source": "curated_component_db"
+            },
+            "stock": null,
+            "supplier_sku": "LM74700QDBVRQ1"
+          },
+          "stock": null
+        },
+        "symbol": {
+          "expected_pins": [
+            "1",
+            "2",
+            "3"
+          ],
+          "library_id": "HW_Curated:LM74700",
+          "verified": true
+        }
+      },
+      "provenance": {
+        "database_file": "/Users/mrcha033/Documents/hw-cli/parts/components/robotics_controller.yaml",
+        "database_file_sha256": "91d6e190296f79fac18edee2bfda346ce42f195a9e2a4c3805131dfbf61ca1bb",
+        "datasheet_catalog": "/Users/mrcha033/Documents/hw-cli/parts/evidence/datasheets.yaml",
+        "datasheet_catalog_sha256": "ffc81ba5e48f17ebb26d1d2caeaba45846bb93d0672fc1766b1438ec7ae9d3af",
+        "datasheet_evidence_ids": [
+          "datasheet_lm74700qdbvrq1"
+        ],
+        "resolver": "in_repo_curated_v2",
+        "role_set": "/Users/mrcha033/Documents/hw-cli/parts/role_sets/sensor_data_logger.yaml",
+        "role_set_sha256": "930ffa932706d56900a19acb42c56fbb1d0acb64f1b154615431ba6c86dadfb9",
+        "supplier_catalog": "/Users/mrcha033/Documents/hw-cli/parts/suppliers/curated.yaml",
+        "supplier_catalog_sha256": "de3a0852fbe383b6abda8bd095ddf866048e35da75a377f938a07b3a47fa87b3",
+        "supplier_provider": "curated",
+        "supplier_record": {
+          "availability": "unknown",
+          "component_id": "lm74700qdbvrq1",
+          "observed_at": null,
+          "provider": "curated",
+          "sku": "LM74700QDBVRQ1",
+          "source_record": {
+            "availability": "unknown",
+            "component_id": "lm74700qdbvrq1",
+            "observed_at": null,
+            "provenance": {
+              "reviewed_at": "2026-06-15",
+              "source": "curated_component_db"
+            },
+            "stock": null,
+            "supplier_sku": "LM74700QDBVRQ1"
+          },
+          "stock": null
+        }
+      },
+      "ref": "Q1",
+      "resolution": "curated",
+      "role": "reverse_polarity"
     },
     {
       "component_id": "usblc6_2sc6",
@@ -669,17 +1345,17 @@
       },
       "provenance": {
         "database_file": "/Users/mrcha033/Documents/hw-cli/parts/components/robotics_controller.yaml",
-        "database_file_sha256": "ec3e3c7e396330ad5d9900b674eb87966e5fa7f4742d67181a36248f6b2a365b",
+        "database_file_sha256": "91d6e190296f79fac18edee2bfda346ce42f195a9e2a4c3805131dfbf61ca1bb",
         "datasheet_catalog": "/Users/mrcha033/Documents/hw-cli/parts/evidence/datasheets.yaml",
-        "datasheet_catalog_sha256": "672d91caee2212c0eb4c711843b9470a48be62688bc9412608e83eae262db930",
+        "datasheet_catalog_sha256": "ffc81ba5e48f17ebb26d1d2caeaba45846bb93d0672fc1766b1438ec7ae9d3af",
         "datasheet_evidence_ids": [
           "datasheet_usblc6_2sc6"
         ],
         "resolver": "in_repo_curated_v2",
         "role_set": "/Users/mrcha033/Documents/hw-cli/parts/role_sets/sensor_data_logger.yaml",
-        "role_set_sha256": "6732646d45fed1daa55e60b9480cf225afee98cfc6595fbfd6f108a12b88e338",
+        "role_set_sha256": "930ffa932706d56900a19acb42c56fbb1d0acb64f1b154615431ba6c86dadfb9",
         "supplier_catalog": "/Users/mrcha033/Documents/hw-cli/parts/suppliers/curated.yaml",
-        "supplier_catalog_sha256": "449138f5a528af6faa2cd8a5ed3ab63f6a46fd8b4a97fb11c1644bbe4c6451fc",
+        "supplier_catalog_sha256": "de3a0852fbe383b6abda8bd095ddf866048e35da75a377f938a07b3a47fa87b3",
         "supplier_provider": "curated",
         "supplier_record": {
           "availability": "unknown",
@@ -805,17 +1481,17 @@
       },
       "provenance": {
         "database_file": "/Users/mrcha033/Documents/hw-cli/parts/components/robotics_controller.yaml",
-        "database_file_sha256": "ec3e3c7e396330ad5d9900b674eb87966e5fa7f4742d67181a36248f6b2a365b",
+        "database_file_sha256": "91d6e190296f79fac18edee2bfda346ce42f195a9e2a4c3805131dfbf61ca1bb",
         "datasheet_catalog": "/Users/mrcha033/Documents/hw-cli/parts/evidence/datasheets.yaml",
-        "datasheet_catalog_sha256": "672d91caee2212c0eb4c711843b9470a48be62688bc9412608e83eae262db930",
+        "datasheet_catalog_sha256": "ffc81ba5e48f17ebb26d1d2caeaba45846bb93d0672fc1766b1438ec7ae9d3af",
         "datasheet_evidence_ids": [
           "datasheet_tps62133rgtr"
         ],
         "resolver": "in_repo_curated_v2",
         "role_set": "/Users/mrcha033/Documents/hw-cli/parts/role_sets/sensor_data_logger.yaml",
-        "role_set_sha256": "6732646d45fed1daa55e60b9480cf225afee98cfc6595fbfd6f108a12b88e338",
+        "role_set_sha256": "930ffa932706d56900a19acb42c56fbb1d0acb64f1b154615431ba6c86dadfb9",
         "supplier_catalog": "/Users/mrcha033/Documents/hw-cli/parts/suppliers/curated.yaml",
-        "supplier_catalog_sha256": "449138f5a528af6faa2cd8a5ed3ab63f6a46fd8b4a97fb11c1644bbe4c6451fc",
+        "supplier_catalog_sha256": "de3a0852fbe383b6abda8bd095ddf866048e35da75a377f938a07b3a47fa87b3",
         "supplier_provider": "curated",
         "supplier_record": {
           "availability": "unknown",
@@ -1071,17 +1747,17 @@
       },
       "provenance": {
         "database_file": "/Users/mrcha033/Documents/hw-cli/parts/components/sensor_data_logger.yaml",
-        "database_file_sha256": "7be25670bac09779b0e0ae5bae43905c3e8a0244425ee8dd41123958487467c2",
+        "database_file_sha256": "ca788d7cf6bc44ac9158d70d9c6d431945178174c4fa5c2e7672d7420b434906",
         "datasheet_catalog": "/Users/mrcha033/Documents/hw-cli/parts/evidence/datasheets.yaml",
-        "datasheet_catalog_sha256": "672d91caee2212c0eb4c711843b9470a48be62688bc9412608e83eae262db930",
+        "datasheet_catalog_sha256": "ffc81ba5e48f17ebb26d1d2caeaba45846bb93d0672fc1766b1438ec7ae9d3af",
         "datasheet_evidence_ids": [
           "datasheet_esp32s3_wroom_1"
         ],
         "resolver": "in_repo_curated_v2",
         "role_set": "/Users/mrcha033/Documents/hw-cli/parts/role_sets/sensor_data_logger.yaml",
-        "role_set_sha256": "6732646d45fed1daa55e60b9480cf225afee98cfc6595fbfd6f108a12b88e338",
+        "role_set_sha256": "930ffa932706d56900a19acb42c56fbb1d0acb64f1b154615431ba6c86dadfb9",
         "supplier_catalog": "/Users/mrcha033/Documents/hw-cli/parts/suppliers/curated.yaml",
-        "supplier_catalog_sha256": "449138f5a528af6faa2cd8a5ed3ab63f6a46fd8b4a97fb11c1644bbe4c6451fc",
+        "supplier_catalog_sha256": "de3a0852fbe383b6abda8bd095ddf866048e35da75a377f938a07b3a47fa87b3",
         "supplier_provider": "curated",
         "supplier_record": {
           "availability": "unknown",
@@ -1222,17 +1898,17 @@
       },
       "provenance": {
         "database_file": "/Users/mrcha033/Documents/hw-cli/parts/components/robotics_controller.yaml",
-        "database_file_sha256": "ec3e3c7e396330ad5d9900b674eb87966e5fa7f4742d67181a36248f6b2a365b",
+        "database_file_sha256": "91d6e190296f79fac18edee2bfda346ce42f195a9e2a4c3805131dfbf61ca1bb",
         "datasheet_catalog": "/Users/mrcha033/Documents/hw-cli/parts/evidence/datasheets.yaml",
-        "datasheet_catalog_sha256": "672d91caee2212c0eb4c711843b9470a48be62688bc9412608e83eae262db930",
+        "datasheet_catalog_sha256": "ffc81ba5e48f17ebb26d1d2caeaba45846bb93d0672fc1766b1438ec7ae9d3af",
         "datasheet_evidence_ids": [
           "datasheet_icm_42688_p"
         ],
         "resolver": "in_repo_curated_v2",
         "role_set": "/Users/mrcha033/Documents/hw-cli/parts/role_sets/sensor_data_logger.yaml",
-        "role_set_sha256": "6732646d45fed1daa55e60b9480cf225afee98cfc6595fbfd6f108a12b88e338",
+        "role_set_sha256": "930ffa932706d56900a19acb42c56fbb1d0acb64f1b154615431ba6c86dadfb9",
         "supplier_catalog": "/Users/mrcha033/Documents/hw-cli/parts/suppliers/curated.yaml",
-        "supplier_catalog_sha256": "449138f5a528af6faa2cd8a5ed3ab63f6a46fd8b4a97fb11c1644bbe4c6451fc",
+        "supplier_catalog_sha256": "de3a0852fbe383b6abda8bd095ddf866048e35da75a377f938a07b3a47fa87b3",
         "supplier_provider": "curated",
         "supplier_record": {
           "availability": "unknown",
@@ -1259,16 +1935,16 @@
       "role": "imu"
     },
     {
-      "component_id": "samtec_ftsh_105",
+      "component_id": "samtec_ftsh_105_uart",
       "data": {
         "constraints": [
-          "swd"
+          "uart_debug"
         ],
         "datasheet_evidence": [
           {
-            "component_id": "samtec_ftsh_105",
+            "component_id": "samtec_ftsh_105_uart",
             "content_sha256": null,
-            "id": "datasheet_samtec_ftsh_105",
+            "id": "datasheet_samtec_ftsh_105_uart",
             "kind": "datasheet",
             "locator": "Samtec-FTSH-105-01-L-DV-K",
             "review_status": "approved",
@@ -1300,7 +1976,7 @@
           "library_id": "Connector_Samtec:FTSH-105",
           "verified": true
         },
-        "id": "samtec_ftsh_105",
+        "id": "samtec_ftsh_105_uart",
         "lifecycle": "active",
         "manufacturer": "Samtec",
         "mpn": "Samtec-FTSH-105-01-L-DV-K",
@@ -1313,25 +1989,25 @@
             "voltage_domain": "V3V3"
           },
           {
-            "electrical_type": "bidirectional",
-            "name": "SWDIO",
+            "electrical_type": "output",
+            "name": "TXD",
             "number": "2"
+          },
+          {
+            "electrical_type": "input",
+            "name": "RXD",
+            "number": "3"
+          },
+          {
+            "electrical_type": "input",
+            "name": "BOOT",
+            "number": "4"
           },
           {
             "electrical_type": "ground",
             "name": "GND",
-            "number": "3",
+            "number": "5",
             "voltage_domain": "GND"
-          },
-          {
-            "electrical_type": "input",
-            "name": "SWCLK",
-            "number": "4"
-          },
-          {
-            "electrical_type": "bidirectional",
-            "name": "NRST",
-            "number": "5"
           }
         ],
         "resolution_provenance": {
@@ -1347,13 +2023,13 @@
         },
         "supplier_offer": {
           "availability": "unknown",
-          "component_id": "samtec_ftsh_105",
+          "component_id": "samtec_ftsh_105_uart",
           "observed_at": null,
           "provider": "curated",
           "sku": "FTSH-105-01-L-DV-K",
           "source_record": {
             "availability": "unknown",
-            "component_id": "samtec_ftsh_105",
+            "component_id": "samtec_ftsh_105_uart",
             "observed_at": null,
             "provenance": {
               "reviewed_at": "2026-06-15",
@@ -1377,28 +2053,28 @@
         }
       },
       "provenance": {
-        "database_file": "/Users/mrcha033/Documents/hw-cli/parts/components/robotics_controller.yaml",
-        "database_file_sha256": "ec3e3c7e396330ad5d9900b674eb87966e5fa7f4742d67181a36248f6b2a365b",
+        "database_file": "/Users/mrcha033/Documents/hw-cli/parts/components/sensor_data_logger.yaml",
+        "database_file_sha256": "ca788d7cf6bc44ac9158d70d9c6d431945178174c4fa5c2e7672d7420b434906",
         "datasheet_catalog": "/Users/mrcha033/Documents/hw-cli/parts/evidence/datasheets.yaml",
-        "datasheet_catalog_sha256": "672d91caee2212c0eb4c711843b9470a48be62688bc9412608e83eae262db930",
+        "datasheet_catalog_sha256": "ffc81ba5e48f17ebb26d1d2caeaba45846bb93d0672fc1766b1438ec7ae9d3af",
         "datasheet_evidence_ids": [
-          "datasheet_samtec_ftsh_105"
+          "datasheet_samtec_ftsh_105_uart"
         ],
         "resolver": "in_repo_curated_v2",
         "role_set": "/Users/mrcha033/Documents/hw-cli/parts/role_sets/sensor_data_logger.yaml",
-        "role_set_sha256": "6732646d45fed1daa55e60b9480cf225afee98cfc6595fbfd6f108a12b88e338",
+        "role_set_sha256": "930ffa932706d56900a19acb42c56fbb1d0acb64f1b154615431ba6c86dadfb9",
         "supplier_catalog": "/Users/mrcha033/Documents/hw-cli/parts/suppliers/curated.yaml",
-        "supplier_catalog_sha256": "449138f5a528af6faa2cd8a5ed3ab63f6a46fd8b4a97fb11c1644bbe4c6451fc",
+        "supplier_catalog_sha256": "de3a0852fbe383b6abda8bd095ddf866048e35da75a377f938a07b3a47fa87b3",
         "supplier_provider": "curated",
         "supplier_record": {
           "availability": "unknown",
-          "component_id": "samtec_ftsh_105",
+          "component_id": "samtec_ftsh_105_uart",
           "observed_at": null,
           "provider": "curated",
           "sku": "FTSH-105-01-L-DV-K",
           "source_record": {
             "availability": "unknown",
-            "component_id": "samtec_ftsh_105",
+            "component_id": "samtec_ftsh_105_uart",
             "observed_at": null,
             "provenance": {
               "reviewed_at": "2026-06-15",
@@ -1506,17 +2182,17 @@
       },
       "provenance": {
         "database_file": "/Users/mrcha033/Documents/hw-cli/parts/components/robotics_controller.yaml",
-        "database_file_sha256": "ec3e3c7e396330ad5d9900b674eb87966e5fa7f4742d67181a36248f6b2a365b",
+        "database_file_sha256": "91d6e190296f79fac18edee2bfda346ce42f195a9e2a4c3805131dfbf61ca1bb",
         "datasheet_catalog": "/Users/mrcha033/Documents/hw-cli/parts/evidence/datasheets.yaml",
-        "datasheet_catalog_sha256": "672d91caee2212c0eb4c711843b9470a48be62688bc9412608e83eae262db930",
+        "datasheet_catalog_sha256": "ffc81ba5e48f17ebb26d1d2caeaba45846bb93d0672fc1766b1438ec7ae9d3af",
         "datasheet_evidence_ids": [
           "datasheet_rc0603_4k7"
         ],
         "resolver": "in_repo_curated_v2",
         "role_set": "/Users/mrcha033/Documents/hw-cli/parts/role_sets/sensor_data_logger.yaml",
-        "role_set_sha256": "6732646d45fed1daa55e60b9480cf225afee98cfc6595fbfd6f108a12b88e338",
+        "role_set_sha256": "930ffa932706d56900a19acb42c56fbb1d0acb64f1b154615431ba6c86dadfb9",
         "supplier_catalog": "/Users/mrcha033/Documents/hw-cli/parts/suppliers/curated.yaml",
-        "supplier_catalog_sha256": "449138f5a528af6faa2cd8a5ed3ab63f6a46fd8b4a97fb11c1644bbe4c6451fc",
+        "supplier_catalog_sha256": "de3a0852fbe383b6abda8bd095ddf866048e35da75a377f938a07b3a47fa87b3",
         "supplier_provider": "curated",
         "supplier_record": {
           "availability": "unknown",
@@ -1634,17 +2310,17 @@
       },
       "provenance": {
         "database_file": "/Users/mrcha033/Documents/hw-cli/parts/components/robotics_controller.yaml",
-        "database_file_sha256": "ec3e3c7e396330ad5d9900b674eb87966e5fa7f4742d67181a36248f6b2a365b",
+        "database_file_sha256": "91d6e190296f79fac18edee2bfda346ce42f195a9e2a4c3805131dfbf61ca1bb",
         "datasheet_catalog": "/Users/mrcha033/Documents/hw-cli/parts/evidence/datasheets.yaml",
-        "datasheet_catalog_sha256": "672d91caee2212c0eb4c711843b9470a48be62688bc9412608e83eae262db930",
+        "datasheet_catalog_sha256": "ffc81ba5e48f17ebb26d1d2caeaba45846bb93d0672fc1766b1438ec7ae9d3af",
         "datasheet_evidence_ids": [
           "datasheet_rc0603_4k7"
         ],
         "resolver": "in_repo_curated_v2",
         "role_set": "/Users/mrcha033/Documents/hw-cli/parts/role_sets/sensor_data_logger.yaml",
-        "role_set_sha256": "6732646d45fed1daa55e60b9480cf225afee98cfc6595fbfd6f108a12b88e338",
+        "role_set_sha256": "930ffa932706d56900a19acb42c56fbb1d0acb64f1b154615431ba6c86dadfb9",
         "supplier_catalog": "/Users/mrcha033/Documents/hw-cli/parts/suppliers/curated.yaml",
-        "supplier_catalog_sha256": "449138f5a528af6faa2cd8a5ed3ab63f6a46fd8b4a97fb11c1644bbe4c6451fc",
+        "supplier_catalog_sha256": "de3a0852fbe383b6abda8bd095ddf866048e35da75a377f938a07b3a47fa87b3",
         "supplier_provider": "curated",
         "supplier_record": {
           "availability": "unknown",
@@ -1762,17 +2438,17 @@
       },
       "provenance": {
         "database_file": "/Users/mrcha033/Documents/hw-cli/parts/components/robotics_controller.yaml",
-        "database_file_sha256": "ec3e3c7e396330ad5d9900b674eb87966e5fa7f4742d67181a36248f6b2a365b",
+        "database_file_sha256": "91d6e190296f79fac18edee2bfda346ce42f195a9e2a4c3805131dfbf61ca1bb",
         "datasheet_catalog": "/Users/mrcha033/Documents/hw-cli/parts/evidence/datasheets.yaml",
-        "datasheet_catalog_sha256": "672d91caee2212c0eb4c711843b9470a48be62688bc9412608e83eae262db930",
+        "datasheet_catalog_sha256": "ffc81ba5e48f17ebb26d1d2caeaba45846bb93d0672fc1766b1438ec7ae9d3af",
         "datasheet_evidence_ids": [
           "datasheet_rc0603_4k7"
         ],
         "resolver": "in_repo_curated_v2",
         "role_set": "/Users/mrcha033/Documents/hw-cli/parts/role_sets/sensor_data_logger.yaml",
-        "role_set_sha256": "6732646d45fed1daa55e60b9480cf225afee98cfc6595fbfd6f108a12b88e338",
+        "role_set_sha256": "930ffa932706d56900a19acb42c56fbb1d0acb64f1b154615431ba6c86dadfb9",
         "supplier_catalog": "/Users/mrcha033/Documents/hw-cli/parts/suppliers/curated.yaml",
-        "supplier_catalog_sha256": "449138f5a528af6faa2cd8a5ed3ab63f6a46fd8b4a97fb11c1644bbe4c6451fc",
+        "supplier_catalog_sha256": "de3a0852fbe383b6abda8bd095ddf866048e35da75a377f938a07b3a47fa87b3",
         "supplier_provider": "curated",
         "supplier_record": {
           "availability": "unknown",
@@ -1891,17 +2567,17 @@
       },
       "provenance": {
         "database_file": "/Users/mrcha033/Documents/hw-cli/parts/components/robotics_controller.yaml",
-        "database_file_sha256": "ec3e3c7e396330ad5d9900b674eb87966e5fa7f4742d67181a36248f6b2a365b",
+        "database_file_sha256": "91d6e190296f79fac18edee2bfda346ce42f195a9e2a4c3805131dfbf61ca1bb",
         "datasheet_catalog": "/Users/mrcha033/Documents/hw-cli/parts/evidence/datasheets.yaml",
-        "datasheet_catalog_sha256": "672d91caee2212c0eb4c711843b9470a48be62688bc9412608e83eae262db930",
+        "datasheet_catalog_sha256": "ffc81ba5e48f17ebb26d1d2caeaba45846bb93d0672fc1766b1438ec7ae9d3af",
         "datasheet_evidence_ids": [
           "datasheet_grm188_100n"
         ],
         "resolver": "in_repo_curated_v2",
         "role_set": "/Users/mrcha033/Documents/hw-cli/parts/role_sets/sensor_data_logger.yaml",
-        "role_set_sha256": "6732646d45fed1daa55e60b9480cf225afee98cfc6595fbfd6f108a12b88e338",
+        "role_set_sha256": "930ffa932706d56900a19acb42c56fbb1d0acb64f1b154615431ba6c86dadfb9",
         "supplier_catalog": "/Users/mrcha033/Documents/hw-cli/parts/suppliers/curated.yaml",
-        "supplier_catalog_sha256": "449138f5a528af6faa2cd8a5ed3ab63f6a46fd8b4a97fb11c1644bbe4c6451fc",
+        "supplier_catalog_sha256": "de3a0852fbe383b6abda8bd095ddf866048e35da75a377f938a07b3a47fa87b3",
         "supplier_provider": "curated",
         "supplier_record": {
           "availability": "unknown",
@@ -2020,17 +2696,17 @@
       },
       "provenance": {
         "database_file": "/Users/mrcha033/Documents/hw-cli/parts/components/robotics_controller.yaml",
-        "database_file_sha256": "ec3e3c7e396330ad5d9900b674eb87966e5fa7f4742d67181a36248f6b2a365b",
+        "database_file_sha256": "91d6e190296f79fac18edee2bfda346ce42f195a9e2a4c3805131dfbf61ca1bb",
         "datasheet_catalog": "/Users/mrcha033/Documents/hw-cli/parts/evidence/datasheets.yaml",
-        "datasheet_catalog_sha256": "672d91caee2212c0eb4c711843b9470a48be62688bc9412608e83eae262db930",
+        "datasheet_catalog_sha256": "ffc81ba5e48f17ebb26d1d2caeaba45846bb93d0672fc1766b1438ec7ae9d3af",
         "datasheet_evidence_ids": [
           "datasheet_grm188_100n"
         ],
         "resolver": "in_repo_curated_v2",
         "role_set": "/Users/mrcha033/Documents/hw-cli/parts/role_sets/sensor_data_logger.yaml",
-        "role_set_sha256": "6732646d45fed1daa55e60b9480cf225afee98cfc6595fbfd6f108a12b88e338",
+        "role_set_sha256": "930ffa932706d56900a19acb42c56fbb1d0acb64f1b154615431ba6c86dadfb9",
         "supplier_catalog": "/Users/mrcha033/Documents/hw-cli/parts/suppliers/curated.yaml",
-        "supplier_catalog_sha256": "449138f5a528af6faa2cd8a5ed3ab63f6a46fd8b4a97fb11c1644bbe4c6451fc",
+        "supplier_catalog_sha256": "de3a0852fbe383b6abda8bd095ddf866048e35da75a377f938a07b3a47fa87b3",
         "supplier_provider": "curated",
         "supplier_record": {
           "availability": "unknown",
@@ -2149,17 +2825,17 @@
       },
       "provenance": {
         "database_file": "/Users/mrcha033/Documents/hw-cli/parts/components/robotics_controller.yaml",
-        "database_file_sha256": "ec3e3c7e396330ad5d9900b674eb87966e5fa7f4742d67181a36248f6b2a365b",
+        "database_file_sha256": "91d6e190296f79fac18edee2bfda346ce42f195a9e2a4c3805131dfbf61ca1bb",
         "datasheet_catalog": "/Users/mrcha033/Documents/hw-cli/parts/evidence/datasheets.yaml",
-        "datasheet_catalog_sha256": "672d91caee2212c0eb4c711843b9470a48be62688bc9412608e83eae262db930",
+        "datasheet_catalog_sha256": "ffc81ba5e48f17ebb26d1d2caeaba45846bb93d0672fc1766b1438ec7ae9d3af",
         "datasheet_evidence_ids": [
           "datasheet_grm31_22u"
         ],
         "resolver": "in_repo_curated_v2",
         "role_set": "/Users/mrcha033/Documents/hw-cli/parts/role_sets/sensor_data_logger.yaml",
-        "role_set_sha256": "6732646d45fed1daa55e60b9480cf225afee98cfc6595fbfd6f108a12b88e338",
+        "role_set_sha256": "930ffa932706d56900a19acb42c56fbb1d0acb64f1b154615431ba6c86dadfb9",
         "supplier_catalog": "/Users/mrcha033/Documents/hw-cli/parts/suppliers/curated.yaml",
-        "supplier_catalog_sha256": "449138f5a528af6faa2cd8a5ed3ab63f6a46fd8b4a97fb11c1644bbe4c6451fc",
+        "supplier_catalog_sha256": "de3a0852fbe383b6abda8bd095ddf866048e35da75a377f938a07b3a47fa87b3",
         "supplier_provider": "curated",
         "supplier_record": {
           "availability": "unknown",
@@ -2197,9 +2873,9 @@
     "failures": [],
     "gate": "component_resolution",
     "metrics": {
-      "critical_roles": 5,
-      "requested": 12,
-      "resolved": 12,
+      "critical_roles": 7,
+      "requested": 16,
+      "resolved": 16,
       "supplier_provider": "curated"
     },
     "status": "pass"
@@ -2209,7 +2885,8 @@
       "category": "power_input",
       "component_id": "usb4105_gf_a",
       "constraints": [
-        "usb2"
+        "usb2",
+        "usb_c_sink_cc"
       ],
       "datasheet_evidence": [
         {
@@ -2237,7 +2914,9 @@
           "1",
           "2",
           "3",
-          "4"
+          "4",
+          "5",
+          "6"
         ],
         "library_id": "Connector_USB:USB_C_GCT_USB4105",
         "verified": true
@@ -2250,6 +2929,40 @@
         18.0,
         4.0
       ],
+      "pin_contracts": {
+        "1": {
+          "electrical_type": "power_in",
+          "name": "VBUS",
+          "number": "1",
+          "voltage_domain": "USB_5V"
+        },
+        "2": {
+          "electrical_type": "ground",
+          "name": "GND",
+          "number": "2",
+          "voltage_domain": "GND"
+        },
+        "3": {
+          "electrical_type": "bidirectional",
+          "name": "D+",
+          "number": "3"
+        },
+        "4": {
+          "electrical_type": "bidirectional",
+          "name": "D-",
+          "number": "4"
+        },
+        "5": {
+          "electrical_type": "passive",
+          "name": "CC1",
+          "number": "5"
+        },
+        "6": {
+          "electrical_type": "passive",
+          "name": "CC2",
+          "number": "6"
+        }
+      },
       "pins": [
         {
           "name": "VBUS",
@@ -2278,23 +2991,38 @@
           "number": "4",
           "role": "bidirectional",
           "voltage_domain": null
+        },
+        {
+          "name": "CC1",
+          "net": "USB_CC1",
+          "number": "5",
+          "role": "passive",
+          "voltage_domain": null
+        },
+        {
+          "name": "CC2",
+          "net": "USB_CC2",
+          "number": "6",
+          "role": "passive",
+          "voltage_domain": null
         }
       ],
+      "placement_source": "sensor_data_logger_anchor",
       "ref": "J1",
       "resolution": "curated",
       "resolution_provenance": {
         "database_file": "/Users/mrcha033/Documents/hw-cli/parts/components/robotics_controller.yaml",
-        "database_file_sha256": "ec3e3c7e396330ad5d9900b674eb87966e5fa7f4742d67181a36248f6b2a365b",
+        "database_file_sha256": "91d6e190296f79fac18edee2bfda346ce42f195a9e2a4c3805131dfbf61ca1bb",
         "datasheet_catalog": "/Users/mrcha033/Documents/hw-cli/parts/evidence/datasheets.yaml",
-        "datasheet_catalog_sha256": "672d91caee2212c0eb4c711843b9470a48be62688bc9412608e83eae262db930",
+        "datasheet_catalog_sha256": "ffc81ba5e48f17ebb26d1d2caeaba45846bb93d0672fc1766b1438ec7ae9d3af",
         "datasheet_evidence_ids": [
           "datasheet_usb4105_gf_a"
         ],
         "resolver": "in_repo_curated_v2",
         "role_set": "/Users/mrcha033/Documents/hw-cli/parts/role_sets/sensor_data_logger.yaml",
-        "role_set_sha256": "6732646d45fed1daa55e60b9480cf225afee98cfc6595fbfd6f108a12b88e338",
+        "role_set_sha256": "930ffa932706d56900a19acb42c56fbb1d0acb64f1b154615431ba6c86dadfb9",
         "supplier_catalog": "/Users/mrcha033/Documents/hw-cli/parts/suppliers/curated.yaml",
-        "supplier_catalog_sha256": "449138f5a528af6faa2cd8a5ed3ab63f6a46fd8b4a97fb11c1644bbe4c6451fc",
+        "supplier_catalog_sha256": "de3a0852fbe383b6abda8bd095ddf866048e35da75a377f938a07b3a47fa87b3",
         "supplier_provider": "curated",
         "supplier_record": {
           "availability": "unknown",
@@ -2349,12 +3077,647 @@
           "1",
           "2",
           "3",
-          "4"
+          "4",
+          "5",
+          "6"
         ],
         "library_id": "Connector:USB_C_Receptacle_USB2.0_16P",
         "verified": true
       },
       "value": "USB-C POWER"
+    },
+    {
+      "category": "usb_cc_pulldown",
+      "component_id": "rc0603_5k1",
+      "constraints": [
+        "usb_c_rd",
+        "pulldown"
+      ],
+      "datasheet_evidence": [
+        {
+          "component_id": "rc0603_5k1",
+          "content_sha256": null,
+          "id": "datasheet_rc0603_5k1",
+          "kind": "datasheet",
+          "locator": "RC0603FR-075K1L",
+          "review_status": "approved",
+          "reviewed_at": "2026-06-21",
+          "source": "manufacturer",
+          "supports": [
+            "identity",
+            "pins",
+            "symbol",
+            "package",
+            "footprint"
+          ],
+          "uri": null
+        }
+      ],
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "footprint_metadata": {
+        "expected_pads": [
+          "1",
+          "2"
+        ],
+        "library_id": "Resistor_SMD:R_0603_1608Metric",
+        "verified": true
+      },
+      "lifecycle": "active",
+      "manufacturer": "Yageo",
+      "mpn": "RC0603FR-075K1L",
+      "package": "0603",
+      "pcb_position_mm": [
+        22.0,
+        7.0
+      ],
+      "pin_contracts": {
+        "1": {
+          "electrical_type": "passive",
+          "name": "A",
+          "number": "1"
+        },
+        "2": {
+          "electrical_type": "passive",
+          "name": "B",
+          "number": "2"
+        }
+      },
+      "pins": [
+        {
+          "name": "A",
+          "net": "USB_CC1",
+          "number": "1",
+          "role": "passive",
+          "voltage_domain": null
+        },
+        {
+          "name": "B",
+          "net": "GND",
+          "number": "2",
+          "role": "ground",
+          "voltage_domain": "GND"
+        }
+      ],
+      "placement_rationale": "USB-C Rd resistor position derived from the connector CC pins.",
+      "placement_source": "usb_c_rd_connector_seed",
+      "ref": "R5",
+      "resolution": "curated",
+      "resolution_provenance": {
+        "database_file": "/Users/mrcha033/Documents/hw-cli/parts/components/common_passives.yaml",
+        "database_file_sha256": "debf50b9535b9bfbbf1e3660d62f73f2c2f5a8fea1611f34dd7e6e23133188c9",
+        "datasheet_catalog": "/Users/mrcha033/Documents/hw-cli/parts/evidence/datasheets.yaml",
+        "datasheet_catalog_sha256": "ffc81ba5e48f17ebb26d1d2caeaba45846bb93d0672fc1766b1438ec7ae9d3af",
+        "datasheet_evidence_ids": [
+          "datasheet_rc0603_5k1"
+        ],
+        "resolver": "in_repo_curated_v2",
+        "role_set": "/Users/mrcha033/Documents/hw-cli/parts/role_sets/sensor_data_logger.yaml",
+        "role_set_sha256": "930ffa932706d56900a19acb42c56fbb1d0acb64f1b154615431ba6c86dadfb9",
+        "supplier_catalog": "/Users/mrcha033/Documents/hw-cli/parts/suppliers/curated.yaml",
+        "supplier_catalog_sha256": "de3a0852fbe383b6abda8bd095ddf866048e35da75a377f938a07b3a47fa87b3",
+        "supplier_provider": "curated",
+        "supplier_record": {
+          "availability": "unknown",
+          "component_id": "rc0603_5k1",
+          "observed_at": null,
+          "provider": "curated",
+          "sku": "RC0603FR-075K1L",
+          "source_record": {
+            "availability": "unknown",
+            "component_id": "rc0603_5k1",
+            "observed_at": null,
+            "provenance": {
+              "reviewed_at": "2026-06-21",
+              "source": "curated_component_db"
+            },
+            "stock": null,
+            "supplier_sku": "RC0603FR-075K1L"
+          },
+          "stock": null
+        }
+      },
+      "review_status": "approved",
+      "sourcing": {
+        "status": "resolved",
+        "supplier_skus": [
+          "RC0603FR-075K1L"
+        ]
+      },
+      "substitute_mpn": "CRCW06035K10FKEA",
+      "supplier_offer": {
+        "availability": "unknown",
+        "component_id": "rc0603_5k1",
+        "observed_at": null,
+        "provider": "curated",
+        "sku": "RC0603FR-075K1L",
+        "source_record": {
+          "availability": "unknown",
+          "component_id": "rc0603_5k1",
+          "observed_at": null,
+          "provenance": {
+            "reviewed_at": "2026-06-21",
+            "source": "curated_component_db"
+          },
+          "stock": null,
+          "supplier_sku": "RC0603FR-075K1L"
+        },
+        "stock": null
+      },
+      "supplier_sku": "RC0603FR-075K1L",
+      "symbol": {
+        "expected_pins": [
+          "1",
+          "2"
+        ],
+        "library_id": "Device:R",
+        "verified": true
+      },
+      "value": "5K1 USB-C Rd"
+    },
+    {
+      "category": "usb_cc_pulldown",
+      "component_id": "rc0603_5k1",
+      "constraints": [
+        "usb_c_rd",
+        "pulldown"
+      ],
+      "datasheet_evidence": [
+        {
+          "component_id": "rc0603_5k1",
+          "content_sha256": null,
+          "id": "datasheet_rc0603_5k1",
+          "kind": "datasheet",
+          "locator": "RC0603FR-075K1L",
+          "review_status": "approved",
+          "reviewed_at": "2026-06-21",
+          "source": "manufacturer",
+          "supports": [
+            "identity",
+            "pins",
+            "symbol",
+            "package",
+            "footprint"
+          ],
+          "uri": null
+        }
+      ],
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "footprint_metadata": {
+        "expected_pads": [
+          "1",
+          "2"
+        ],
+        "library_id": "Resistor_SMD:R_0603_1608Metric",
+        "verified": true
+      },
+      "lifecycle": "active",
+      "manufacturer": "Yageo",
+      "mpn": "RC0603FR-075K1L",
+      "package": "0603",
+      "pcb_position_mm": [
+        26.0,
+        7.0
+      ],
+      "pin_contracts": {
+        "1": {
+          "electrical_type": "passive",
+          "name": "A",
+          "number": "1"
+        },
+        "2": {
+          "electrical_type": "passive",
+          "name": "B",
+          "number": "2"
+        }
+      },
+      "pins": [
+        {
+          "name": "A",
+          "net": "USB_CC2",
+          "number": "1",
+          "role": "passive",
+          "voltage_domain": null
+        },
+        {
+          "name": "B",
+          "net": "GND",
+          "number": "2",
+          "role": "ground",
+          "voltage_domain": "GND"
+        }
+      ],
+      "placement_rationale": "USB-C Rd resistor position derived from the connector CC pins.",
+      "placement_source": "usb_c_rd_connector_seed",
+      "ref": "R6",
+      "resolution": "curated",
+      "resolution_provenance": {
+        "database_file": "/Users/mrcha033/Documents/hw-cli/parts/components/common_passives.yaml",
+        "database_file_sha256": "debf50b9535b9bfbbf1e3660d62f73f2c2f5a8fea1611f34dd7e6e23133188c9",
+        "datasheet_catalog": "/Users/mrcha033/Documents/hw-cli/parts/evidence/datasheets.yaml",
+        "datasheet_catalog_sha256": "ffc81ba5e48f17ebb26d1d2caeaba45846bb93d0672fc1766b1438ec7ae9d3af",
+        "datasheet_evidence_ids": [
+          "datasheet_rc0603_5k1"
+        ],
+        "resolver": "in_repo_curated_v2",
+        "role_set": "/Users/mrcha033/Documents/hw-cli/parts/role_sets/sensor_data_logger.yaml",
+        "role_set_sha256": "930ffa932706d56900a19acb42c56fbb1d0acb64f1b154615431ba6c86dadfb9",
+        "supplier_catalog": "/Users/mrcha033/Documents/hw-cli/parts/suppliers/curated.yaml",
+        "supplier_catalog_sha256": "de3a0852fbe383b6abda8bd095ddf866048e35da75a377f938a07b3a47fa87b3",
+        "supplier_provider": "curated",
+        "supplier_record": {
+          "availability": "unknown",
+          "component_id": "rc0603_5k1",
+          "observed_at": null,
+          "provider": "curated",
+          "sku": "RC0603FR-075K1L",
+          "source_record": {
+            "availability": "unknown",
+            "component_id": "rc0603_5k1",
+            "observed_at": null,
+            "provenance": {
+              "reviewed_at": "2026-06-21",
+              "source": "curated_component_db"
+            },
+            "stock": null,
+            "supplier_sku": "RC0603FR-075K1L"
+          },
+          "stock": null
+        }
+      },
+      "review_status": "approved",
+      "sourcing": {
+        "status": "resolved",
+        "supplier_skus": [
+          "RC0603FR-075K1L"
+        ]
+      },
+      "substitute_mpn": "CRCW06035K10FKEA",
+      "supplier_offer": {
+        "availability": "unknown",
+        "component_id": "rc0603_5k1",
+        "observed_at": null,
+        "provider": "curated",
+        "sku": "RC0603FR-075K1L",
+        "source_record": {
+          "availability": "unknown",
+          "component_id": "rc0603_5k1",
+          "observed_at": null,
+          "provenance": {
+            "reviewed_at": "2026-06-21",
+            "source": "curated_component_db"
+          },
+          "stock": null,
+          "supplier_sku": "RC0603FR-075K1L"
+        },
+        "stock": null
+      },
+      "supplier_sku": "RC0603FR-075K1L",
+      "symbol": {
+        "expected_pins": [
+          "1",
+          "2"
+        ],
+        "library_id": "Device:R",
+        "verified": true
+      },
+      "value": "5K1 USB-C Rd"
+    },
+    {
+      "category": "fuse",
+      "component_id": "littelfuse_0498080",
+      "constraints": [
+        "service_fuse"
+      ],
+      "datasheet_evidence": [
+        {
+          "component_id": "littelfuse_0498080",
+          "content_sha256": null,
+          "id": "datasheet_littelfuse_0498080",
+          "kind": "datasheet",
+          "locator": "Littelfuse-0498080.M",
+          "review_status": "approved",
+          "reviewed_at": "2026-06-15",
+          "source": "manufacturer",
+          "supports": [
+            "identity",
+            "pins",
+            "symbol",
+            "package",
+            "footprint"
+          ],
+          "uri": null
+        }
+      ],
+      "footprint": "HW_Curated:MIDI_Fuse",
+      "footprint_metadata": {
+        "expected_pads": [
+          "1",
+          "2"
+        ],
+        "library_id": "HW_Curated:MIDI_Fuse",
+        "verified": true
+      },
+      "lifecycle": "active",
+      "manufacturer": "Littelfuse",
+      "mpn": "Littelfuse-0498080.M",
+      "package": "MIDI",
+      "pcb_position_mm": [
+        26.0,
+        10.0
+      ],
+      "pin_contracts": {
+        "1": {
+          "electrical_type": "passive",
+          "name": "IN",
+          "number": "1"
+        },
+        "2": {
+          "electrical_type": "passive",
+          "name": "OUT",
+          "number": "2"
+        }
+      },
+      "pins": [
+        {
+          "name": "IN",
+          "net": "USB_VBUS",
+          "number": "1",
+          "role": "passive",
+          "voltage_domain": null
+        },
+        {
+          "name": "OUT",
+          "net": "USB_FUSED",
+          "number": "2",
+          "role": "passive",
+          "voltage_domain": null
+        }
+      ],
+      "placement_source": "sensor_data_logger_anchor",
+      "ref": "F1",
+      "resolution": "curated",
+      "resolution_provenance": {
+        "database_file": "/Users/mrcha033/Documents/hw-cli/parts/components/robotics_controller.yaml",
+        "database_file_sha256": "91d6e190296f79fac18edee2bfda346ce42f195a9e2a4c3805131dfbf61ca1bb",
+        "datasheet_catalog": "/Users/mrcha033/Documents/hw-cli/parts/evidence/datasheets.yaml",
+        "datasheet_catalog_sha256": "ffc81ba5e48f17ebb26d1d2caeaba45846bb93d0672fc1766b1438ec7ae9d3af",
+        "datasheet_evidence_ids": [
+          "datasheet_littelfuse_0498080"
+        ],
+        "resolver": "in_repo_curated_v2",
+        "role_set": "/Users/mrcha033/Documents/hw-cli/parts/role_sets/sensor_data_logger.yaml",
+        "role_set_sha256": "930ffa932706d56900a19acb42c56fbb1d0acb64f1b154615431ba6c86dadfb9",
+        "supplier_catalog": "/Users/mrcha033/Documents/hw-cli/parts/suppliers/curated.yaml",
+        "supplier_catalog_sha256": "de3a0852fbe383b6abda8bd095ddf866048e35da75a377f938a07b3a47fa87b3",
+        "supplier_provider": "curated",
+        "supplier_record": {
+          "availability": "unknown",
+          "component_id": "littelfuse_0498080",
+          "observed_at": null,
+          "provider": "curated",
+          "sku": "0498080.M",
+          "source_record": {
+            "availability": "unknown",
+            "component_id": "littelfuse_0498080",
+            "observed_at": null,
+            "provenance": {
+              "reviewed_at": "2026-06-15",
+              "source": "curated_component_db"
+            },
+            "stock": null,
+            "supplier_sku": "0498080.M"
+          },
+          "stock": null
+        }
+      },
+      "review_status": "approved",
+      "sourcing": {
+        "status": "resolved",
+        "supplier_skus": [
+          "0498080.M"
+        ]
+      },
+      "substitute_mpn": null,
+      "supplier_offer": {
+        "availability": "unknown",
+        "component_id": "littelfuse_0498080",
+        "observed_at": null,
+        "provider": "curated",
+        "sku": "0498080.M",
+        "source_record": {
+          "availability": "unknown",
+          "component_id": "littelfuse_0498080",
+          "observed_at": null,
+          "provenance": {
+            "reviewed_at": "2026-06-15",
+            "source": "curated_component_db"
+          },
+          "stock": null,
+          "supplier_sku": "0498080.M"
+        },
+        "stock": null
+      },
+      "supplier_sku": "Littelfuse-0498080.M",
+      "symbol": {
+        "expected_pins": [
+          "1",
+          "2"
+        ],
+        "library_id": "HW_Curated:Fuse_2",
+        "verified": true
+      },
+      "value": "500mA Fuse"
+    },
+    {
+      "category": "reverse_polarity",
+      "component_id": "lm74700qdbvrq1",
+      "constraints": [
+        "reverse_polarity_controller"
+      ],
+      "datasheet_evidence": [
+        {
+          "component_id": "lm74700qdbvrq1",
+          "content_sha256": null,
+          "id": "datasheet_lm74700qdbvrq1",
+          "kind": "datasheet",
+          "locator": "LM74700QDBVRQ1",
+          "review_status": "approved",
+          "reviewed_at": "2026-06-15",
+          "source": "manufacturer",
+          "supports": [
+            "identity",
+            "pins",
+            "symbol",
+            "package",
+            "footprint"
+          ],
+          "uri": null
+        }
+      ],
+      "footprint": "Package_TO_SOT_SMD:SOT-23-6",
+      "footprint_metadata": {
+        "expected_pads": [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5",
+          "6"
+        ],
+        "library_id": "Package_TO_SOT_SMD:SOT-23-6",
+        "verified": true
+      },
+      "lifecycle": "active",
+      "manufacturer": "Texas Instruments",
+      "mpn": "LM74700QDBVRQ1",
+      "package": "SOT-23-6",
+      "pcb_position_mm": [
+        34.0,
+        4.0
+      ],
+      "pin_contracts": {
+        "1": {
+          "electrical_type": "power_in",
+          "name": "ANODE",
+          "number": "1"
+        },
+        "2": {
+          "electrical_type": "power_out",
+          "name": "CATHODE",
+          "number": "2"
+        },
+        "3": {
+          "electrical_type": "ground",
+          "name": "GND",
+          "number": "3",
+          "voltage_domain": "GND"
+        }
+      },
+      "pins": [
+        {
+          "name": "ANODE",
+          "net": "USB_FUSED",
+          "number": "1",
+          "role": "power_in",
+          "voltage_domain": "V3V3"
+        },
+        {
+          "name": "CATHODE",
+          "net": "USB_PROT",
+          "number": "2",
+          "role": "power_out",
+          "voltage_domain": "V3V3"
+        },
+        {
+          "name": "GND",
+          "net": "GND",
+          "number": "3",
+          "role": "ground",
+          "voltage_domain": "GND"
+        },
+        {
+          "electrical_type": "no_connect",
+          "footprint_only": true,
+          "generated_no_connect": true,
+          "name": "NC",
+          "net": null,
+          "number": "4",
+          "role": "no_connect"
+        },
+        {
+          "electrical_type": "no_connect",
+          "footprint_only": true,
+          "generated_no_connect": true,
+          "name": "NC",
+          "net": null,
+          "number": "5",
+          "role": "no_connect"
+        },
+        {
+          "electrical_type": "no_connect",
+          "footprint_only": true,
+          "generated_no_connect": true,
+          "name": "NC",
+          "net": null,
+          "number": "6",
+          "role": "no_connect"
+        }
+      ],
+      "placement_source": "sensor_data_logger_anchor",
+      "ref": "Q1",
+      "resolution": "curated",
+      "resolution_provenance": {
+        "database_file": "/Users/mrcha033/Documents/hw-cli/parts/components/robotics_controller.yaml",
+        "database_file_sha256": "91d6e190296f79fac18edee2bfda346ce42f195a9e2a4c3805131dfbf61ca1bb",
+        "datasheet_catalog": "/Users/mrcha033/Documents/hw-cli/parts/evidence/datasheets.yaml",
+        "datasheet_catalog_sha256": "ffc81ba5e48f17ebb26d1d2caeaba45846bb93d0672fc1766b1438ec7ae9d3af",
+        "datasheet_evidence_ids": [
+          "datasheet_lm74700qdbvrq1"
+        ],
+        "resolver": "in_repo_curated_v2",
+        "role_set": "/Users/mrcha033/Documents/hw-cli/parts/role_sets/sensor_data_logger.yaml",
+        "role_set_sha256": "930ffa932706d56900a19acb42c56fbb1d0acb64f1b154615431ba6c86dadfb9",
+        "supplier_catalog": "/Users/mrcha033/Documents/hw-cli/parts/suppliers/curated.yaml",
+        "supplier_catalog_sha256": "de3a0852fbe383b6abda8bd095ddf866048e35da75a377f938a07b3a47fa87b3",
+        "supplier_provider": "curated",
+        "supplier_record": {
+          "availability": "unknown",
+          "component_id": "lm74700qdbvrq1",
+          "observed_at": null,
+          "provider": "curated",
+          "sku": "LM74700QDBVRQ1",
+          "source_record": {
+            "availability": "unknown",
+            "component_id": "lm74700qdbvrq1",
+            "observed_at": null,
+            "provenance": {
+              "reviewed_at": "2026-06-15",
+              "source": "curated_component_db"
+            },
+            "stock": null,
+            "supplier_sku": "LM74700QDBVRQ1"
+          },
+          "stock": null
+        }
+      },
+      "review_status": "approved",
+      "sourcing": {
+        "status": "resolved",
+        "supplier_skus": [
+          "LM74700QDBVRQ1"
+        ]
+      },
+      "substitute_mpn": null,
+      "supplier_offer": {
+        "availability": "unknown",
+        "component_id": "lm74700qdbvrq1",
+        "observed_at": null,
+        "provider": "curated",
+        "sku": "LM74700QDBVRQ1",
+        "source_record": {
+          "availability": "unknown",
+          "component_id": "lm74700qdbvrq1",
+          "observed_at": null,
+          "provenance": {
+            "reviewed_at": "2026-06-15",
+            "source": "curated_component_db"
+          },
+          "stock": null,
+          "supplier_sku": "LM74700QDBVRQ1"
+        },
+        "stock": null
+      },
+      "supplier_sku": "LM74700QDBVRQ1",
+      "symbol": {
+        "expected_pins": [
+          "1",
+          "2",
+          "3"
+        ],
+        "library_id": "HW_Curated:LM74700",
+        "verified": true
+      },
+      "value": "Ideal Diode"
     },
     {
       "category": "tvs",
@@ -2403,6 +3766,34 @@
         30.0,
         10.0
       ],
+      "pin_contracts": {
+        "1": {
+          "electrical_type": "bidirectional",
+          "name": "DP_IN",
+          "number": "1"
+        },
+        "2": {
+          "electrical_type": "bidirectional",
+          "name": "DP_OUT",
+          "number": "2"
+        },
+        "3": {
+          "electrical_type": "bidirectional",
+          "name": "DM_IN",
+          "number": "3"
+        },
+        "4": {
+          "electrical_type": "bidirectional",
+          "name": "DM_OUT",
+          "number": "4"
+        },
+        "5": {
+          "electrical_type": "ground",
+          "name": "GND",
+          "number": "5",
+          "voltage_domain": "GND"
+        }
+      },
       "pins": [
         {
           "name": "DP_IN",
@@ -2438,23 +3829,33 @@
           "number": "5",
           "role": "ground",
           "voltage_domain": "GND"
+        },
+        {
+          "electrical_type": "no_connect",
+          "footprint_only": true,
+          "generated_no_connect": true,
+          "name": "NC",
+          "net": null,
+          "number": "6",
+          "role": "no_connect"
         }
       ],
+      "placement_source": "sensor_data_logger_anchor",
       "ref": "D1",
       "resolution": "curated",
       "resolution_provenance": {
         "database_file": "/Users/mrcha033/Documents/hw-cli/parts/components/robotics_controller.yaml",
-        "database_file_sha256": "ec3e3c7e396330ad5d9900b674eb87966e5fa7f4742d67181a36248f6b2a365b",
+        "database_file_sha256": "91d6e190296f79fac18edee2bfda346ce42f195a9e2a4c3805131dfbf61ca1bb",
         "datasheet_catalog": "/Users/mrcha033/Documents/hw-cli/parts/evidence/datasheets.yaml",
-        "datasheet_catalog_sha256": "672d91caee2212c0eb4c711843b9470a48be62688bc9412608e83eae262db930",
+        "datasheet_catalog_sha256": "ffc81ba5e48f17ebb26d1d2caeaba45846bb93d0672fc1766b1438ec7ae9d3af",
         "datasheet_evidence_ids": [
           "datasheet_usblc6_2sc6"
         ],
         "resolver": "in_repo_curated_v2",
         "role_set": "/Users/mrcha033/Documents/hw-cli/parts/role_sets/sensor_data_logger.yaml",
-        "role_set_sha256": "6732646d45fed1daa55e60b9480cf225afee98cfc6595fbfd6f108a12b88e338",
+        "role_set_sha256": "930ffa932706d56900a19acb42c56fbb1d0acb64f1b154615431ba6c86dadfb9",
         "supplier_catalog": "/Users/mrcha033/Documents/hw-cli/parts/suppliers/curated.yaml",
-        "supplier_catalog_sha256": "449138f5a528af6faa2cd8a5ed3ab63f6a46fd8b4a97fb11c1644bbe4c6451fc",
+        "supplier_catalog_sha256": "de3a0852fbe383b6abda8bd095ddf866048e35da75a377f938a07b3a47fa87b3",
         "supplier_provider": "curated",
         "supplier_record": {
           "availability": "unknown",
@@ -2561,13 +3962,31 @@
         44.0,
         12.0
       ],
+      "pin_contracts": {
+        "1": {
+          "electrical_type": "power_in",
+          "name": "VIN",
+          "number": "1"
+        },
+        "2": {
+          "electrical_type": "power_out",
+          "name": "VOUT",
+          "number": "2"
+        },
+        "3": {
+          "electrical_type": "ground",
+          "name": "GND",
+          "number": "3",
+          "voltage_domain": "GND"
+        }
+      },
       "pins": [
         {
           "name": "VIN",
-          "net": "USB_VBUS",
+          "net": "USB_PROT",
           "number": "1",
           "role": "power_in",
-          "voltage_domain": "USB_5V"
+          "voltage_domain": "V3V3"
         },
         {
           "name": "VOUT",
@@ -2584,21 +4003,22 @@
           "voltage_domain": "GND"
         }
       ],
+      "placement_source": "sensor_data_logger_anchor",
       "ref": "U3",
       "resolution": "curated",
       "resolution_provenance": {
         "database_file": "/Users/mrcha033/Documents/hw-cli/parts/components/robotics_controller.yaml",
-        "database_file_sha256": "ec3e3c7e396330ad5d9900b674eb87966e5fa7f4742d67181a36248f6b2a365b",
+        "database_file_sha256": "91d6e190296f79fac18edee2bfda346ce42f195a9e2a4c3805131dfbf61ca1bb",
         "datasheet_catalog": "/Users/mrcha033/Documents/hw-cli/parts/evidence/datasheets.yaml",
-        "datasheet_catalog_sha256": "672d91caee2212c0eb4c711843b9470a48be62688bc9412608e83eae262db930",
+        "datasheet_catalog_sha256": "ffc81ba5e48f17ebb26d1d2caeaba45846bb93d0672fc1766b1438ec7ae9d3af",
         "datasheet_evidence_ids": [
           "datasheet_tps62133rgtr"
         ],
         "resolver": "in_repo_curated_v2",
         "role_set": "/Users/mrcha033/Documents/hw-cli/parts/role_sets/sensor_data_logger.yaml",
-        "role_set_sha256": "6732646d45fed1daa55e60b9480cf225afee98cfc6595fbfd6f108a12b88e338",
+        "role_set_sha256": "930ffa932706d56900a19acb42c56fbb1d0acb64f1b154615431ba6c86dadfb9",
         "supplier_catalog": "/Users/mrcha033/Documents/hw-cli/parts/suppliers/curated.yaml",
-        "supplier_catalog_sha256": "449138f5a528af6faa2cd8a5ed3ab63f6a46fd8b4a97fb11c1644bbe4c6451fc",
+        "supplier_catalog_sha256": "de3a0852fbe383b6abda8bd095ddf866048e35da75a377f938a07b3a47fa87b3",
         "supplier_provider": "curated",
         "supplier_record": {
           "availability": "unknown",
@@ -2740,8 +4160,79 @@
       "package": "LCC-41",
       "pcb_position_mm": [
         44.0,
-        44.0
+        43.0
       ],
+      "pin_contracts": {
+        "1": {
+          "electrical_type": "ground",
+          "name": "GND",
+          "number": "1",
+          "voltage_domain": "GND"
+        },
+        "12": {
+          "electrical_type": "bidirectional",
+          "name": "IO8",
+          "number": "12"
+        },
+        "13": {
+          "electrical_type": "bidirectional",
+          "name": "USB_D-",
+          "number": "13"
+        },
+        "14": {
+          "electrical_type": "bidirectional",
+          "name": "USB_D+",
+          "number": "14"
+        },
+        "15": {
+          "electrical_type": "bidirectional",
+          "name": "IO3",
+          "number": "15"
+        },
+        "2": {
+          "electrical_type": "power_in",
+          "name": "3V3",
+          "number": "2",
+          "voltage_domain": "V3V3"
+        },
+        "27": {
+          "electrical_type": "bidirectional",
+          "name": "IO0",
+          "number": "27"
+        },
+        "3": {
+          "electrical_type": "input",
+          "name": "EN",
+          "number": "3"
+        },
+        "36": {
+          "electrical_type": "bidirectional",
+          "name": "RXD0",
+          "number": "36"
+        },
+        "37": {
+          "electrical_type": "bidirectional",
+          "name": "TXD0",
+          "number": "37"
+        },
+        "39": {
+          "electrical_type": "bidirectional",
+          "name": "IO1",
+          "number": "39"
+        },
+        "40": {
+          "electrical_type": "ground",
+          "name": "GND",
+          "number": "40",
+          "voltage_domain": "GND"
+        },
+        "41": {
+          "electrical_type": "ground",
+          "name": "GND",
+          "number": "41",
+          "voltage_domain": "GND"
+        }
+      },
       "pins": [
         {
           "name": "GND",
@@ -2842,23 +4333,276 @@
           "number": "41",
           "role": "ground",
           "voltage_domain": "GND"
+        },
+        {
+          "electrical_type": "no_connect",
+          "footprint_only": false,
+          "generated_no_connect": true,
+          "name": "NC",
+          "net": null,
+          "number": "4",
+          "role": "no_connect"
+        },
+        {
+          "electrical_type": "no_connect",
+          "footprint_only": false,
+          "generated_no_connect": true,
+          "name": "NC",
+          "net": null,
+          "number": "5",
+          "role": "no_connect"
+        },
+        {
+          "electrical_type": "no_connect",
+          "footprint_only": false,
+          "generated_no_connect": true,
+          "name": "NC",
+          "net": null,
+          "number": "6",
+          "role": "no_connect"
+        },
+        {
+          "electrical_type": "no_connect",
+          "footprint_only": false,
+          "generated_no_connect": true,
+          "name": "NC",
+          "net": null,
+          "number": "7",
+          "role": "no_connect"
+        },
+        {
+          "electrical_type": "no_connect",
+          "footprint_only": false,
+          "generated_no_connect": true,
+          "name": "NC",
+          "net": null,
+          "number": "8",
+          "role": "no_connect"
+        },
+        {
+          "electrical_type": "no_connect",
+          "footprint_only": false,
+          "generated_no_connect": true,
+          "name": "NC",
+          "net": null,
+          "number": "9",
+          "role": "no_connect"
+        },
+        {
+          "electrical_type": "no_connect",
+          "footprint_only": false,
+          "generated_no_connect": true,
+          "name": "NC",
+          "net": null,
+          "number": "10",
+          "role": "no_connect"
+        },
+        {
+          "electrical_type": "no_connect",
+          "footprint_only": false,
+          "generated_no_connect": true,
+          "name": "NC",
+          "net": null,
+          "number": "11",
+          "role": "no_connect"
+        },
+        {
+          "electrical_type": "no_connect",
+          "footprint_only": false,
+          "generated_no_connect": true,
+          "name": "NC",
+          "net": null,
+          "number": "16",
+          "role": "no_connect"
+        },
+        {
+          "electrical_type": "no_connect",
+          "footprint_only": false,
+          "generated_no_connect": true,
+          "name": "NC",
+          "net": null,
+          "number": "17",
+          "role": "no_connect"
+        },
+        {
+          "electrical_type": "no_connect",
+          "footprint_only": false,
+          "generated_no_connect": true,
+          "name": "NC",
+          "net": null,
+          "number": "18",
+          "role": "no_connect"
+        },
+        {
+          "electrical_type": "no_connect",
+          "footprint_only": false,
+          "generated_no_connect": true,
+          "name": "NC",
+          "net": null,
+          "number": "19",
+          "role": "no_connect"
+        },
+        {
+          "electrical_type": "no_connect",
+          "footprint_only": false,
+          "generated_no_connect": true,
+          "name": "NC",
+          "net": null,
+          "number": "20",
+          "role": "no_connect"
+        },
+        {
+          "electrical_type": "no_connect",
+          "footprint_only": false,
+          "generated_no_connect": true,
+          "name": "NC",
+          "net": null,
+          "number": "21",
+          "role": "no_connect"
+        },
+        {
+          "electrical_type": "no_connect",
+          "footprint_only": false,
+          "generated_no_connect": true,
+          "name": "NC",
+          "net": null,
+          "number": "22",
+          "role": "no_connect"
+        },
+        {
+          "electrical_type": "no_connect",
+          "footprint_only": false,
+          "generated_no_connect": true,
+          "name": "NC",
+          "net": null,
+          "number": "23",
+          "role": "no_connect"
+        },
+        {
+          "electrical_type": "no_connect",
+          "footprint_only": false,
+          "generated_no_connect": true,
+          "name": "NC",
+          "net": null,
+          "number": "24",
+          "role": "no_connect"
+        },
+        {
+          "electrical_type": "no_connect",
+          "footprint_only": false,
+          "generated_no_connect": true,
+          "name": "NC",
+          "net": null,
+          "number": "25",
+          "role": "no_connect"
+        },
+        {
+          "electrical_type": "no_connect",
+          "footprint_only": false,
+          "generated_no_connect": true,
+          "name": "NC",
+          "net": null,
+          "number": "26",
+          "role": "no_connect"
+        },
+        {
+          "electrical_type": "no_connect",
+          "footprint_only": false,
+          "generated_no_connect": true,
+          "name": "NC",
+          "net": null,
+          "number": "28",
+          "role": "no_connect"
+        },
+        {
+          "electrical_type": "no_connect",
+          "footprint_only": false,
+          "generated_no_connect": true,
+          "name": "NC",
+          "net": null,
+          "number": "29",
+          "role": "no_connect"
+        },
+        {
+          "electrical_type": "no_connect",
+          "footprint_only": false,
+          "generated_no_connect": true,
+          "name": "NC",
+          "net": null,
+          "number": "30",
+          "role": "no_connect"
+        },
+        {
+          "electrical_type": "no_connect",
+          "footprint_only": false,
+          "generated_no_connect": true,
+          "name": "NC",
+          "net": null,
+          "number": "31",
+          "role": "no_connect"
+        },
+        {
+          "electrical_type": "no_connect",
+          "footprint_only": false,
+          "generated_no_connect": true,
+          "name": "NC",
+          "net": null,
+          "number": "32",
+          "role": "no_connect"
+        },
+        {
+          "electrical_type": "no_connect",
+          "footprint_only": false,
+          "generated_no_connect": true,
+          "name": "NC",
+          "net": null,
+          "number": "33",
+          "role": "no_connect"
+        },
+        {
+          "electrical_type": "no_connect",
+          "footprint_only": false,
+          "generated_no_connect": true,
+          "name": "NC",
+          "net": null,
+          "number": "34",
+          "role": "no_connect"
+        },
+        {
+          "electrical_type": "no_connect",
+          "footprint_only": false,
+          "generated_no_connect": true,
+          "name": "NC",
+          "net": null,
+          "number": "35",
+          "role": "no_connect"
+        },
+        {
+          "electrical_type": "no_connect",
+          "footprint_only": false,
+          "generated_no_connect": true,
+          "name": "NC",
+          "net": null,
+          "number": "38",
+          "role": "no_connect"
         }
       ],
+      "placement_source": "sensor_data_logger_anchor",
       "ref": "U1",
       "resolution": "curated",
       "resolution_provenance": {
         "database_file": "/Users/mrcha033/Documents/hw-cli/parts/components/sensor_data_logger.yaml",
-        "database_file_sha256": "7be25670bac09779b0e0ae5bae43905c3e8a0244425ee8dd41123958487467c2",
+        "database_file_sha256": "ca788d7cf6bc44ac9158d70d9c6d431945178174c4fa5c2e7672d7420b434906",
         "datasheet_catalog": "/Users/mrcha033/Documents/hw-cli/parts/evidence/datasheets.yaml",
-        "datasheet_catalog_sha256": "672d91caee2212c0eb4c711843b9470a48be62688bc9412608e83eae262db930",
+        "datasheet_catalog_sha256": "ffc81ba5e48f17ebb26d1d2caeaba45846bb93d0672fc1766b1438ec7ae9d3af",
         "datasheet_evidence_ids": [
           "datasheet_esp32s3_wroom_1"
         ],
         "resolver": "in_repo_curated_v2",
         "role_set": "/Users/mrcha033/Documents/hw-cli/parts/role_sets/sensor_data_logger.yaml",
-        "role_set_sha256": "6732646d45fed1daa55e60b9480cf225afee98cfc6595fbfd6f108a12b88e338",
+        "role_set_sha256": "930ffa932706d56900a19acb42c56fbb1d0acb64f1b154615431ba6c86dadfb9",
         "supplier_catalog": "/Users/mrcha033/Documents/hw-cli/parts/suppliers/curated.yaml",
-        "supplier_catalog_sha256": "449138f5a528af6faa2cd8a5ed3ab63f6a46fd8b4a97fb11c1644bbe4c6451fc",
+        "supplier_catalog_sha256": "de3a0852fbe383b6abda8bd095ddf866048e35da75a377f938a07b3a47fa87b3",
         "supplier_provider": "curated",
         "supplier_record": {
           "availability": "unknown",
@@ -3003,6 +4747,35 @@
         18.0,
         28.0
       ],
+      "pin_contracts": {
+        "1": {
+          "electrical_type": "power_in",
+          "name": "VDD",
+          "number": "1",
+          "voltage_domain": "V3V3"
+        },
+        "2": {
+          "electrical_type": "ground",
+          "name": "GND",
+          "number": "2",
+          "voltage_domain": "GND"
+        },
+        "3": {
+          "electrical_type": "open_drain",
+          "name": "SCL",
+          "number": "3"
+        },
+        "4": {
+          "electrical_type": "open_drain",
+          "name": "SDA",
+          "number": "4"
+        },
+        "5": {
+          "electrical_type": "output",
+          "name": "INT1",
+          "number": "5"
+        }
+      },
       "pins": [
         {
           "name": "VDD",
@@ -3040,21 +4813,22 @@
           "voltage_domain": null
         }
       ],
+      "placement_source": "sensor_data_logger_anchor",
       "ref": "U2",
       "resolution": "curated",
       "resolution_provenance": {
         "database_file": "/Users/mrcha033/Documents/hw-cli/parts/components/robotics_controller.yaml",
-        "database_file_sha256": "ec3e3c7e396330ad5d9900b674eb87966e5fa7f4742d67181a36248f6b2a365b",
+        "database_file_sha256": "91d6e190296f79fac18edee2bfda346ce42f195a9e2a4c3805131dfbf61ca1bb",
         "datasheet_catalog": "/Users/mrcha033/Documents/hw-cli/parts/evidence/datasheets.yaml",
-        "datasheet_catalog_sha256": "672d91caee2212c0eb4c711843b9470a48be62688bc9412608e83eae262db930",
+        "datasheet_catalog_sha256": "ffc81ba5e48f17ebb26d1d2caeaba45846bb93d0672fc1766b1438ec7ae9d3af",
         "datasheet_evidence_ids": [
           "datasheet_icm_42688_p"
         ],
         "resolver": "in_repo_curated_v2",
         "role_set": "/Users/mrcha033/Documents/hw-cli/parts/role_sets/sensor_data_logger.yaml",
-        "role_set_sha256": "6732646d45fed1daa55e60b9480cf225afee98cfc6595fbfd6f108a12b88e338",
+        "role_set_sha256": "930ffa932706d56900a19acb42c56fbb1d0acb64f1b154615431ba6c86dadfb9",
         "supplier_catalog": "/Users/mrcha033/Documents/hw-cli/parts/suppliers/curated.yaml",
-        "supplier_catalog_sha256": "449138f5a528af6faa2cd8a5ed3ab63f6a46fd8b4a97fb11c1644bbe4c6451fc",
+        "supplier_catalog_sha256": "de3a0852fbe383b6abda8bd095ddf866048e35da75a377f938a07b3a47fa87b3",
         "supplier_provider": "curated",
         "supplier_record": {
           "availability": "unknown",
@@ -3119,15 +4893,15 @@
     },
     {
       "category": "debug",
-      "component_id": "samtec_ftsh_105",
+      "component_id": "samtec_ftsh_105_uart",
       "constraints": [
-        "swd"
+        "uart_debug"
       ],
       "datasheet_evidence": [
         {
-          "component_id": "samtec_ftsh_105",
+          "component_id": "samtec_ftsh_105_uart",
           "content_sha256": null,
-          "id": "datasheet_samtec_ftsh_105",
+          "id": "datasheet_samtec_ftsh_105_uart",
           "kind": "datasheet",
           "locator": "Samtec-FTSH-105-01-L-DV-K",
           "review_status": "approved",
@@ -3165,9 +4939,38 @@
       "mpn": "Samtec-FTSH-105-01-L-DV-K",
       "package": "FTSH-10",
       "pcb_position_mm": [
-        58.0,
-        44.0
+        54.0,
+        39.0
       ],
+      "pin_contracts": {
+        "1": {
+          "electrical_type": "power_out",
+          "name": "VREF",
+          "number": "1",
+          "voltage_domain": "V3V3"
+        },
+        "2": {
+          "electrical_type": "output",
+          "name": "TXD",
+          "number": "2"
+        },
+        "3": {
+          "electrical_type": "input",
+          "name": "RXD",
+          "number": "3"
+        },
+        "4": {
+          "electrical_type": "input",
+          "name": "BOOT",
+          "number": "4"
+        },
+        "5": {
+          "electrical_type": "ground",
+          "name": "GND",
+          "number": "5",
+          "voltage_domain": "GND"
+        }
+      },
       "pins": [
         {
           "name": "VREF",
@@ -3203,33 +5006,79 @@
           "number": "5",
           "role": "ground",
           "voltage_domain": "GND"
+        },
+        {
+          "electrical_type": "no_connect",
+          "footprint_only": true,
+          "generated_no_connect": true,
+          "name": "NC",
+          "net": null,
+          "number": "6",
+          "role": "no_connect"
+        },
+        {
+          "electrical_type": "no_connect",
+          "footprint_only": true,
+          "generated_no_connect": true,
+          "name": "NC",
+          "net": null,
+          "number": "7",
+          "role": "no_connect"
+        },
+        {
+          "electrical_type": "no_connect",
+          "footprint_only": true,
+          "generated_no_connect": true,
+          "name": "NC",
+          "net": null,
+          "number": "8",
+          "role": "no_connect"
+        },
+        {
+          "electrical_type": "no_connect",
+          "footprint_only": true,
+          "generated_no_connect": true,
+          "name": "NC",
+          "net": null,
+          "number": "9",
+          "role": "no_connect"
+        },
+        {
+          "electrical_type": "no_connect",
+          "footprint_only": true,
+          "generated_no_connect": true,
+          "name": "NC",
+          "net": null,
+          "number": "10",
+          "role": "no_connect"
         }
       ],
+      "placement_source": "sensor_data_logger_anchor",
       "ref": "J2",
       "resolution": "curated",
       "resolution_provenance": {
-        "database_file": "/Users/mrcha033/Documents/hw-cli/parts/components/robotics_controller.yaml",
-        "database_file_sha256": "ec3e3c7e396330ad5d9900b674eb87966e5fa7f4742d67181a36248f6b2a365b",
+        "database_file": "/Users/mrcha033/Documents/hw-cli/parts/components/sensor_data_logger.yaml",
+        "database_file_sha256": "ca788d7cf6bc44ac9158d70d9c6d431945178174c4fa5c2e7672d7420b434906",
         "datasheet_catalog": "/Users/mrcha033/Documents/hw-cli/parts/evidence/datasheets.yaml",
-        "datasheet_catalog_sha256": "672d91caee2212c0eb4c711843b9470a48be62688bc9412608e83eae262db930",
+        "datasheet_catalog_sha256": "ffc81ba5e48f17ebb26d1d2caeaba45846bb93d0672fc1766b1438ec7ae9d3af",
         "datasheet_evidence_ids": [
-          "datasheet_samtec_ftsh_105"
+          "datasheet_samtec_ftsh_105_uart"
         ],
         "resolver": "in_repo_curated_v2",
         "role_set": "/Users/mrcha033/Documents/hw-cli/parts/role_sets/sensor_data_logger.yaml",
-        "role_set_sha256": "6732646d45fed1daa55e60b9480cf225afee98cfc6595fbfd6f108a12b88e338",
+        "role_set_sha256": "930ffa932706d56900a19acb42c56fbb1d0acb64f1b154615431ba6c86dadfb9",
         "supplier_catalog": "/Users/mrcha033/Documents/hw-cli/parts/suppliers/curated.yaml",
-        "supplier_catalog_sha256": "449138f5a528af6faa2cd8a5ed3ab63f6a46fd8b4a97fb11c1644bbe4c6451fc",
+        "supplier_catalog_sha256": "de3a0852fbe383b6abda8bd095ddf866048e35da75a377f938a07b3a47fa87b3",
         "supplier_provider": "curated",
         "supplier_record": {
           "availability": "unknown",
-          "component_id": "samtec_ftsh_105",
+          "component_id": "samtec_ftsh_105_uart",
           "observed_at": null,
           "provider": "curated",
           "sku": "FTSH-105-01-L-DV-K",
           "source_record": {
             "availability": "unknown",
-            "component_id": "samtec_ftsh_105",
+            "component_id": "samtec_ftsh_105_uart",
             "observed_at": null,
             "provenance": {
               "reviewed_at": "2026-06-15",
@@ -3251,13 +5100,13 @@
       "substitute_mpn": null,
       "supplier_offer": {
         "availability": "unknown",
-        "component_id": "samtec_ftsh_105",
+        "component_id": "samtec_ftsh_105_uart",
         "observed_at": null,
         "provider": "curated",
         "sku": "FTSH-105-01-L-DV-K",
         "source_record": {
           "availability": "unknown",
-          "component_id": "samtec_ftsh_105",
+          "component_id": "samtec_ftsh_105_uart",
           "observed_at": null,
           "provenance": {
             "reviewed_at": "2026-06-15",
@@ -3325,6 +5174,18 @@
         18.0,
         38.0
       ],
+      "pin_contracts": {
+        "1": {
+          "electrical_type": "passive",
+          "name": "VCC",
+          "number": "1"
+        },
+        "2": {
+          "electrical_type": "passive",
+          "name": "SIGNAL",
+          "number": "2"
+        }
+      },
       "pins": [
         {
           "name": "VCC",
@@ -3341,21 +5202,22 @@
           "voltage_domain": null
         }
       ],
+      "placement_source": "sensor_data_logger_anchor",
       "ref": "R1",
       "resolution": "curated",
       "resolution_provenance": {
         "database_file": "/Users/mrcha033/Documents/hw-cli/parts/components/robotics_controller.yaml",
-        "database_file_sha256": "ec3e3c7e396330ad5d9900b674eb87966e5fa7f4742d67181a36248f6b2a365b",
+        "database_file_sha256": "91d6e190296f79fac18edee2bfda346ce42f195a9e2a4c3805131dfbf61ca1bb",
         "datasheet_catalog": "/Users/mrcha033/Documents/hw-cli/parts/evidence/datasheets.yaml",
-        "datasheet_catalog_sha256": "672d91caee2212c0eb4c711843b9470a48be62688bc9412608e83eae262db930",
+        "datasheet_catalog_sha256": "ffc81ba5e48f17ebb26d1d2caeaba45846bb93d0672fc1766b1438ec7ae9d3af",
         "datasheet_evidence_ids": [
           "datasheet_rc0603_4k7"
         ],
         "resolver": "in_repo_curated_v2",
         "role_set": "/Users/mrcha033/Documents/hw-cli/parts/role_sets/sensor_data_logger.yaml",
-        "role_set_sha256": "6732646d45fed1daa55e60b9480cf225afee98cfc6595fbfd6f108a12b88e338",
+        "role_set_sha256": "930ffa932706d56900a19acb42c56fbb1d0acb64f1b154615431ba6c86dadfb9",
         "supplier_catalog": "/Users/mrcha033/Documents/hw-cli/parts/suppliers/curated.yaml",
-        "supplier_catalog_sha256": "449138f5a528af6faa2cd8a5ed3ab63f6a46fd8b4a97fb11c1644bbe4c6451fc",
+        "supplier_catalog_sha256": "de3a0852fbe383b6abda8bd095ddf866048e35da75a377f938a07b3a47fa87b3",
         "supplier_provider": "curated",
         "supplier_record": {
           "availability": "unknown",
@@ -3458,6 +5320,18 @@
         27.0,
         38.0
       ],
+      "pin_contracts": {
+        "1": {
+          "electrical_type": "passive",
+          "name": "VCC",
+          "number": "1"
+        },
+        "2": {
+          "electrical_type": "passive",
+          "name": "SIGNAL",
+          "number": "2"
+        }
+      },
       "pins": [
         {
           "name": "VCC",
@@ -3474,21 +5348,22 @@
           "voltage_domain": null
         }
       ],
+      "placement_source": "sensor_data_logger_anchor",
       "ref": "R2",
       "resolution": "curated",
       "resolution_provenance": {
         "database_file": "/Users/mrcha033/Documents/hw-cli/parts/components/robotics_controller.yaml",
-        "database_file_sha256": "ec3e3c7e396330ad5d9900b674eb87966e5fa7f4742d67181a36248f6b2a365b",
+        "database_file_sha256": "91d6e190296f79fac18edee2bfda346ce42f195a9e2a4c3805131dfbf61ca1bb",
         "datasheet_catalog": "/Users/mrcha033/Documents/hw-cli/parts/evidence/datasheets.yaml",
-        "datasheet_catalog_sha256": "672d91caee2212c0eb4c711843b9470a48be62688bc9412608e83eae262db930",
+        "datasheet_catalog_sha256": "ffc81ba5e48f17ebb26d1d2caeaba45846bb93d0672fc1766b1438ec7ae9d3af",
         "datasheet_evidence_ids": [
           "datasheet_rc0603_4k7"
         ],
         "resolver": "in_repo_curated_v2",
         "role_set": "/Users/mrcha033/Documents/hw-cli/parts/role_sets/sensor_data_logger.yaml",
-        "role_set_sha256": "6732646d45fed1daa55e60b9480cf225afee98cfc6595fbfd6f108a12b88e338",
+        "role_set_sha256": "930ffa932706d56900a19acb42c56fbb1d0acb64f1b154615431ba6c86dadfb9",
         "supplier_catalog": "/Users/mrcha033/Documents/hw-cli/parts/suppliers/curated.yaml",
-        "supplier_catalog_sha256": "449138f5a528af6faa2cd8a5ed3ab63f6a46fd8b4a97fb11c1644bbe4c6451fc",
+        "supplier_catalog_sha256": "de3a0852fbe383b6abda8bd095ddf866048e35da75a377f938a07b3a47fa87b3",
         "supplier_provider": "curated",
         "supplier_record": {
           "availability": "unknown",
@@ -3591,6 +5466,18 @@
         50.0,
         25.0
       ],
+      "pin_contracts": {
+        "1": {
+          "electrical_type": "passive",
+          "name": "VCC",
+          "number": "1"
+        },
+        "2": {
+          "electrical_type": "passive",
+          "name": "SIGNAL",
+          "number": "2"
+        }
+      },
       "pins": [
         {
           "name": "VCC",
@@ -3607,21 +5494,22 @@
           "voltage_domain": null
         }
       ],
+      "placement_source": "sensor_data_logger_anchor",
       "ref": "R3",
       "resolution": "curated",
       "resolution_provenance": {
         "database_file": "/Users/mrcha033/Documents/hw-cli/parts/components/robotics_controller.yaml",
-        "database_file_sha256": "ec3e3c7e396330ad5d9900b674eb87966e5fa7f4742d67181a36248f6b2a365b",
+        "database_file_sha256": "91d6e190296f79fac18edee2bfda346ce42f195a9e2a4c3805131dfbf61ca1bb",
         "datasheet_catalog": "/Users/mrcha033/Documents/hw-cli/parts/evidence/datasheets.yaml",
-        "datasheet_catalog_sha256": "672d91caee2212c0eb4c711843b9470a48be62688bc9412608e83eae262db930",
+        "datasheet_catalog_sha256": "ffc81ba5e48f17ebb26d1d2caeaba45846bb93d0672fc1766b1438ec7ae9d3af",
         "datasheet_evidence_ids": [
           "datasheet_rc0603_4k7"
         ],
         "resolver": "in_repo_curated_v2",
         "role_set": "/Users/mrcha033/Documents/hw-cli/parts/role_sets/sensor_data_logger.yaml",
-        "role_set_sha256": "6732646d45fed1daa55e60b9480cf225afee98cfc6595fbfd6f108a12b88e338",
+        "role_set_sha256": "930ffa932706d56900a19acb42c56fbb1d0acb64f1b154615431ba6c86dadfb9",
         "supplier_catalog": "/Users/mrcha033/Documents/hw-cli/parts/suppliers/curated.yaml",
-        "supplier_catalog_sha256": "449138f5a528af6faa2cd8a5ed3ab63f6a46fd8b4a97fb11c1644bbe4c6451fc",
+        "supplier_catalog_sha256": "de3a0852fbe383b6abda8bd095ddf866048e35da75a377f938a07b3a47fa87b3",
         "supplier_provider": "curated",
         "supplier_record": {
           "availability": "unknown",
@@ -3707,6 +5595,7 @@
           "uri": null
         }
       ],
+      "decoupling_target_ref": "U1",
       "footprint": "Capacitor_SMD:C_0603_1608Metric",
       "footprint_metadata": {
         "expected_pads": [
@@ -3724,6 +5613,19 @@
         35.0,
         39.0
       ],
+      "pin_contracts": {
+        "1": {
+          "electrical_type": "passive",
+          "name": "VCC",
+          "number": "1"
+        },
+        "2": {
+          "electrical_type": "ground",
+          "name": "GND",
+          "number": "2",
+          "voltage_domain": "GND"
+        }
+      },
       "pins": [
         {
           "name": "VCC",
@@ -3740,21 +5642,22 @@
           "voltage_domain": "GND"
         }
       ],
+      "placement_source": "sensor_data_logger_anchor",
       "ref": "C1",
       "resolution": "curated",
       "resolution_provenance": {
         "database_file": "/Users/mrcha033/Documents/hw-cli/parts/components/robotics_controller.yaml",
-        "database_file_sha256": "ec3e3c7e396330ad5d9900b674eb87966e5fa7f4742d67181a36248f6b2a365b",
+        "database_file_sha256": "91d6e190296f79fac18edee2bfda346ce42f195a9e2a4c3805131dfbf61ca1bb",
         "datasheet_catalog": "/Users/mrcha033/Documents/hw-cli/parts/evidence/datasheets.yaml",
-        "datasheet_catalog_sha256": "672d91caee2212c0eb4c711843b9470a48be62688bc9412608e83eae262db930",
+        "datasheet_catalog_sha256": "ffc81ba5e48f17ebb26d1d2caeaba45846bb93d0672fc1766b1438ec7ae9d3af",
         "datasheet_evidence_ids": [
           "datasheet_grm188_100n"
         ],
         "resolver": "in_repo_curated_v2",
         "role_set": "/Users/mrcha033/Documents/hw-cli/parts/role_sets/sensor_data_logger.yaml",
-        "role_set_sha256": "6732646d45fed1daa55e60b9480cf225afee98cfc6595fbfd6f108a12b88e338",
+        "role_set_sha256": "930ffa932706d56900a19acb42c56fbb1d0acb64f1b154615431ba6c86dadfb9",
         "supplier_catalog": "/Users/mrcha033/Documents/hw-cli/parts/suppliers/curated.yaml",
-        "supplier_catalog_sha256": "449138f5a528af6faa2cd8a5ed3ab63f6a46fd8b4a97fb11c1644bbe4c6451fc",
+        "supplier_catalog_sha256": "de3a0852fbe383b6abda8bd095ddf866048e35da75a377f938a07b3a47fa87b3",
         "supplier_provider": "curated",
         "supplier_record": {
           "availability": "unknown",
@@ -3840,6 +5743,7 @@
           "uri": null
         }
       ],
+      "decoupling_target_ref": "U1",
       "footprint": "Capacitor_SMD:C_0603_1608Metric",
       "footprint_metadata": {
         "expected_pads": [
@@ -3857,6 +5761,19 @@
         44.0,
         39.0
       ],
+      "pin_contracts": {
+        "1": {
+          "electrical_type": "passive",
+          "name": "VCC",
+          "number": "1"
+        },
+        "2": {
+          "electrical_type": "ground",
+          "name": "GND",
+          "number": "2",
+          "voltage_domain": "GND"
+        }
+      },
       "pins": [
         {
           "name": "VCC",
@@ -3873,21 +5790,22 @@
           "voltage_domain": "GND"
         }
       ],
+      "placement_source": "sensor_data_logger_anchor",
       "ref": "C2",
       "resolution": "curated",
       "resolution_provenance": {
         "database_file": "/Users/mrcha033/Documents/hw-cli/parts/components/robotics_controller.yaml",
-        "database_file_sha256": "ec3e3c7e396330ad5d9900b674eb87966e5fa7f4742d67181a36248f6b2a365b",
+        "database_file_sha256": "91d6e190296f79fac18edee2bfda346ce42f195a9e2a4c3805131dfbf61ca1bb",
         "datasheet_catalog": "/Users/mrcha033/Documents/hw-cli/parts/evidence/datasheets.yaml",
-        "datasheet_catalog_sha256": "672d91caee2212c0eb4c711843b9470a48be62688bc9412608e83eae262db930",
+        "datasheet_catalog_sha256": "ffc81ba5e48f17ebb26d1d2caeaba45846bb93d0672fc1766b1438ec7ae9d3af",
         "datasheet_evidence_ids": [
           "datasheet_grm188_100n"
         ],
         "resolver": "in_repo_curated_v2",
         "role_set": "/Users/mrcha033/Documents/hw-cli/parts/role_sets/sensor_data_logger.yaml",
-        "role_set_sha256": "6732646d45fed1daa55e60b9480cf225afee98cfc6595fbfd6f108a12b88e338",
+        "role_set_sha256": "930ffa932706d56900a19acb42c56fbb1d0acb64f1b154615431ba6c86dadfb9",
         "supplier_catalog": "/Users/mrcha033/Documents/hw-cli/parts/suppliers/curated.yaml",
-        "supplier_catalog_sha256": "449138f5a528af6faa2cd8a5ed3ab63f6a46fd8b4a97fb11c1644bbe4c6451fc",
+        "supplier_catalog_sha256": "de3a0852fbe383b6abda8bd095ddf866048e35da75a377f938a07b3a47fa87b3",
         "supplier_provider": "curated",
         "supplier_record": {
           "availability": "unknown",
@@ -3990,6 +5908,19 @@
         56.0,
         14.0
       ],
+      "pin_contracts": {
+        "1": {
+          "electrical_type": "passive",
+          "name": "VCC",
+          "number": "1"
+        },
+        "2": {
+          "electrical_type": "ground",
+          "name": "GND",
+          "number": "2",
+          "voltage_domain": "GND"
+        }
+      },
       "pins": [
         {
           "name": "VCC",
@@ -4006,21 +5937,22 @@
           "voltage_domain": "GND"
         }
       ],
+      "placement_source": "sensor_data_logger_anchor",
       "ref": "C9",
       "resolution": "curated",
       "resolution_provenance": {
         "database_file": "/Users/mrcha033/Documents/hw-cli/parts/components/robotics_controller.yaml",
-        "database_file_sha256": "ec3e3c7e396330ad5d9900b674eb87966e5fa7f4742d67181a36248f6b2a365b",
+        "database_file_sha256": "91d6e190296f79fac18edee2bfda346ce42f195a9e2a4c3805131dfbf61ca1bb",
         "datasheet_catalog": "/Users/mrcha033/Documents/hw-cli/parts/evidence/datasheets.yaml",
-        "datasheet_catalog_sha256": "672d91caee2212c0eb4c711843b9470a48be62688bc9412608e83eae262db930",
+        "datasheet_catalog_sha256": "ffc81ba5e48f17ebb26d1d2caeaba45846bb93d0672fc1766b1438ec7ae9d3af",
         "datasheet_evidence_ids": [
           "datasheet_grm31_22u"
         ],
         "resolver": "in_repo_curated_v2",
         "role_set": "/Users/mrcha033/Documents/hw-cli/parts/role_sets/sensor_data_logger.yaml",
-        "role_set_sha256": "6732646d45fed1daa55e60b9480cf225afee98cfc6595fbfd6f108a12b88e338",
+        "role_set_sha256": "930ffa932706d56900a19acb42c56fbb1d0acb64f1b154615431ba6c86dadfb9",
         "supplier_catalog": "/Users/mrcha033/Documents/hw-cli/parts/suppliers/curated.yaml",
-        "supplier_catalog_sha256": "449138f5a528af6faa2cd8a5ed3ab63f6a46fd8b4a97fb11c1644bbe4c6451fc",
+        "supplier_catalog_sha256": "de3a0852fbe383b6abda8bd095ddf866048e35da75a377f938a07b3a47fa87b3",
         "supplier_provider": "curated",
         "supplier_record": {
           "availability": "unknown",
@@ -4089,7 +6021,7 @@
     "failures": [],
     "gate": "datasheet_evidence",
     "metrics": {
-      "components_checked": 12
+      "components_checked": 16
     },
     "status": "pass"
   },
@@ -4128,6 +6060,9 @@
         "D1.5",
         "J1.2",
         "J2.5",
+        "Q1.3",
+        "R5.2",
+        "R6.2",
         "U1.1",
         "U1.40",
         "U1.41",
@@ -4135,7 +6070,7 @@
         "U3.3"
       ],
       "name": "GND",
-      "required_track_width_mm": 0.15,
+      "required_track_width_mm": 0.2,
       "signal_class": "ground",
       "voltage_domain": "GND"
     },
@@ -4193,6 +6128,26 @@
     },
     {
       "connected_pins": [
+        "J1.5",
+        "R5.1"
+      ],
+      "name": "USB_CC1",
+      "required_track_width_mm": 0.15,
+      "signal_class": "usb",
+      "voltage_domain": "V3V3"
+    },
+    {
+      "connected_pins": [
+        "J1.6",
+        "R6.1"
+      ],
+      "name": "USB_CC2",
+      "required_track_width_mm": 0.15,
+      "signal_class": "usb",
+      "voltage_domain": "V3V3"
+    },
+    {
+      "connected_pins": [
         "D1.4",
         "U1.13"
       ],
@@ -4233,8 +6188,28 @@
     },
     {
       "connected_pins": [
-        "J1.1",
+        "F1.2",
+        "Q1.1"
+      ],
+      "name": "USB_FUSED",
+      "required_track_width_mm": 0.5,
+      "signal_class": "power",
+      "voltage_domain": "V3V3"
+    },
+    {
+      "connected_pins": [
+        "Q1.2",
         "U3.1"
+      ],
+      "name": "USB_PROT",
+      "required_track_width_mm": 0.5,
+      "signal_class": "power",
+      "voltage_domain": "V3V3"
+    },
+    {
+      "connected_pins": [
+        "F1.1",
+        "J1.1"
       ],
       "name": "USB_VBUS",
       "required_track_width_mm": 0.5,
@@ -4263,6 +6238,373 @@
   "placement": {
     "board_height_mm": 50.0,
     "board_width_mm": 70.0,
+    "constraint_graph": {
+      "edges": [
+        {
+          "derived_from": "mechanical.mounting_holes[0] + mechanical.assembly_clearance_mm",
+          "details": {
+            "keepout_radius_mm": 2.4,
+            "x_mm": 4.0,
+            "y_mm": 4.0
+          },
+          "enforced": true,
+          "kind": "mounting_hole_keepout",
+          "refs": [
+            "J1",
+            "R5",
+            "R6",
+            "F1",
+            "Q1",
+            "D1",
+            "U3",
+            "U1",
+            "U2",
+            "J2",
+            "R1",
+            "R2",
+            "R3",
+            "C1",
+            "C2",
+            "C9"
+          ]
+        },
+        {
+          "derived_from": "mechanical.mounting_holes[1] + mechanical.assembly_clearance_mm",
+          "details": {
+            "keepout_radius_mm": 2.4,
+            "x_mm": 66.0,
+            "y_mm": 4.0
+          },
+          "enforced": true,
+          "kind": "mounting_hole_keepout",
+          "refs": [
+            "J1",
+            "R5",
+            "R6",
+            "F1",
+            "Q1",
+            "D1",
+            "U3",
+            "U1",
+            "U2",
+            "J2",
+            "R1",
+            "R2",
+            "R3",
+            "C1",
+            "C2",
+            "C9"
+          ]
+        },
+        {
+          "derived_from": "mechanical.mounting_holes[2] + mechanical.assembly_clearance_mm",
+          "details": {
+            "keepout_radius_mm": 2.4,
+            "x_mm": 4.0,
+            "y_mm": 46.0
+          },
+          "enforced": true,
+          "kind": "mounting_hole_keepout",
+          "refs": [
+            "J1",
+            "R5",
+            "R6",
+            "F1",
+            "Q1",
+            "D1",
+            "U3",
+            "U1",
+            "U2",
+            "J2",
+            "R1",
+            "R2",
+            "R3",
+            "C1",
+            "C2",
+            "C9"
+          ]
+        },
+        {
+          "derived_from": "mechanical.mounting_holes[3] + mechanical.assembly_clearance_mm",
+          "details": {
+            "keepout_radius_mm": 2.4,
+            "x_mm": 66.0,
+            "y_mm": 46.0
+          },
+          "enforced": true,
+          "kind": "mounting_hole_keepout",
+          "refs": [
+            "J1",
+            "R5",
+            "R6",
+            "F1",
+            "Q1",
+            "D1",
+            "U3",
+            "U1",
+            "U2",
+            "J2",
+            "R1",
+            "R2",
+            "R3",
+            "C1",
+            "C2",
+            "C9"
+          ]
+        },
+        {
+          "derived_from": "mechanical.connector_interfaces + mechanical.max_connector_edge_distance_mm",
+          "details": {
+            "cost_key": "connector_edge",
+            "distance_mm": 4.0,
+            "limit_mm": 5.0,
+            "margin_mm": 1.0,
+            "max_edge_distance_mm": 5.0,
+            "side": "front",
+            "violation_cost": 0.0,
+            "wrong_side_cost": 0.0
+          },
+          "enforced": true,
+          "kind": "connector_edge",
+          "refs": [
+            "J1"
+          ]
+        },
+        {
+          "derived_from": "graph decoupling component pins + decoupling target inference",
+          "details": {
+            "cost_key": "decoupling_proximity",
+            "distance_mm": 9.849,
+            "limit_mm": 12.0,
+            "margin_mm": 2.151,
+            "max_distance_mm": 12.0,
+            "power_nets": [
+              "GND",
+              "V3V3"
+            ],
+            "violation_cost": 0.0
+          },
+          "enforced": true,
+          "kind": "decoupling_proximity",
+          "refs": [
+            "C1",
+            "U1"
+          ]
+        },
+        {
+          "derived_from": "graph decoupling component pins + decoupling target inference",
+          "details": {
+            "cost_key": "decoupling_proximity",
+            "distance_mm": 4.0,
+            "limit_mm": 12.0,
+            "margin_mm": 8.0,
+            "max_distance_mm": 12.0,
+            "power_nets": [
+              "GND",
+              "V3V3"
+            ],
+            "violation_cost": 0.0
+          },
+          "enforced": true,
+          "kind": "decoupling_proximity",
+          "refs": [
+            "C2",
+            "U1"
+          ]
+        },
+        {
+          "derived_from": "graph power-category component",
+          "details": {
+            "min_spacing_mm": 8.0
+          },
+          "enforced": false,
+          "kind": "thermal_spacing",
+          "refs": [
+            "Q1"
+          ]
+        },
+        {
+          "derived_from": "graph power-category component",
+          "details": {
+            "min_spacing_mm": 8.0
+          },
+          "enforced": false,
+          "kind": "thermal_spacing",
+          "refs": [
+            "U3"
+          ]
+        },
+        {
+          "derived_from": "component RF/integral-antenna metadata",
+          "details": {
+            "cost_key": "rf_edge_keepout",
+            "distance_mm": 7.0,
+            "limit_mm": 8.0,
+            "margin_mm": 1.0,
+            "max_edge_distance_mm": 8.0,
+            "violation_cost": 0.0
+          },
+          "enforced": true,
+          "kind": "rf_edge_keepout",
+          "refs": [
+            "U1"
+          ]
+        },
+        {
+          "derived_from": "component RF/noisy category metadata",
+          "details": {
+            "cost_key": "rf_noisy_keepout",
+            "distance_mm": 40.262,
+            "margin_mm": 30.262,
+            "minimum_keepout_mm": 10.0,
+            "minimum_mm": 10.0,
+            "violation_cost": 0.0
+          },
+          "enforced": true,
+          "kind": "rf_noisy_keepout",
+          "refs": [
+            "U1",
+            "Q1"
+          ]
+        },
+        {
+          "derived_from": "component RF/noisy category metadata",
+          "details": {
+            "cost_key": "rf_noisy_keepout",
+            "distance_mm": 31.0,
+            "margin_mm": 21.0,
+            "minimum_keepout_mm": 10.0,
+            "minimum_mm": 10.0,
+            "violation_cost": 0.0
+          },
+          "enforced": true,
+          "kind": "rf_noisy_keepout",
+          "refs": [
+            "U1",
+            "U3"
+          ]
+        },
+        {
+          "derived_from": "thermal-risk and sensitive component categories",
+          "details": {
+            "cost_key": "thermal_zone",
+            "distance_mm": 40.262,
+            "margin_mm": 32.262,
+            "minimum_mm": 8.0,
+            "minimum_spacing_mm": 8.0,
+            "violation_cost": 0.0
+          },
+          "enforced": true,
+          "kind": "thermal_zone",
+          "refs": [
+            "Q1",
+            "U1"
+          ]
+        },
+        {
+          "derived_from": "thermal-risk and sensitive component categories",
+          "details": {
+            "cost_key": "thermal_zone",
+            "distance_mm": 28.844,
+            "margin_mm": 20.844,
+            "minimum_mm": 8.0,
+            "minimum_spacing_mm": 8.0,
+            "violation_cost": 0.0
+          },
+          "enforced": true,
+          "kind": "thermal_zone",
+          "refs": [
+            "Q1",
+            "U2"
+          ]
+        },
+        {
+          "derived_from": "thermal-risk and sensitive component categories",
+          "details": {
+            "cost_key": "thermal_zone",
+            "distance_mm": 31.0,
+            "margin_mm": 23.0,
+            "minimum_mm": 8.0,
+            "minimum_spacing_mm": 8.0,
+            "violation_cost": 0.0
+          },
+          "enforced": true,
+          "kind": "thermal_zone",
+          "refs": [
+            "U3",
+            "U1"
+          ]
+        },
+        {
+          "derived_from": "thermal-risk and sensitive component categories",
+          "details": {
+            "cost_key": "thermal_zone",
+            "distance_mm": 30.529,
+            "margin_mm": 22.529,
+            "minimum_mm": 8.0,
+            "minimum_spacing_mm": 8.0,
+            "violation_cost": 0.0
+          },
+          "enforced": true,
+          "kind": "thermal_zone",
+          "refs": [
+            "U3",
+            "U2"
+          ]
+        },
+        {
+          "derived_from": "USB raw/protected net bridge metadata",
+          "details": {
+            "cost_key": "usb_esd_connector_distance",
+            "distance_mm": 13.416,
+            "limit_mm": 15.0,
+            "margin_mm": 1.584,
+            "max_connector_distance_mm": 15.0,
+            "violation_cost": 0.0
+          },
+          "enforced": true,
+          "kind": "usb_esd_connector_side",
+          "refs": [
+            "D1",
+            "J1"
+          ]
+        }
+      ],
+      "metrics": {
+        "deferred_edges": 2,
+        "edges": 17,
+        "edges_by_kind": {
+          "connector_edge": 1,
+          "decoupling_proximity": 2,
+          "mounting_hole_keepout": 4,
+          "rf_edge_keepout": 1,
+          "rf_noisy_keepout": 2,
+          "thermal_spacing": 2,
+          "thermal_zone": 4,
+          "usb_esd_connector_side": 1
+        },
+        "enforced_edges": 15,
+        "nodes": 16
+      },
+      "nodes": [
+        "C1",
+        "C2",
+        "C9",
+        "D1",
+        "F1",
+        "J1",
+        "J2",
+        "Q1",
+        "R1",
+        "R2",
+        "R3",
+        "R5",
+        "R6",
+        "U1",
+        "U2",
+        "U3"
+      ]
+    },
     "constraints": [
       {
         "derived_from": "mechanical.envelope + manufacturing.pcb.min_clearance_mm",
@@ -4336,30 +6678,46 @@
         "target_ref": "J1"
       },
       {
-        "derived_from": "graph decoupling component pins",
-        "enforced": false,
+        "derived_from": "graph decoupling component pins + decoupling target inference",
+        "enforced": true,
         "kind": "decoupling_proximity",
         "params": {
+          "max_distance_mm": 12.0,
           "power_nets": [
             "GND",
             "V3V3"
-          ]
+          ],
+          "target_ref": "U1",
+          "target_source": "explicit_decoupling_target_ref"
         },
-        "rationale": "Cap-to-IC association is not modelled in the netlist; proximity enforcement is deferred.",
+        "rationale": "",
         "target_ref": "C1"
       },
       {
-        "derived_from": "graph decoupling component pins",
-        "enforced": false,
+        "derived_from": "graph decoupling component pins + decoupling target inference",
+        "enforced": true,
         "kind": "decoupling_proximity",
         "params": {
+          "max_distance_mm": 12.0,
           "power_nets": [
             "GND",
             "V3V3"
-          ]
+          ],
+          "target_ref": "U1",
+          "target_source": "explicit_decoupling_target_ref"
         },
-        "rationale": "Cap-to-IC association is not modelled in the netlist; proximity enforcement is deferred.",
+        "rationale": "",
         "target_ref": "C2"
+      },
+      {
+        "derived_from": "graph power-category component",
+        "enforced": false,
+        "kind": "thermal_spacing",
+        "params": {
+          "min_spacing_mm": 8.0
+        },
+        "rationale": "Advisory spacing only; thermal qualification requires load testing.",
+        "target_ref": "Q1"
       },
       {
         "derived_from": "graph power-category component",
@@ -4372,6 +6730,8 @@
         "target_ref": "U3"
       }
     ],
+    "cost": 0,
+    "cost_breakdown": {},
     "placements": {
       "C1": {
         "courtyard_h_mm": 4.243,
@@ -4407,8 +6767,8 @@
         "y_mm": 14.0
       },
       "D1": {
-        "courtyard_h_mm": 6.708,
-        "courtyard_w_mm": 6.708,
+        "courtyard_h_mm": 7.348,
+        "courtyard_w_mm": 7.348,
         "rationale": "",
         "ref": "D1",
         "rotation_deg": 0.0,
@@ -4417,9 +6777,20 @@
         "x_mm": 30.0,
         "y_mm": 10.0
       },
+      "F1": {
+        "courtyard_h_mm": 4.243,
+        "courtyard_w_mm": 4.243,
+        "rationale": "",
+        "ref": "F1",
+        "rotation_deg": 0.0,
+        "side": "top",
+        "source": "sensor_data_logger_anchor",
+        "x_mm": 26.0,
+        "y_mm": 10.0
+      },
       "J1": {
-        "courtyard_h_mm": 6.0,
-        "courtyard_w_mm": 6.0,
+        "courtyard_h_mm": 7.348,
+        "courtyard_w_mm": 7.348,
         "rationale": "",
         "ref": "J1",
         "rotation_deg": 0.0,
@@ -4429,15 +6800,26 @@
         "y_mm": 4.0
       },
       "J2": {
-        "courtyard_h_mm": 6.708,
-        "courtyard_w_mm": 6.708,
+        "courtyard_h_mm": 9.487,
+        "courtyard_w_mm": 9.487,
         "rationale": "",
         "ref": "J2",
         "rotation_deg": 0.0,
         "side": "top",
         "source": "sensor_data_logger_anchor",
-        "x_mm": 58.0,
-        "y_mm": 44.0
+        "x_mm": 54.0,
+        "y_mm": 39.0
+      },
+      "Q1": {
+        "courtyard_h_mm": 7.348,
+        "courtyard_w_mm": 7.348,
+        "rationale": "",
+        "ref": "Q1",
+        "rotation_deg": 0.0,
+        "side": "top",
+        "source": "sensor_data_logger_anchor",
+        "x_mm": 34.0,
+        "y_mm": 4.0
       },
       "R1": {
         "courtyard_h_mm": 4.243,
@@ -4472,16 +6854,38 @@
         "x_mm": 50.0,
         "y_mm": 25.0
       },
+      "R5": {
+        "courtyard_h_mm": 4.243,
+        "courtyard_w_mm": 4.243,
+        "rationale": "USB-C Rd resistor position derived from the connector CC pins.",
+        "ref": "R5",
+        "rotation_deg": 0.0,
+        "side": "top",
+        "source": "usb_c_rd_connector_seed",
+        "x_mm": 22.0,
+        "y_mm": 7.0
+      },
+      "R6": {
+        "courtyard_h_mm": 4.243,
+        "courtyard_w_mm": 4.243,
+        "rationale": "USB-C Rd resistor position derived from the connector CC pins.",
+        "ref": "R6",
+        "rotation_deg": 0.0,
+        "side": "top",
+        "source": "usb_c_rd_connector_seed",
+        "x_mm": 26.0,
+        "y_mm": 7.0
+      },
       "U1": {
-        "courtyard_h_mm": 10.817,
-        "courtyard_w_mm": 10.817,
+        "courtyard_h_mm": 19.209,
+        "courtyard_w_mm": 19.209,
         "rationale": "",
         "ref": "U1",
         "rotation_deg": 0.0,
         "side": "top",
         "source": "sensor_data_logger_anchor",
         "x_mm": 44.0,
-        "y_mm": 44.0
+        "y_mm": 43.0
       },
       "U2": {
         "courtyard_h_mm": 6.708,
@@ -4505,16 +6909,21 @@
         "x_mm": 44.0,
         "y_mm": 12.0
       }
+    },
+    "solver": {
+      "authoritative": false,
+      "iterations": 0,
+      "method": "deterministic_constraint_cost_search"
     }
   },
   "provenance": {
     "backend": "tscircuit",
     "command": [],
     "compiler_version": null,
-    "component_db_hash": "5a97ac71f96574a18a58a6ad3b1b878b9858cb069286457b0c411a425bf7fbd1",
+    "component_db_hash": "506bfd3a28aa5e84cbc970dd584a4debcb845586e55282376d39984d0ae7a569",
     "release_eligible": false,
-    "role_set_hash": "6732646d45fed1daa55e60b9480cf225afee98cfc6595fbfd6f108a12b88e338",
-    "source_spec_hash": "256b56fe3c0ae23be1efe33d1ab3daf334d478ec482dd50e22d3f4cbbee8a591",
+    "role_set_hash": "930ffa932706d56900a19acb42c56fbb1d0acb64f1b154615431ba6c86dadfb9",
+    "source_spec_hash": "ce73661df203a9f4aafd99fc19265e6d6a85bf12d7f3a60ac9e2617b72ed336d",
     "timestamp": "1970-01-01T00:00:00+00:00",
     "tool_versions": {
       "python": "3.14.6"
@@ -4535,6 +6944,42 @@
         "details": {},
         "message": "Current availability is not evidenced for J1 at curated",
         "path": "J1",
+        "requires_user_decision": false,
+        "severity": "error"
+      },
+      {
+        "category": "BOM_ERROR",
+        "code": "supplier_availability_unknown",
+        "details": {},
+        "message": "Current availability is not evidenced for R5 at curated",
+        "path": "R5",
+        "requires_user_decision": false,
+        "severity": "error"
+      },
+      {
+        "category": "BOM_ERROR",
+        "code": "supplier_availability_unknown",
+        "details": {},
+        "message": "Current availability is not evidenced for R6 at curated",
+        "path": "R6",
+        "requires_user_decision": false,
+        "severity": "error"
+      },
+      {
+        "category": "BOM_ERROR",
+        "code": "supplier_availability_unknown",
+        "details": {},
+        "message": "Current availability is not evidenced for F1 at curated",
+        "path": "F1",
+        "requires_user_decision": false,
+        "severity": "error"
+      },
+      {
+        "category": "BOM_ERROR",
+        "code": "supplier_availability_unknown",
+        "details": {},
+        "message": "Current availability is not evidenced for Q1 at curated",
+        "path": "Q1",
         "requires_user_decision": false,
         "severity": "error"
       },
@@ -4640,7 +7085,7 @@
     ],
     "gate": "supplier_availability",
     "metrics": {
-      "components_checked": 12,
+      "components_checked": 16,
       "provider": "curated"
     },
     "status": "blocked"

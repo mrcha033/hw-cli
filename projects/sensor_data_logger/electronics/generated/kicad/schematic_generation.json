@@ -1,0 +1,6 @@
+{
+  "code": "kicad_symbol_instantiation_failed",
+  "fallback": "sensor_data_logger.kicad_sch",
+  "message": "Label text cannot be empty",
+  "status": "blocked"
+}

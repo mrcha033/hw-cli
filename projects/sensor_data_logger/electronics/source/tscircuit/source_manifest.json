@@ -10,7 +10,16 @@
     "tscircuit_layout_completeness",
     "tscircuit_manufacturing_export"
   ],
+  "fabrication_release_eligible": false,
+  "hdl_source_release_eligible": false,
+  "netlist_release_eligible": false,
   "pcb_disabled": false,
+  "placement_contract": {
+    "coordinate_transform": "board_origin_top_left_to_tscircuit_center",
+    "missing_solver_placements": [],
+    "solver_placements": 16,
+    "source": "electrical_graph.components[].pcb_position_mm"
+  },
   "provenance": {
     "backend": "tscircuit",
     "command": [
@@ -22,10 +31,11 @@
       "--disable-parts-engine"
     ],
     "compiler_version": "0.1.1491",
-    "component_db_hash": "5a97ac71f96574a18a58a6ad3b1b878b9858cb069286457b0c411a425bf7fbd1",
-    "release_eligible": true,
-    "role_set_hash": "6732646d45fed1daa55e60b9480cf225afee98cfc6595fbfd6f108a12b88e338",
-    "source_spec_hash": "256b56fe3c0ae23be1efe33d1ab3daf334d478ec482dd50e22d3f4cbbee8a591",
+    "component_db_hash": "506bfd3a28aa5e84cbc970dd584a4debcb845586e55282376d39984d0ae7a569",
+    "release_eligible": false,
+    "release_tier": "fabrication",
+    "role_set_hash": "930ffa932706d56900a19acb42c56fbb1d0acb64f1b154615431ba6c86dadfb9",
+    "source_spec_hash": "ce73661df203a9f4aafd99fc19265e6d6a85bf12d7f3a60ac9e2617b72ed336d",
     "timestamp": "1970-01-01T00:00:00+00:00",
     "tool_versions": {
       "python": "3.14.6"
@@ -39,17 +49,23 @@
     "tscircuit_layout_completeness",
     "tscircuit_manufacturing_export"
   ],
+  "release_tier": "fabrication",
   "routing_disabled": false,
-  "source_release_eligible": true,
+  "source_release_eligible": false,
   "sources": [
     {
       "path": "board.compiler.mjs",
-      "sha256": "204148889069708f2f2af41500d7fa1639b61631989a5942e6b3d493e1749aa4"
+      "sha256": "c85de86ca218a00bd315d08ba3c1587077e4603ebc7e595a454d023e6a63e79b"
     },
     {
       "path": "board.tsx",
-      "sha256": "fc06b3d8153bd996c25f38326c6d9ab2b29ca5a3ce52ef10964ab2792d502a33"
+      "sha256": "5457c4f08364713c622f31383fd714d9a879131d46f3aba03268e8274d1b8acb"
     }
   ],
-  "unsupported_footprints": []
+  "unsupported_footprints": [
+    {
+      "footprint": "HW_Curated:MIDI_Fuse",
+      "ref": "F1"
+    }
+  ]
 }

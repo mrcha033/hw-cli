@@ -6,44 +6,15 @@
     "deterministic": true,
     "name": "support-circuit-contract"
   },
-  "failures": [
-    {
-      "category": "ELECTRICAL_SEMANTIC_ERROR",
-      "code": "missing_required_protection_role",
-      "details": {
-        "acceptable_roles": [
-          "reverse_polarity"
-        ],
-        "protection": "reverse_polarity"
-      },
-      "message": "Required protection lacks a resolved support block: reverse_polarity",
-      "path": "safety.required_protections",
-      "requires_user_decision": false,
-      "severity": "error"
-    },
-    {
-      "category": "ELECTRICAL_SEMANTIC_ERROR",
-      "code": "missing_required_protection_role",
-      "details": {
-        "acceptable_roles": [
-          "fuse",
-          "efuse"
-        ],
-        "protection": "fuse_or_efuse"
-      },
-      "message": "Required protection lacks a resolved support block: fuse_or_efuse",
-      "path": "safety.required_protections",
-      "requires_user_decision": false,
-      "severity": "error"
-    }
-  ],
+  "failures": [],
   "gate": "support_circuit_completeness",
   "metrics": {
-    "components": 12,
-    "critical_roles": 5,
-    "net_contract_checks": 5,
-    "resolved_critical_roles": 5,
-    "role_set": "sensor_data_logger"
+    "components": 16,
+    "critical_roles": 7,
+    "net_contract_checks": 7,
+    "resolved_critical_roles": 7,
+    "role_set": "sensor_data_logger",
+    "status_leds_checked": 0
   },
-  "status": "fail"
+  "status": "pass"
 }

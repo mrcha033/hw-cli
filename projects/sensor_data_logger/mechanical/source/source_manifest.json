@@ -3,7 +3,7 @@
   "backend": "opencascade",
   "release_eligible": false,
   "selected_variant": "desktop",
-  "source_spec_hash": "256b56fe3c0ae23be1efe33d1ab3daf334d478ec482dd50e22d3f4cbbee8a591",
+  "source_spec_hash": "ce73661df203a9f4aafd99fc19265e6d6a85bf12d7f3a60ac9e2617b72ed336d",
   "sources": [
     {
       "path": "assembly.py",
@@ -15,7 +15,7 @@
     },
     {
       "path": "enclosure.py",
-      "sha256": "ad3ad2ebfd5fb3deb16fdec0b61bb30c76dffea18267c4c0d06fab59c1579fdc"
+      "sha256": "556bd2379c996290b6469013fd3b4112c0d77d1dbff320b8f4e0fa7dd688ab82"
     },
     {
       "path": "enclosure_variants.py",
@@ -27,7 +27,7 @@
     },
     {
       "path": "mechanical_contract.json",
-      "sha256": "78cbb3c77a4b80398bd9eca8edd5d571c07084d35b6b1f0a51fd971567ca9637"
+      "sha256": "08abb82b48cd5e1d4907dd44f43be9b51a698579ea52058249de4300898d6f2b"
     }
   ],
   "variants": [

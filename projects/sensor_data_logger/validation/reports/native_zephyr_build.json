@@ -4,9 +4,9 @@
   "failures": [
     {
       "category": "TOOL_ERROR",
-      "code": "external_gate_not_run",
+      "code": "xtensa_toolchain_unavailable",
       "details": {},
-      "message": "Native Zephyr build was not requested",
+      "message": "Board 'esp32s3' requires the xtensa-esp toolchain which is not in the bundled toolchain set",
       "path": null,
       "requires_user_decision": false,
       "severity": "error"

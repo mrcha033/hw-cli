@@ -1,18 +1,13 @@
 {
   "artifacts": [],
-  "backend": {},
-  "failures": [
-    {
-      "category": "TOOL_ERROR",
-      "code": "external_gate_not_run",
-      "details": {},
-      "message": "KiCad library cross-check was not requested",
-      "path": null,
-      "requires_user_decision": false,
-      "severity": "error"
-    }
-  ],
+  "backend": {
+    "name": "kicad-cli"
+  },
+  "failures": [],
   "gate": "kicad_library_crosscheck",
-  "metrics": {},
-  "status": "blocked"
+  "metrics": {
+    "issues": 0,
+    "method": "native_erc_drc_library_resolution"
+  },
+  "status": "pass"
 }

@@ -1,0 +1,17 @@
+{
+  "artifacts": [],
+  "backend": {},
+  "failures": [],
+  "gate": "mechanical_mounting_integrity",
+  "metrics": {
+    "assembly_clearance_mm": 0.8,
+    "collision_refs": [],
+    "errors": 0,
+    "holes_checked": 4,
+    "invalid_hole_indices": [],
+    "manufacturing_clearance_mm": 0.15,
+    "oracle_boundary": "center-point screw/standoff keepout precheck; native CAD and board DRC remain authoritative for courtyard and fastener geometry",
+    "warnings": 0
+  },
+  "status": "pass"
+}

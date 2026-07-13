@@ -4,8 +4,10 @@
   "failures": [],
   "gate": "firmware_modules",
   "metrics": {
+    "artifact_check_enabled": true,
     "isr_count": 0,
     "module_count": 0,
+    "rendered_module_ids": [],
     "required_behaviors": [],
     "total_stack_bytes": 0
   },

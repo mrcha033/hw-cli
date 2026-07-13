@@ -24,6 +24,7 @@
       (path pcb 0  70000 -50000  0 -50000  0 0  70000 0  70000 -50000)
     )
     (plane GND (polygon B.Cu 0  1000 -1000  69000 -1000  69000 -49000  1000 -49000  1000 -1000))
+    (plane GND (polygon F.Cu 0  1000 -1000  69000 -1000  69000 -49000  1000 -49000  1000 -1000))
     (via "Via[0-1]_600:300_um")
     (rule
       (width 200)
@@ -32,11 +33,15 @@
     )
   )
   (placement
-    (component USB_C_16Pin
+    (component Connector_USB:USB_C_GCT_USB4105
       (place J1 18000 -4000 front 0 (PN "USB-C POWER"))
+      (place Q1 34000 -4000 front 0 (PN "Ideal Diode"))
+      (place D1 30000 -10000 front 0 (PN "USB ESD"))
     )
-    (component MIDI
-      (place F1 26000 -4000 front 0 (PN "500mA Fuse"))
+    (component Resistor_SMD:R_0603_1608Metric
+      (place R5 22000 -7000 front 0 (PN "5K1 USB-C Rd"))
+      (place R6 26000 -7000 front 0 (PN "5K1 USB-C Rd"))
+      (place F1 26000 -10000 front 0 (PN "500mA Fuse"))
       (place R1 18000 -38000 front 0 (PN 4K7))
       (place R2 27000 -38000 front 0 (PN 4K7))
       (place R3 50000 -25000 front 0 (PN 4K7))
@@ -44,17 +49,17 @@
       (place C2 44000 -39000 front 0 (PN 100nF))
       (place C9 56000 -14000 front 0 (PN 22uF))
     )
-    (component "SOT23-6"
-      (place Q1 34000 -4000 front 0 (PN "Ideal Diode"))
+    (component "Package_DFN_QFN:VQFN-16"
       (place U3 44000 -12000 front 0 (PN "3V3 Buck"))
     )
-    (component "SOT23-6::1"
-      (place D1 30000 -10000 front 0 (PN "USB ESD"))
-      (place U2 18000 -28000 front 0 (PN "ICM-42688-P"))
-      (place J2 58000 -44000 front 0 (PN "UART DEBUG"))
-    )
     (component "RF_Module:ESP32-S3-WROOM-1"
-      (place U1 44000 -44000 front 0 (PN "ESP32-S3-WROOM-1"))
+      (place U1 44000 -43000 front 0 (PN "ESP32-S3-WROOM-1"))
+    )
+    (component "Package_LGA:LGA-14"
+      (place U2 18000 -28000 front 0 (PN "ICM-42688-P"))
+    )
+    (component "Connector_Samtec:FTSH-105"
+      (place J2 54000 -39000 front 0 (PN "UART DEBUG"))
     )
     (component MountingHole:MountingHole_3.2mm_Pad
       (place H1 4000 -4000 front 0 (PN MountingHole))
@@ -64,34 +69,28 @@
     )
   )
   (library
-    (image USB_C_16Pin
-      (outline (path signal 200  -1000 1000  8000 1000  8000 -3000  -1000 -3000  -1000 1000))
-      (pin Round[A]Pad_750.000000_um 1 0 0)
-      (pin Round[A]Pad_750.000000_um 2 2000 0)
-      (pin Round[A]Pad_750.000000_um 3 4000 0)
-      (pin Round[A]Pad_750.000000_um 4 6000 0)
-    )
-    (image MIDI
-      (outline (path signal 200  -1000 1000  4000 1000  4000 -3000  -1000 -3000  -1000 1000))
-      (pin Round[A]Pad_750.000000_um 1 0 0)
-      (pin Round[A]Pad_750.000000_um 2 2000 0)
-    )
-    (image "SOT23-6"
-      (outline (path signal 200  -1000 1000  6000 1000  6000 -3000  -1000 -3000  -1000 1000))
-      (pin Round[A]Pad_750.000000_um 1 0 0)
-      (pin Round[A]Pad_750.000000_um 2 2000 0)
-      (pin Round[A]Pad_750.000000_um 3 4000 0)
-    )
-    (image "SOT23-6::1"
-      (outline (path signal 200  -1000 1000  10000 1000  10000 -3000  -1000 -3000  -1000 1000))
+    (image Connector_USB:USB_C_GCT_USB4105
+      (outline (path signal 200  -1000 1000  12000 1000  12000 -3000  -1000 -3000  -1000 1000))
       (pin Round[A]Pad_750.000000_um 1 0 0)
       (pin Round[A]Pad_750.000000_um 2 2000 0)
       (pin Round[A]Pad_750.000000_um 3 4000 0)
       (pin Round[A]Pad_750.000000_um 4 6000 0)
       (pin Round[A]Pad_750.000000_um 5 8000 0)
+      (pin Round[A]Pad_750.000000_um 6 10000 0)
+    )
+    (image Resistor_SMD:R_0603_1608Metric
+      (outline (path signal 200  -1000 1000  4000 1000  4000 -3000  -1000 -3000  -1000 1000))
+      (pin Round[A]Pad_750.000000_um 1 0 0)
+      (pin Round[A]Pad_750.000000_um 2 2000 0)
+    )
+    (image "Package_DFN_QFN:VQFN-16"
+      (outline (path signal 200  -1000 1000  6000 1000  6000 -3000  -1000 -3000  -1000 1000))
+      (pin Round[A]Pad_750.000000_um 1 0 0)
+      (pin Round[A]Pad_750.000000_um 2 2000 0)
+      (pin Round[A]Pad_750.000000_um 3 4000 0)
     )
     (image "RF_Module:ESP32-S3-WROOM-1"
-      (outline (path signal 200  -1000 1000  14000 1000  14000 -4000  -1000 -4000  -1000 1000))
+      (outline (path signal 200  -1000 1000  14000 1000  14000 -12000  -1000 -12000  -1000 1000))
       (pin Round[A]Pad_750.000000_um 1 0 0)
       (pin Round[A]Pad_750.000000_um 2 2000 0)
       (pin Round[A]Pad_750.000000_um 3 4000 0)
@@ -105,6 +104,55 @@
       (pin Round[A]Pad_750.000000_um 39 6000 -2000)
       (pin Round[A]Pad_750.000000_um 40 8000 -2000)
       (pin Round[A]Pad_750.000000_um 41 10000 -2000)
+      (pin Round[A]Pad_750.000000_um 4 12000 -2000)
+      (pin Round[A]Pad_750.000000_um 5 0 -4000)
+      (pin Round[A]Pad_750.000000_um 6 2000 -4000)
+      (pin Round[A]Pad_750.000000_um 7 4000 -4000)
+      (pin Round[A]Pad_750.000000_um 8 6000 -4000)
+      (pin Round[A]Pad_750.000000_um 9 8000 -4000)
+      (pin Round[A]Pad_750.000000_um 10 10000 -4000)
+      (pin Round[A]Pad_750.000000_um 11 12000 -4000)
+      (pin Round[A]Pad_750.000000_um 16 0 -6000)
+      (pin Round[A]Pad_750.000000_um 17 2000 -6000)
+      (pin Round[A]Pad_750.000000_um 18 4000 -6000)
+      (pin Round[A]Pad_750.000000_um 19 6000 -6000)
+      (pin Round[A]Pad_750.000000_um 20 8000 -6000)
+      (pin Round[A]Pad_750.000000_um 21 10000 -6000)
+      (pin Round[A]Pad_750.000000_um 22 12000 -6000)
+      (pin Round[A]Pad_750.000000_um 23 0 -8000)
+      (pin Round[A]Pad_750.000000_um 24 2000 -8000)
+      (pin Round[A]Pad_750.000000_um 25 4000 -8000)
+      (pin Round[A]Pad_750.000000_um 26 6000 -8000)
+      (pin Round[A]Pad_750.000000_um 28 8000 -8000)
+      (pin Round[A]Pad_750.000000_um 29 10000 -8000)
+      (pin Round[A]Pad_750.000000_um 30 12000 -8000)
+      (pin Round[A]Pad_750.000000_um 31 0 -10000)
+      (pin Round[A]Pad_750.000000_um 32 2000 -10000)
+      (pin Round[A]Pad_750.000000_um 33 4000 -10000)
+      (pin Round[A]Pad_750.000000_um 34 6000 -10000)
+      (pin Round[A]Pad_750.000000_um 35 8000 -10000)
+      (pin Round[A]Pad_750.000000_um 38 10000 -10000)
+    )
+    (image "Package_LGA:LGA-14"
+      (outline (path signal 200  -1000 1000  10000 1000  10000 -3000  -1000 -3000  -1000 1000))
+      (pin Round[A]Pad_750.000000_um 1 0 0)
+      (pin Round[A]Pad_750.000000_um 2 2000 0)
+      (pin Round[A]Pad_750.000000_um 3 4000 0)
+      (pin Round[A]Pad_750.000000_um 4 6000 0)
+      (pin Round[A]Pad_750.000000_um 5 8000 0)
+    )
+    (image "Connector_Samtec:FTSH-105"
+      (outline (path signal 200  -1000 1000  14000 1000  14000 -4000  -1000 -4000  -1000 1000))
+      (pin Round[A]Pad_750.000000_um 1 0 0)
+      (pin Round[A]Pad_750.000000_um 2 2000 0)
+      (pin Round[A]Pad_750.000000_um 3 4000 0)
+      (pin Round[A]Pad_750.000000_um 4 6000 0)
+      (pin Round[A]Pad_750.000000_um 5 8000 0)
+      (pin Round[A]Pad_750.000000_um 6 10000 0)
+      (pin Round[A]Pad_750.000000_um 7 12000 0)
+      (pin Round[A]Pad_750.000000_um 8 0 -2000)
+      (pin Round[A]Pad_750.000000_um 9 2000 -2000)
+      (pin Round[A]Pad_750.000000_um 10 4000 -2000)
     )
     (image MountingHole:MountingHole_3.2mm_Pad
       (keepout "" (circle F.Cu 3700))
@@ -129,7 +177,7 @@
       (pins U1-3 R3-2)
     )
     (net GND
-      (pins J1-2 Q1-3 D1-5 U3-3 U1-1 U1-40 U1-41 U2-2 J2-5 C1-2 C2-2 C9-2)
+      (pins J1-2 R5-2 R6-2 Q1-3 D1-5 U3-3 U1-1 U1-40 U1-41 U2-2 J2-5 C1-2 C2-2 C9-2)
     )
     (net I2C_IMU_SCL
       (pins U1-12 U2-3 R1-2)
@@ -145,6 +193,12 @@
     )
     (net UART_TX
       (pins U1-37 J2-2)
+    )
+    (net USB_CC1
+      (pins J1-5 R5-1)
+    )
+    (net USB_CC2
+      (pins J1-6 R6-1)
     )
     (net USB_DM
       (pins D1-4 U1-13)
@@ -171,8 +225,8 @@
       (pins U3-2 U1-2 U2-1 J2-1 R1-1 R2-1 R3-1 C1-1 C2-1 C9-1)
     )
     (class kicad_default BOOT ESP_EN GND I2C_IMU_SCL I2C_IMU_SDA IMU_INT UART_RX
-      UART_TX USB_DM USB_DM_RAW USB_DP USB_DP_RAW USB_FUSED USB_PROT USB_VBUS
-      V3V3
+      UART_TX USB_CC1 USB_CC2 USB_DM USB_DM_RAW USB_DP USB_DP_RAW USB_FUSED
+      USB_PROT USB_VBUS V3V3
       (circuit
         (use_via "Via[0-1]_600:300_um")
       )
@@ -183,17 +237,20 @@
     )
   )
   (wiring
-    (wire (path B.Cu 150  38000 -4000  37000 -4000  37000 -5000  20000 -5000  20000 -4000)(net GND)(type route))
-    (wire (path B.Cu 150  38000 -10000  38000 -4000)(net GND)(type route))
-    (wire (path B.Cu 150  48000 -12000  47000 -12000  47000 -11000  38000 -11000  38000 -10000)(net GND)(type route))
-    (wire (path B.Cu 150  58000 -14000  57000 -14000  57000 -13000  48000 -13000  48000 -12000)(net GND)(type route))
-    (wire (path B.Cu 150  20000 -28000  20000 -5000)(net GND)(type route))
-    (wire (path B.Cu 150  37000 -39000  36000 -39000  36000 -38000  30000 -38000  30000 -37000
+    (wire (path B.Cu 200  24000 -7000  23000 -7000  23000 -6000  20000 -6000  20000 -4000)(net GND)(type route))
+    (wire (path B.Cu 200  28000 -7000  27000 -7000  27000 -8000  24000 -8000  24000 -7000)(net GND)(type route))
+    (wire (path B.Cu 200  38000 -10000  37000 -10000  37000 -9000  27000 -9000  27000 -8000)(net GND)(type route))
+    (wire (path B.Cu 200  38000 -4000  38000 -10000)(net GND)(type route))
+    (wire (path B.Cu 200  48000 -12000  47000 -12000  47000 -11000  38000 -11000  38000 -10000)(net GND)(type route))
+    (wire (path B.Cu 200  58000 -14000  57000 -14000  57000 -13000  48000 -13000  48000 -12000)(net GND)(type route))
+    (wire (path B.Cu 200  20000 -28000  20000 -6000)(net GND)(type route))
+    (wire (path B.Cu 200  37000 -39000  36000 -39000  36000 -38000  30000 -38000  30000 -37000
             20000 -37000  20000 -28000)(net GND)(type route))
-    (wire (path B.Cu 150  46000 -39000  45000 -39000  45000 -40000  37000 -40000  37000 -39000)(net GND)(type route))
-    (wire (path B.Cu 150  44000 -44000  44000 -40000)(net GND)(type route))
-    (wire (path B.Cu 150  52000 -46000  51000 -46000  51000 -45000  44000 -45000  44000 -44000)(net GND)(type route))
-    (wire (path B.Cu 150  54000 -46000  52000 -46000)(net GND)(type route))
-    (wire (path B.Cu 150  66000 -44000  65000 -44000  65000 -45000  54000 -45000  54000 -46000)(net GND)(type route))
+    (wire (path B.Cu 200  46000 -39000  45000 -39000  45000 -40000  37000 -40000  37000 -39000)(net GND)(type route))
+    (wire (path B.Cu 200  44000 -43000  44000 -40000)(net GND)(type route))
+    (wire (path B.Cu 200  52000 -45000  51000 -45000  51000 -44000  44000 -44000  44000 -43000)(net GND)(type route))
+    (wire (path B.Cu 200  54000 -45000  52000 -45000)(net GND)(type route))
+    (wire (path B.Cu 200  62000 -39000  61000 -39000  61000 -40000  55000 -40000  55000 -44000
+            54000 -44000  54000 -45000)(net GND)(type route))
   )
 )

@@ -6,3 +6,4 @@ firmware:
   - pinmap
   - driver_stubs
   - bringup_tests
+  modules: []

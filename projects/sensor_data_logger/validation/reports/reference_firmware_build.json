@@ -3,9 +3,15 @@
     "/Users/mrcha033/Documents/hw-cli/projects/sensor_data_logger/firmware/reference/build/bringup_tests"
   ],
   "backend": {
+    "available": true,
+    "command": [
+      "/opt/homebrew/bin/cmake",
+      "--build",
+      "/Users/mrcha033/Documents/hw-cli/projects/sensor_data_logger/firmware/reference/build"
+    ],
     "name": "reference-host-bsp",
     "returncode": 0,
-    "stderr": ""
+    "timeout_seconds": 120
   },
   "failures": [],
   "gate": "reference_firmware_build",

@@ -1,9 +1,25 @@
 {
   "artifacts": [],
-  "backend": {},
+  "backend": {
+    "command": [
+      "/Users/mrcha033/Documents/hw-cli/node_modules/.bin/tsx",
+      "/Users/mrcha033/Documents/hw-cli/node_modules/@tscircuit/cli/dist/cli/main.js",
+      "build",
+      "projects/sensor_data_logger/electronics/source/tscircuit/board.compiler.mjs",
+      "--ignore-config",
+      "--disable-parts-engine"
+    ],
+    "name": "tscircuit",
+    "offline": true,
+    "returncode": 0,
+    "stderr": "No footprint specified for component: <chip#13(.sensor_data_logger>.F1) />\n",
+    "stdout": "Building 1 file(s)...\nBuilding projects/sensor_data_logger/electronics/source/tscircuit/board.compiler.mjs...\nGenerating circuit JSON...\nDispatch phase complete. Created 8 sub-solvers.\nAll sub-solvers finished.\nCircuit JSON written to dist/projects/sensor_data_logger/electronics/source/tscircuit/board.compiler.mjs/circuit.json\nAll pins on J1 are underspecified (no pinAttributes set)\nAll pins on R5 are underspecified (no pinAttributes set)\nAll pins on R6 are underspecified (no pinAttributes set)\nAll pins on F1 are underspecified (no pinAttributes set)\nAll pins on Q1 are underspecified (no pinAttributes set)\nAll pins on D1 are underspecified (no pinAttributes set)\nAll pins on U3 are underspecified (no pinAttributes set)\nAll pins on U1 are underspecified (no pinAttributes set)\nAll pins on U2 are underspecified (no pinAttributes set)\nAll pins on J2 are underspecified (no pinAttributes set)\nAll pins on R1 are underspecified (no pinAttributes set)\nAll pins on R2 are underspecified (no pinAttributes set)\nAll pins on R3 are underspecified (no pinAttributes set)\nAll pins on C1 are underspecified (no pinAttributes set)\nAll pins on C2 are underspecified (no pinAttributes set)\nAll pins on C9 are underspecified (no pinAttributes set)\nJ1 has no pin with requires_power=true\nR5 has no pin with requires_power=true\nR6 has no pin with requires_power=true\nF1 has no pin with requires_power=true\nQ1 has no pin with requires_power=true\nD1 has no pin with requires_power=true\nU3 has no pin with requires_power=true\nU1 has no pin with requires_power=true\nU2 has no pin with requires_power=true\nJ2 has no pin with requires_power=true\nR1 has no pin with requires_power=true\nR2 has no pin with requires_power=true\nR3 has no pin with requires_power=true\nC1 has no pin with requires_power=true\nC2 has no pin with requires_power=true\nC9 has no pin with requires_power=true\nJ1 has no pin with requires_ground=true\nR5 has no pin with requires_ground=true\nR6 has no pin with requires_ground=true\nF1 has no pin with requires_ground=true\nQ1 has no pin with requires_ground=true\nD1 has no pin with requires_ground=true\nU3 has no pin with requires_ground=true\nU1 has no pin with requires_ground=true\nU2 has no pin with requires_ground=true\nJ2 has no pin with requires_ground=true\nR1 has no pin with requires_ground=true\nR2 has no pin with requires_ground=true\nR3 has no pin with requires_ground=true\nC1 has no pin with requires_ground=true\nC2 has no pin with requires_ground=true\nC9 has no pin with requires_ground=true\n\nBuild complete\n  Circuits  1 passed\n  Output    dist\n\n\u26a0 Build completed with errors\nBuild exiting with code 0: build finished successfully\n",
+    "timeout_seconds": 600,
+    "version": "0.1.1491"
+  },
   "failures": [
     {
-      "category": "TOOL_ERROR",
+      "category": "EDA_ERROR",
       "code": "compile_prerequisite_failed",
       "details": {},
       "message": "Prerequisite compile gate did not pass",

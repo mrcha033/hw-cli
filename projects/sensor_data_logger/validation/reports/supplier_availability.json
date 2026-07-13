@@ -20,6 +20,42 @@
       "category": "BOM_ERROR",
       "code": "supplier_availability_unknown",
       "details": {},
+      "message": "Current availability is not evidenced for R5 at curated",
+      "path": "R5",
+      "requires_user_decision": false,
+      "severity": "error"
+    },
+    {
+      "category": "BOM_ERROR",
+      "code": "supplier_availability_unknown",
+      "details": {},
+      "message": "Current availability is not evidenced for R6 at curated",
+      "path": "R6",
+      "requires_user_decision": false,
+      "severity": "error"
+    },
+    {
+      "category": "BOM_ERROR",
+      "code": "supplier_availability_unknown",
+      "details": {},
+      "message": "Current availability is not evidenced for F1 at curated",
+      "path": "F1",
+      "requires_user_decision": false,
+      "severity": "error"
+    },
+    {
+      "category": "BOM_ERROR",
+      "code": "supplier_availability_unknown",
+      "details": {},
+      "message": "Current availability is not evidenced for Q1 at curated",
+      "path": "Q1",
+      "requires_user_decision": false,
+      "severity": "error"
+    },
+    {
+      "category": "BOM_ERROR",
+      "code": "supplier_availability_unknown",
+      "details": {},
       "message": "Current availability is not evidenced for D1 at curated",
       "path": "D1",
       "requires_user_decision": false,
@@ -118,7 +154,7 @@
   ],
   "gate": "supplier_availability",
   "metrics": {
-    "components_checked": 12,
+    "components_checked": 16,
     "provider": "curated"
   },
   "status": "blocked"

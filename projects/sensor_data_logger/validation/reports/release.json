@@ -1,0 +1,615 @@
+{
+  "artifacts": [],
+  "backend": {},
+  "failures": [
+    {
+      "category": "RELEASE_ERROR",
+      "code": "failed_gate",
+      "details": {
+        "details": {
+          "failure_codes": [
+            "supplier_availability_unknown",
+            "supplier_availability_unknown",
+            "supplier_availability_unknown",
+            "supplier_availability_unknown",
+            "supplier_availability_unknown",
+            "supplier_availability_unknown",
+            "supplier_availability_unknown",
+            "supplier_availability_unknown",
+            "supplier_availability_unknown",
+            "supplier_availability_unknown",
+            "supplier_availability_unknown",
+            "supplier_availability_unknown",
+            "supplier_availability_unknown",
+            "supplier_availability_unknown",
+            "supplier_availability_unknown",
+            "supplier_availability_unknown"
+          ],
+          "status": "blocked"
+        }
+      },
+      "message": "Required gate did not pass: supplier_availability",
+      "path": null,
+      "requires_user_decision": false,
+      "severity": "error"
+    },
+    {
+      "category": "RELEASE_ERROR",
+      "code": "failed_gate",
+      "details": {
+        "details": {
+          "failure_codes": [
+            "supplier_availability_unknown",
+            "supplier_availability_unknown",
+            "supplier_availability_unknown",
+            "supplier_availability_unknown",
+            "supplier_availability_unknown",
+            "supplier_availability_unknown",
+            "supplier_availability_unknown",
+            "supplier_availability_unknown",
+            "supplier_availability_unknown",
+            "supplier_availability_unknown",
+            "supplier_availability_unknown",
+            "supplier_availability_unknown",
+            "supplier_availability_unknown",
+            "supplier_availability_unknown",
+            "supplier_availability_unknown",
+            "supplier_availability_unknown"
+          ],
+          "status": "fail"
+        }
+      },
+      "message": "Required gate did not pass: sourcing",
+      "path": null,
+      "requires_user_decision": false,
+      "severity": "error"
+    },
+    {
+      "category": "RELEASE_ERROR",
+      "code": "failed_gate",
+      "details": {
+        "details": {
+          "failure_codes": [
+            "curated_pin_electrical_type_mismatch",
+            "curated_pin_voltage_domain_mismatch"
+          ],
+          "status": "fail"
+        }
+      },
+      "message": "Required gate did not pass: component_provenance",
+      "path": null,
+      "requires_user_decision": false,
+      "severity": "error"
+    },
+    {
+      "category": "RELEASE_ERROR",
+      "code": "failed_gate",
+      "details": {
+        "details": {
+          "failure_codes": [
+            "i2c_pullup_value_out_of_range",
+            "i2c_pullup_value_out_of_range"
+          ],
+          "status": "fail"
+        }
+      },
+      "message": "Required gate did not pass: interface_integrity",
+      "path": null,
+      "requires_user_decision": false,
+      "severity": "error"
+    },
+    {
+      "category": "RELEASE_ERROR",
+      "code": "failed_gate",
+      "details": {
+        "details": {
+          "failure_codes": [
+            "external_gate_not_run"
+          ],
+          "status": "blocked"
+        }
+      },
+      "message": "Required gate did not pass: tscircuit_compile",
+      "path": null,
+      "requires_user_decision": false,
+      "severity": "error"
+    },
+    {
+      "category": "RELEASE_ERROR",
+      "code": "failed_gate",
+      "details": {
+        "details": {
+          "failure_codes": [
+            "external_gate_not_run"
+          ],
+          "status": "blocked"
+        }
+      },
+      "message": "Required gate did not pass: tscircuit_netlist_extract",
+      "path": null,
+      "requires_user_decision": false,
+      "severity": "error"
+    },
+    {
+      "category": "RELEASE_ERROR",
+      "code": "failed_gate",
+      "details": {
+        "details": {
+          "failure_codes": [
+            "external_gate_not_run"
+          ],
+          "status": "blocked"
+        }
+      },
+      "message": "Required gate did not pass: tscircuit_graph_parity",
+      "path": null,
+      "requires_user_decision": false,
+      "severity": "error"
+    },
+    {
+      "category": "RELEASE_ERROR",
+      "code": "failed_gate",
+      "details": {
+        "details": {
+          "failure_codes": [
+            "external_gate_not_run"
+          ],
+          "status": "blocked"
+        }
+      },
+      "message": "Required gate did not pass: tscircuit_footprint_parity",
+      "path": null,
+      "requires_user_decision": false,
+      "severity": "error"
+    },
+    {
+      "category": "RELEASE_ERROR",
+      "code": "failed_gate",
+      "details": {
+        "details": {
+          "failure_codes": [
+            "external_gate_not_run"
+          ],
+          "status": "blocked"
+        }
+      },
+      "message": "Required gate did not pass: tscircuit_layout_completeness",
+      "path": null,
+      "requires_user_decision": false,
+      "severity": "error"
+    },
+    {
+      "category": "RELEASE_ERROR",
+      "code": "failed_gate",
+      "details": {
+        "details": {
+          "failure_codes": [
+            "external_gate_not_run"
+          ],
+          "status": "blocked"
+        }
+      },
+      "message": "Required gate did not pass: tscircuit_manufacturing_export",
+      "path": null,
+      "requires_user_decision": false,
+      "severity": "error"
+    },
+    {
+      "category": "RELEASE_ERROR",
+      "code": "failed_gate",
+      "details": {
+        "details": {
+          "failure_codes": [
+            "external_gate_not_run"
+          ],
+          "status": "blocked"
+        }
+      },
+      "message": "Required gate did not pass: autoroute",
+      "path": null,
+      "requires_user_decision": false,
+      "severity": "error"
+    },
+    {
+      "category": "RELEASE_ERROR",
+      "code": "failed_gate",
+      "details": {
+        "details": {
+          "failure_codes": [
+            "external_gate_not_run"
+          ],
+          "status": "blocked"
+        }
+      },
+      "message": "Required gate did not pass: native_erc",
+      "path": null,
+      "requires_user_decision": false,
+      "severity": "error"
+    },
+    {
+      "category": "RELEASE_ERROR",
+      "code": "failed_gate",
+      "details": {
+        "details": {
+          "failure_codes": [
+            "external_gate_not_run"
+          ],
+          "status": "blocked"
+        }
+      },
+      "message": "Required gate did not pass: native_drc",
+      "path": null,
+      "requires_user_decision": false,
+      "severity": "error"
+    },
+    {
+      "category": "RELEASE_ERROR",
+      "code": "failed_gate",
+      "details": {
+        "details": {
+          "failure_codes": [
+            "external_gate_not_run"
+          ],
+          "status": "blocked"
+        }
+      },
+      "message": "Required gate did not pass: kicad_library_crosscheck",
+      "path": null,
+      "requires_user_decision": false,
+      "severity": "error"
+    },
+    {
+      "category": "RELEASE_ERROR",
+      "code": "failed_gate",
+      "details": {
+        "details": {
+          "failure_codes": [
+            "external_gate_not_run"
+          ],
+          "status": "blocked"
+        }
+      },
+      "message": "Required gate did not pass: native_mechanical_validation",
+      "path": null,
+      "requires_user_decision": false,
+      "severity": "error"
+    },
+    {
+      "category": "RELEASE_ERROR",
+      "code": "failed_gate",
+      "details": {
+        "details": {
+          "failure_codes": [
+            "external_gate_not_run"
+          ],
+          "status": "blocked"
+        }
+      },
+      "message": "Required gate did not pass: native_zephyr_build",
+      "path": null,
+      "requires_user_decision": false,
+      "severity": "error"
+    },
+    {
+      "category": "RELEASE_ERROR",
+      "code": "failed_gate",
+      "details": {
+        "details": {
+          "failure_codes": [
+            "physical_evidence_missing",
+            "physical_evidence_missing",
+            "physical_evidence_missing",
+            "physical_evidence_missing",
+            "physical_evidence_missing",
+            "physical_evidence_missing",
+            "physical_evidence_missing",
+            "physical_evidence_missing"
+          ],
+          "status": "blocked"
+        }
+      },
+      "message": "Required gate did not pass: physical_qualification",
+      "path": null,
+      "requires_user_decision": false,
+      "severity": "error"
+    },
+    {
+      "category": "RELEASE_ERROR",
+      "code": "failed_gate",
+      "details": {
+        "details": {
+          "failure_codes": [
+            "dependency_prerequisite_not_passed",
+            "dependency_prerequisite_not_passed",
+            "dependency_prerequisite_not_passed",
+            "dependency_prerequisite_not_passed",
+            "dependency_prerequisite_not_passed",
+            "dependency_prerequisite_not_passed",
+            "dependency_prerequisite_not_passed",
+            "dependency_prerequisite_not_passed",
+            "dependency_prerequisite_not_passed"
+          ],
+          "status": "fail"
+        }
+      },
+      "message": "Required gate did not pass: design_dependency_graph",
+      "path": null,
+      "requires_user_decision": false,
+      "severity": "error"
+    },
+    {
+      "category": "RELEASE_ERROR",
+      "code": "failed_gate",
+      "details": {
+        "details": {
+          "failure_codes": [
+            "missing_manifest"
+          ],
+          "status": "fail"
+        }
+      },
+      "message": "Required gate did not pass: artifact_integrity",
+      "path": null,
+      "requires_user_decision": false,
+      "severity": "error"
+    },
+    {
+      "category": "RELEASE_ERROR",
+      "code": "unresolved_critical_assumption",
+      "details": {},
+      "message": "Critical assumption requires review: rf_antenna_clearance",
+      "path": "assumptions.rf_antenna_clearance",
+      "requires_user_decision": true,
+      "severity": "error"
+    },
+    {
+      "category": "RELEASE_ERROR",
+      "code": "missing_export",
+      "details": {},
+      "message": "Required release artifact is missing: gerbers.zip",
+      "path": "/Users/mrcha033/Documents/hw-cli/projects/sensor_data_logger/exports/releases/r1/fabrication/gerbers.zip",
+      "requires_user_decision": false,
+      "severity": "error"
+    },
+    {
+      "category": "RELEASE_ERROR",
+      "code": "missing_export",
+      "details": {},
+      "message": "Required release artifact is missing: drill.zip",
+      "path": "/Users/mrcha033/Documents/hw-cli/projects/sensor_data_logger/exports/releases/r1/fabrication/drill.zip",
+      "requires_user_decision": false,
+      "severity": "error"
+    },
+    {
+      "category": "RELEASE_ERROR",
+      "code": "missing_export",
+      "details": {},
+      "message": "Required release artifact is missing: bom.csv",
+      "path": "/Users/mrcha033/Documents/hw-cli/projects/sensor_data_logger/exports/releases/r1/fabrication/bom.csv",
+      "requires_user_decision": false,
+      "severity": "error"
+    },
+    {
+      "category": "RELEASE_ERROR",
+      "code": "missing_export",
+      "details": {},
+      "message": "Required release artifact is missing: pick_and_place.csv",
+      "path": "/Users/mrcha033/Documents/hw-cli/projects/sensor_data_logger/exports/releases/r1/fabrication/pick_and_place.csv",
+      "requires_user_decision": false,
+      "severity": "error"
+    },
+    {
+      "category": "RELEASE_ERROR",
+      "code": "missing_export",
+      "details": {},
+      "message": "Required release artifact is missing: assembly_drawing.pdf",
+      "path": "/Users/mrcha033/Documents/hw-cli/projects/sensor_data_logger/exports/releases/r1/fabrication/assembly_drawing.pdf",
+      "requires_user_decision": false,
+      "severity": "error"
+    },
+    {
+      "category": "RELEASE_ERROR",
+      "code": "missing_export",
+      "details": {},
+      "message": "Required release artifact is missing: board.step",
+      "path": "/Users/mrcha033/Documents/hw-cli/projects/sensor_data_logger/exports/releases/r1/mechanical/board.step",
+      "requires_user_decision": false,
+      "severity": "error"
+    },
+    {
+      "category": "RELEASE_ERROR",
+      "code": "missing_export",
+      "details": {},
+      "message": "Required release artifact is missing: enclosure.step",
+      "path": "/Users/mrcha033/Documents/hw-cli/projects/sensor_data_logger/exports/releases/r1/mechanical/enclosure.step",
+      "requires_user_decision": false,
+      "severity": "error"
+    },
+    {
+      "category": "RELEASE_ERROR",
+      "code": "missing_export",
+      "details": {},
+      "message": "Required release artifact is missing: enclosure.stl",
+      "path": "/Users/mrcha033/Documents/hw-cli/projects/sensor_data_logger/exports/releases/r1/mechanical/enclosure.stl",
+      "requires_user_decision": false,
+      "severity": "error"
+    },
+    {
+      "category": "RELEASE_ERROR",
+      "code": "missing_export",
+      "details": {},
+      "message": "Required release artifact is missing: assembly.step",
+      "path": "/Users/mrcha033/Documents/hw-cli/projects/sensor_data_logger/exports/releases/r1/mechanical/assembly.step",
+      "requires_user_decision": false,
+      "severity": "error"
+    },
+    {
+      "category": "RELEASE_ERROR",
+      "code": "missing_export",
+      "details": {},
+      "message": "Required release artifact is missing: mechanical_manifest.json",
+      "path": "/Users/mrcha033/Documents/hw-cli/projects/sensor_data_logger/exports/releases/r1/mechanical/mechanical_manifest.json",
+      "requires_user_decision": false,
+      "severity": "error"
+    },
+    {
+      "category": "RELEASE_ERROR",
+      "code": "missing_export",
+      "details": {},
+      "message": "Required release artifact is missing: source.zip",
+      "path": "/Users/mrcha033/Documents/hw-cli/projects/sensor_data_logger/exports/releases/r1/firmware/source.zip",
+      "requires_user_decision": false,
+      "severity": "error"
+    },
+    {
+      "category": "RELEASE_ERROR",
+      "code": "missing_export",
+      "details": {},
+      "message": "Required release artifact is missing: design_report.md",
+      "path": "/Users/mrcha033/Documents/hw-cli/projects/sensor_data_logger/exports/releases/r1/docs/design_report.md",
+      "requires_user_decision": false,
+      "severity": "error"
+    },
+    {
+      "category": "RELEASE_ERROR",
+      "code": "missing_export",
+      "details": {},
+      "message": "Required release artifact is missing: pinmap.h",
+      "path": "/Users/mrcha033/Documents/hw-cli/projects/sensor_data_logger/exports/releases/r1/firmware/pinmap.h",
+      "requires_user_decision": false,
+      "severity": "error"
+    },
+    {
+      "category": "RELEASE_ERROR",
+      "code": "missing_export",
+      "details": {},
+      "message": "Required release artifact is missing: devicetree.overlay",
+      "path": "/Users/mrcha033/Documents/hw-cli/projects/sensor_data_logger/exports/releases/r1/firmware/devicetree.overlay",
+      "requires_user_decision": false,
+      "severity": "error"
+    },
+    {
+      "category": "RELEASE_ERROR",
+      "code": "missing_export",
+      "details": {},
+      "message": "Required release artifact is missing: build_instructions.md",
+      "path": "/Users/mrcha033/Documents/hw-cli/projects/sensor_data_logger/exports/releases/r1/firmware/build_instructions.md",
+      "requires_user_decision": false,
+      "severity": "error"
+    },
+    {
+      "category": "RELEASE_ERROR",
+      "code": "missing_export",
+      "details": {},
+      "message": "Required release artifact is missing: validation_report.json",
+      "path": "/Users/mrcha033/Documents/hw-cli/projects/sensor_data_logger/exports/releases/r1/docs/validation_report.json",
+      "requires_user_decision": false,
+      "severity": "error"
+    },
+    {
+      "category": "RELEASE_ERROR",
+      "code": "missing_export",
+      "details": {},
+      "message": "Required release artifact is missing: bringup_guide.md",
+      "path": "/Users/mrcha033/Documents/hw-cli/projects/sensor_data_logger/exports/releases/r1/docs/bringup_guide.md",
+      "requires_user_decision": false,
+      "severity": "error"
+    },
+    {
+      "category": "RELEASE_ERROR",
+      "code": "missing_export",
+      "details": {},
+      "message": "Required release artifact is missing: known_risks.md",
+      "path": "/Users/mrcha033/Documents/hw-cli/projects/sensor_data_logger/exports/releases/r1/docs/known_risks.md",
+      "requires_user_decision": false,
+      "severity": "error"
+    },
+    {
+      "category": "RELEASE_ERROR",
+      "code": "missing_export",
+      "details": {},
+      "message": "Required release artifact is missing: physical_qualification_plan.json",
+      "path": "/Users/mrcha033/Documents/hw-cli/projects/sensor_data_logger/exports/releases/r1/docs/physical_qualification_plan.json",
+      "requires_user_decision": false,
+      "severity": "error"
+    },
+    {
+      "category": "RELEASE_ERROR",
+      "code": "missing_export",
+      "details": {},
+      "message": "Required release artifact is missing: physical_qualification_plan.md",
+      "path": "/Users/mrcha033/Documents/hw-cli/projects/sensor_data_logger/exports/releases/r1/docs/physical_qualification_plan.md",
+      "requires_user_decision": false,
+      "severity": "error"
+    },
+    {
+      "category": "RELEASE_ERROR",
+      "code": "missing_export",
+      "details": {},
+      "message": "Required release artifact is missing: schematic.pdf",
+      "path": "/Users/mrcha033/Documents/hw-cli/projects/sensor_data_logger/exports/releases/r1/docs/schematic.pdf",
+      "requires_user_decision": false,
+      "severity": "error"
+    },
+    {
+      "category": "RELEASE_ERROR",
+      "code": "missing_export",
+      "details": {},
+      "message": "Required release artifact is missing: layout_preview.pdf",
+      "path": "/Users/mrcha033/Documents/hw-cli/projects/sensor_data_logger/exports/releases/r1/docs/layout_preview.pdf",
+      "requires_user_decision": false,
+      "severity": "error"
+    },
+    {
+      "category": "RELEASE_ERROR",
+      "code": "missing_export",
+      "details": {},
+      "message": "Required release artifact is missing: design_report.pdf",
+      "path": "/Users/mrcha033/Documents/hw-cli/projects/sensor_data_logger/exports/releases/r1/docs/design_report.pdf",
+      "requires_user_decision": false,
+      "severity": "error"
+    },
+    {
+      "category": "RELEASE_ERROR",
+      "code": "missing_export",
+      "details": {},
+      "message": "Required release artifact is missing: validation_report.pdf",
+      "path": "/Users/mrcha033/Documents/hw-cli/projects/sensor_data_logger/exports/releases/r1/docs/validation_report.pdf",
+      "requires_user_decision": false,
+      "severity": "error"
+    },
+    {
+      "category": "RELEASE_ERROR",
+      "code": "missing_export",
+      "details": {},
+      "message": "Required release artifact is missing: bringup_guide.pdf",
+      "path": "/Users/mrcha033/Documents/hw-cli/projects/sensor_data_logger/exports/releases/r1/docs/bringup_guide.pdf",
+      "requires_user_decision": false,
+      "severity": "error"
+    },
+    {
+      "category": "RELEASE_ERROR",
+      "code": "missing_export",
+      "details": {},
+      "message": "Required release artifact is missing: manifest.json",
+      "path": "/Users/mrcha033/Documents/hw-cli/projects/sensor_data_logger/exports/releases/r1/manifest.json",
+      "requires_user_decision": false,
+      "severity": "error"
+    },
+    {
+      "category": "RELEASE_ERROR",
+      "code": "missing_export",
+      "details": {},
+      "message": "Required release artifact is missing: enclosure_desktop.step",
+      "path": "/Users/mrcha033/Documents/hw-cli/projects/sensor_data_logger/exports/releases/r1/mechanical/variants/enclosure_desktop.step",
+      "requires_user_decision": false,
+      "severity": "error"
+    }
+  ],
+  "gate": "release",
+  "metrics": {
+    "errors": 47,
+    "warnings": 0
+  },
+  "status": "blocked"
+}

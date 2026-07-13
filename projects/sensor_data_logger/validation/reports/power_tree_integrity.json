@@ -4,13 +4,18 @@
   "failures": [],
   "gate": "power_tree_integrity",
   "metrics": {
+    "component_voltage_limits": {},
     "errors": 0,
-    "power_loads_checked": 3,
+    "power_loads_checked": 4,
+    "regulator_enable_biases": {},
+    "regulator_voltage_limits": {},
     "source_nets": [
+      "USB_FUSED",
+      "USB_PROT",
       "USB_VBUS",
       "V3V3"
     ],
-    "transfer_components": 1,
+    "transfer_components": 3,
     "warnings": 0
   },
   "status": "pass"

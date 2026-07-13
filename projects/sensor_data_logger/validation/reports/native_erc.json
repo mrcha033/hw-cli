@@ -1,18 +1,28 @@
 {
-  "artifacts": [],
-  "backend": {},
-  "failures": [
-    {
-      "category": "TOOL_ERROR",
-      "code": "external_gate_not_run",
-      "details": {},
-      "message": "KiCad ERC was not requested",
-      "path": null,
-      "requires_user_decision": false,
-      "severity": "error"
-    }
+  "artifacts": [
+    "/Users/mrcha033/Documents/hw-cli/projects/sensor_data_logger/validation/reports/kicad_erc.json"
   ],
+  "backend": {
+    "available": true,
+    "command": [
+      "kicad-cli",
+      "sch",
+      "erc",
+      "--format",
+      "json",
+      "--output",
+      "/Users/mrcha033/Documents/hw-cli/projects/sensor_data_logger/validation/reports/kicad_erc.json",
+      "/Users/mrcha033/Documents/hw-cli/projects/sensor_data_logger/electronics/generated/kicad/sensor_data_logger.kicad_sch"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "stdout": "Found 0 violations\nSaved ERC Report to /Users/mrcha033/Documents/hw-cli/projects/sensor_data_logger/validation/reports/kicad_erc.json\n"
+  },
+  "failures": [],
   "gate": "native_erc",
-  "metrics": {},
-  "status": "blocked"
+  "metrics": {
+    "footprint_link_issues": 0,
+    "violations": 0
+  },
+  "status": "pass"
 }
