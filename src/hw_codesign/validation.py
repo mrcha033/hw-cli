@@ -2110,8 +2110,12 @@ def _component_is_i2c_pullup(
     if _component_category_matches(component, {"pullup"}):
         return True
     category = str(component.get("category", "")).lower()
-    footprint = str(component.get("footprint", "")).upper()
-    resistor_like = category.startswith("resistor") or category.endswith("_resistor") or footprint.startswith("R")
+    footprint = str(component.get("footprint", "")).upper().replace("\\", "/")
+    resistor_like = (
+        category.startswith("resistor")
+        or category.endswith("_resistor")
+        or re.search(r"(^|:)RESISTOR_SMD:R_", footprint) is not None
+    )
     return resistor_like and _component_resistance_ohms(component) is not None
 
 
