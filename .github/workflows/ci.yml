@@ -27,6 +27,7 @@ jobs:
   test:
     name: Python ${{ matrix.python-version }}
     runs-on: ubuntu-latest
+    timeout-minutes: 45
     strategy:
       fail-fast: false
       matrix:
@@ -50,7 +51,34 @@ jobs:
       - run: uv sync --locked --extra dev --extra mcp
       - name: Enforce MCP stdout protocol hygiene
         run: uv run pytest -q tests/test_mcp_stdio.py
-      - run: uv run pytest
+      - name: Run full authoritative suite on Python 3.11
+        if: matrix.python-version == '3.11'
+        run: uv run pytest
+      - name: Run Python 3.12 compatibility smoke suite
+        if: matrix.python-version == '3.12'
+        run: >-
+          uv run pytest -q
+          tests/test_electronics_backends.py
+          tests/test_footprint_library.py
+          tests/test_harness_loop.py
+          tests/test_jobs.py
+          tests/test_mcp_stdio.py
+          tests/test_p0_fixes.py
+          tests/test_p1_p3_platform.py
+          tests/test_project_parts.py
+          tests/test_reference_backend.py
+          tests/test_release_metadata.py
+          tests/test_review_3d.py
+          tests/test_review_bundle.py
+          tests/test_review_sharing.py
+          tests/test_root_cause_diagnostics.py
+          tests/test_rp2040_native_geometry.py
+          tests/test_rp2040_reference_contract.py
+          tests/test_schematic_generator.py
+          tests/test_toolchain_provisioning.py
+          tests/test_via_in_pad_qualification.py
+          tests/test_workspace.py
+          tests/test_zephyr_backend.py
 
   test-windows:
     name: Windows Python 3.11
