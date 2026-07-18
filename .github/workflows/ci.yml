@@ -25,13 +25,27 @@ jobs:
       - run: uv run ruff check src/ tests/
 
   test:
-    name: Python ${{ matrix.python-version }}
+    name: Python ${{ matrix.python-version }} ${{ matrix.shard }}
     runs-on: ubuntu-latest
     timeout-minutes: 45
     strategy:
       fail-fast: false
       matrix:
-        python-version: ["3.11", "3.12"]
+        include:
+          - python-version: "3.11"
+            shard: 1
+          - python-version: "3.11"
+            shard: 2
+          - python-version: "3.11"
+            shard: 3
+          - python-version: "3.11"
+            shard: 4
+          - python-version: "3.11"
+            shard: 5
+          - python-version: "3.11"
+            shard: 6
+          - python-version: "3.12"
+            shard: compat
     steps:
       - uses: actions/checkout@v5
       - uses: actions/setup-node@v5
@@ -51,9 +65,13 @@ jobs:
       - run: uv sync --locked --extra dev --extra mcp
       - name: Enforce MCP stdout protocol hygiene
         run: uv run pytest -q tests/test_mcp_stdio.py
-      - name: Run full authoritative suite on Python 3.11
+      - name: Run Python 3.11 full-suite shard
         if: matrix.python-version == '3.11'
-        run: uv run pytest
+        shell: bash
+        run: |
+          files="$(find tests -maxdepth 1 -type f -name 'test_*.py' -print | sort | awk -v shard='${{ matrix.shard }}' '((NR - 1) % 6) + 1 == shard { print }')"
+          test -n "$files"
+          uv run pytest -q $files
       - name: Run Python 3.12 compatibility smoke suite
         if: matrix.python-version == '3.12'
         run: >-
