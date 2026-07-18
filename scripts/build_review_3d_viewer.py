@@ -40,6 +40,11 @@ EXPECTED_INPUTS = {
 }
 
 
+def _repo_relative(path: Path) -> str:
+    """Return a stable, POSIX-style repository path on every platform."""
+    return path.relative_to(ROOT).as_posix()
+
+
 def _sha256(payload: bytes) -> str:
     return hashlib.sha256(payload).hexdigest()
 
@@ -134,7 +139,7 @@ def _build() -> tuple[bytes, str]:
     receipt = {
         "schema_version": 1,
         "generator": "scripts/build_review_3d_viewer.py",
-        "bundle": str(BUNDLE.relative_to(ROOT)),
+        "bundle": _repo_relative(BUNDLE),
         "bundle_sha256": _sha256(bundle),
         "build_arguments": list(BUILD_ARGUMENTS),
         "toolchain": {
@@ -147,7 +152,7 @@ def _build() -> tuple[bytes, str]:
         "licenses": [
             {
                 "component": "three",
-                "path": str(THREE_LICENSE.relative_to(ROOT)),
+                "path": _repo_relative(THREE_LICENSE),
                 "sha256": _sha256(THREE_LICENSE.read_bytes()),
                 "spdx": "MIT",
             },

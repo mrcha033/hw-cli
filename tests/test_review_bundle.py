@@ -111,7 +111,9 @@ def test_export_review_records_gate_artifact_integrity(service, project):
     reports = project_path / "validation" / "reports"
     existing = reports / "artifact_probe.txt"
     missing = reports / "missing_artifact.txt"
-    existing.write_text("review evidence\n", encoding="utf-8")
+    # Keep the fixture bytes identical on POSIX and Windows; the assertion
+    # below validates artifact byte accounting rather than newline conversion.
+    existing.write_bytes(b"review evidence\n")
     report = {
         "gate": "artifact_probe",
         "status": "blocked",
