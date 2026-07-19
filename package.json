@@ -1,7 +1,7 @@
 {
   "name": "hw-codesign",
   "private": true,
-  "version": "0.1.0",
+  "version": "0.1.2",
   "devDependencies": {
     "@tscircuit/cli": "0.1.1491",
     "react": "19.1.1",

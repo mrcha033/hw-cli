@@ -1,6 +1,6 @@
 {
   "name": "hw-codesign",
-  "version": "0.1.0",
+  "version": "0.1.2",
   "description": "For supported board families, turn an agent brief into a reviewable hardware candidate and an explicit fabrication-blocker report.",
   "author": {
     "name": "mrcha033",

@@ -5,6 +5,8 @@ import re
 import tomllib
 from pathlib import Path
 
+from hw_codesign import __version__
+
 ROOT = Path(__file__).resolve().parents[1]
 CANONICAL_NAME = "hw-codesign"
 LIVE_REPOSITORY = "https://github.com/mrcha033/hw-codesign"
@@ -69,6 +71,25 @@ def test_canonical_product_name_and_current_repository_slug_are_not_conflated():
         )
     )
     assert UNPUBLISHED_REPOSITORY not in public_metadata
+
+
+def test_release_version_is_synchronized_across_package_surfaces():
+    metadata = tomllib.loads((ROOT / "pyproject.toml").read_text(encoding="utf-8"))
+    version = metadata["project"]["version"]
+    npm_package = _json("package.json")
+    npm_lock = _json("package-lock.json")
+    claude_plugin = _json("plugins/hw-codesign/.claude-plugin/plugin.json")
+    codex_plugin = _json("plugins/hw-codesign/.codex-plugin/plugin.json")
+    uv_packages = tomllib.loads((ROOT / "uv.lock").read_text(encoding="utf-8"))["package"]
+    locked_project = next(package for package in uv_packages if package["name"] == CANONICAL_NAME)
+
+    assert __version__ == version
+    assert npm_package["version"] == version
+    assert npm_lock["version"] == version
+    assert npm_lock["packages"][""]["version"] == version
+    assert claude_plugin["version"] == version
+    assert codex_plugin["version"] == version
+    assert locked_project["version"] == version
 
 
 def test_exact_wedge_is_consistent_across_public_metadata():
